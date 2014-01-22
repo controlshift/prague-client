@@ -9,9 +9,9 @@ In order to get started contributing, you must install Grunt and all the necessa
 
 To install Grunt and everything:
 
-```npm install -g grunt
-npm install -g grunt-cli
-npm install```
+    npm install -g grunt
+    npm install -g grunt-cli
+    npm install
 
 To start the server, compile and minify everything:
 
