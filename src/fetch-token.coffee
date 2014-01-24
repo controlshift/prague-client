@@ -7,8 +7,9 @@ $.fn.serializeObject = ->
 subscribeToDonationChannel = (channelToken) ->
   channel = pusher.subscribe(channelToken)
 
-  channel.bind "my_event", (data) ->
-    console.log('success!')
+  channel.bind "charge_completed", (data) ->
+    console.log(data.status)
+    console.log(data.message)
 
 
 stripeResponseHandler = (status, response) ->
@@ -34,11 +35,11 @@ stripeResponseHandler = (status, response) ->
 
     req.done (response, textStatus, jqXHR) ->
       $form.find(".payment-errors").text "Success! Waiting to charge card..."
-      console.log(response)
+      subscribeToDonationChannel(response.pusher_channel_token)
     req.fail (response, textStatus, errorThrown) ->
       $form.find(".payment-errors").text errorThrown
 
-    subscribeToDonationChannel('test_channel')
+    
     false
 
 jQuery ($) ->
