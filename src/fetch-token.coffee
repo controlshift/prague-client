@@ -26,9 +26,20 @@ stripeResponseHandler = (status, response) ->
     # Insert the token into the form so it gets submitted to the server
     $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
     
+    req = $.ajax(
+      url: "http://localhost:3000/charges"
+      type: "post"
+      data: $("#payment-form").serializeObject()
+    )
+
+    req.done (response, textStatus, jqXHR) ->
+      $form.find(".payment-errors").text "Success! Waiting to charge card..."
+      console.log(response)
+    req.fail (response, textStatus, errorThrown) ->
+      $form.find(".payment-errors").text errorThrown
+
     subscribeToDonationChannel('test_channel')
-    # and re-submit
-    console.log($form.get(0))
+    false
 
 jQuery ($) ->
   $("#payment-form").submit (e) ->
