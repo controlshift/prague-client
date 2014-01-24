@@ -5,12 +5,25 @@
     <title>Donations</title>
     <link href="application.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="application.js"></script>
   </head>
   <body>
     <form action="" method="POST" id="payment-form">
       <span class="payment-errors"></span>
+
+      <input type="hidden" name="organization_slug" value="org">
+
+      <input type="text" name="customer.first_name">
+
+      <input type="text" name="customer.last_name">
+
+      <input type="text" name="customer.email"><br>
+
+      <input type="text" name="customer.charges[0].amount">
+
+      <input type="text" name="customer.charges[0].currency"><br>
 
       <div class="form-row">
         <label>

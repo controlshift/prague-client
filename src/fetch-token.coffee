@@ -1,4 +1,16 @@
 Stripe.setPublishableKey "pk_test_LGrYxpfzI89s9yxXJfKcBB0R"
+pusher = new Pusher('331ca3447b91e264a76f')
+
+$.fn.serializeObject = ->
+  form2js(@attr('id'), '.', true)
+
+subscribeToDonationChannel = (channelToken) ->
+  channel = pusher.subscribe(channelToken)
+
+  channel.bind "my_event", (data) ->
+    console.log('success!')
+
+
 stripeResponseHandler = (status, response) ->
   $form = $("#payment-form")
   if response.error
@@ -12,10 +24,11 @@ stripeResponseHandler = (status, response) ->
     token = response.id
     
     # Insert the token into the form so it gets submitted to the server
-    $form.append $("<input type=\"hidden\" name=\"stripeToken\" />").val(token)
+    $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
     
+    subscribeToDonationChannel('test_channel')
     # and re-submit
-    # $form.get(0).submit()
+    console.log($form.get(0))
 
 jQuery ($) ->
   $("#payment-form").submit (e) ->
