@@ -63,7 +63,7 @@ module.exports = function(grunt) {
           mangle: false
         },
         files: {
-          'build/application.js': [ 'build/**/*.js' ]
+          'build/application.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js' ]
         }
       }
     },

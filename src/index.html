@@ -50,5 +50,110 @@
 
       <button type="submit">Submit Payment</button>
     </form>
+
+    <form id="donation-form" autocomplete="on">
+      <div class="donation-header">
+        <div class="donation-header-main-message">
+          I'M DONATING
+        </div>
+        <div class="donation-subheader-amount">
+          $0
+        </div>
+      </div>
+      <div class="donation-progress-banner">
+        <span class="donation-progress-header dph-active">Amount</span>
+        <span class="donation-progress-header">My Info</span>
+        <span class="donation-progress-header">Payment</span>
+      </div>
+      <div class="donation-input-set" id="input-set-first">
+        <span class="donation-field-label">
+          <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
+        </span>
+        <div class="donation-input-row">
+          <div class="donation-btn donation-btn-sm" >$15</div>
+          <div class="donation-btn donation-btn-sm">$35</div>
+          <div class="donation-btn donation-btn-sm">$50</div>
+        </div>
+        <div class="donation-input-row">      
+          <div class="donation-btn donation-btn-sm">$100</div>
+          <div class="donation-btn donation-btn-sm">$250</div>
+          <div class="donation-btn donation-btn-sm">$500</div>
+        </div>
+        <div class="donation-input-row"> 
+          <div class="donation-btn donation-btn-sm">$1000</div>
+          <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
+        </div>
+        <div class="donation-next-btn">
+          <div class="donation-next-btn-header">
+            NEXT
+          </div>
+        </div>
+      </div>
+      
+      <div class="donation-input-set">
+        <div class="donation-input-row">
+          <span class="donation-field-label">
+            First Name*
+            <span class="donation-error-label">Can't be blank</span>
+          </span>
+          
+          <input type="text" class="donation-text-field" autocompletetype="given-name">
+        </div>
+        <div class="donation-input-row">      
+          <span class="donation-field-label">
+            Last Name*
+            <span class="donation-error-label">Can't be blank</span>
+          </span>
+          
+          <input type="text" class="donation-text-field" autocompletetype="family-name">
+        </div>
+        <div class="donation-input-row"> 
+          <span class="donation-field-label">
+            Email*
+            <span class="donation-error-label">Invalid</span>
+          </span>
+          
+          <input type="email" class="donation-text-field" autocompletetype="email">
+        </div>
+        <div class="donation-next-btn">
+          <div class="donation-next-btn-header">
+            NEXT
+          </div>
+        </div>
+      </div>
+      
+      <div class="donation-input-set">
+        <div class="donation-input-row">
+          <span class="donation-field-label">
+            Card Number*
+            <span class="donation-error-label">Invalid number</span>
+          </span>
+          <input type="cc-num" class="donation-text-field" pattern="\d*" autocompletetype="cc-number">
+        </div>
+        <div class="donation-input-row"> 
+          <span class="donation-field-label">
+            Expiration*
+            <span class="donation-error-label">Invalid</span>
+          </span>
+          <select class="donation-select" type="month">
+          </select>
+          <select class="donation-select" type="year">
+          </select>
+        </div>
+        <div class="donation-input-row"> 
+          <span class="donation-field-label">
+            Security Code*
+            <span class="donation-error-label">Invalid</span>
+          </span>
+          <input type="cvc" class="donation-text-field donation-text-field-sm" pattern="\d*" autocomplete="off">
+        </div>
+        <div class="donation-submit">
+          <div class="donation-submit-header">
+            SUBMIT
+          </div>
+        </div>
+      </div>
+      
+    </form>
   </body>
 </html>
