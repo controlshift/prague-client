@@ -21,7 +21,7 @@ module.exports = function(grunt) {
       },
       scripts: {
         src: [ 'build/**/*.js', '!build/application.js' ]
-      },
+      }
     },
 
     sass: {
