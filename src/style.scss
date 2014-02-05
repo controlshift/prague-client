@@ -21,6 +21,21 @@
       letter-spacing: 5px;
     }
   }
+  #dnt-progress-amount {
+    background-repeat: no-repeat;
+    background-position: 19px 12px;
+    background-image: url('img/icon-amount.png');
+  }
+  #dnt-progress-myinfo {
+    background-repeat: no-repeat;
+    background-position: 19px 12px;
+    background-image: url('img/icon-myinfo.png');
+  }
+  #dnt-progress-payment {
+    background-repeat: no-repeat;
+    background-position: 10px 14px;
+    background-image: url('img/icon-payment.png');
+  }
   .donation-progress-banner {
     height: 40px;
     background-color: #00457e;
@@ -33,11 +48,12 @@
       text-align: center;
       line-height: 40px;
       width: 130px;
-      color: #84909a;
+      color: white;
+      opacity: 0.5;
       cursor: pointer;
     }
     .dph-active {
-      color: white;
+      opacity: 1.0;
     }
   }
   #input-set-first {
