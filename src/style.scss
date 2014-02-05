@@ -47,10 +47,21 @@
       vertical-align: middle;
       text-align: center;
       line-height: 40px;
-      width: 130px;
+      width: 100px;
       color: white;
       opacity: 0.5;
       cursor: pointer;
+      padding-left: 14px;
+    }
+    .donation-progress-arrow {
+      background-image: url('img/icon-arrow.png');
+      background-position: 5px 16px;
+      color: white;
+      display: inline-block;
+      background-repeat: no-repeat;
+      opacity: 0.5;
+      width: 20px;
+      height: 24px;
     }
     .dph-active {
       opacity: 1.0;
