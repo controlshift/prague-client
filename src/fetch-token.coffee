@@ -2,18 +2,21 @@ Stripe.setPublishableKey "pk_test_LGrYxpfzI89s9yxXJfKcBB0R"
 pusher = new Pusher('331ca3447b91e264a76f')
 
 $.fn.serializeObject = ->
-  form2js(@attr('id'), '.', true)
+  serialObj = form2js(@attr('id'), '.', true)
+  amount = if $('.donation-btn-active').text() then $('.donation-btn-active').text() else $('.donation-btn-active').val()
+  serialObj['customer']['charges_attributes'][0]['amount'] = amount.replace("$", "") + "00"
+  serialObj
 
 subscribeToDonationChannel = (channelToken) ->
   channel = pusher.subscribe(channelToken)
 
   channel.bind "charge_completed", (data) ->
-    console.log(data.status)
-    console.log(data.message)
+    alert(data.status)
+    alert(data.message)
 
 
 stripeResponseHandler = (status, response) ->
-  $form = $("#payment-form")
+  $form = $("#donation-form")
   if response.error
     
     # Show the errors on the form
@@ -30,7 +33,7 @@ stripeResponseHandler = (status, response) ->
     req = $.ajax(
       url: "http://localhost:3000/charges"
       type: "post"
-      data: $("#payment-form").serializeObject()
+      data: $("#donation-form").serializeObject()
     )
 
     req.done (response, textStatus, jqXHR) ->
@@ -43,9 +46,8 @@ stripeResponseHandler = (status, response) ->
     false
 
 jQuery ($) ->
-  $("#payment-form").submit (e) ->
+  $("#donation-form").submit (e) ->
     $form = $(this)
-    
     # Disable the submit button to prevent repeated clicks
     $form.find("button").prop "disabled", true
     Stripe.createToken $form, stripeResponseHandler
