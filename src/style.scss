@@ -130,6 +130,11 @@
       padding: 0px 10px;
       font-size: 13px;
     }
+    .donation-text-field[type="cc-num"] {
+      background-image: url('img/icon-cc-none.png');
+      background-repeat: no-repeat;
+      background-position: 290px 5px;
+    }
     .donation-text-field-completed {
       border: 2px solid #0066b4;
     }
@@ -145,6 +150,9 @@
       -webkit-appearance: none;
       padding: 0px 15px;
       font-size: 13px;
+      background-image: url('img/icon-dropdown-arrows.png');
+      background-repeat: no-repeat;
+      background-position: 140px 5px;
     }
     .donation-text-field-sm {
       width: 136px;
