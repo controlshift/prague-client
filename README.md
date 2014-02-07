@@ -5,6 +5,8 @@ This is a jQuery donation webform widget to be used in conjunction with https://
 
 ## Usage
 
+(Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
+
 Stick this somewhere in your header:
 
     <link href="jquery.donations.css" rel="stylesheet" type="text/css">
