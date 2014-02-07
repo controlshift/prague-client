@@ -26,6 +26,12 @@ And if you want some behavior to hide it, call this:
 
     $.DonationsHide();
 
+Lastly, if you want to use our pretty icons, place them somewhere in your image folder. You can pass the path to the images like so when you initialize the form:
+
+    $.DonationsInit('/path/to/images');
+
+`DonationsInit` will take care of the rest. By default the path is `./img/`.
+
 ## Customizations
 
 If you want to apply custom stylings, you can just add another stylesheet below the one we provided and overwrite CSS as you normally would. Custom JS behavior can be added if you want to submit a Github issue so we can take a look at it. For the time being, we've made it pretty easy to modify the function `$.DonationsConnectToServer` because by default, it hooks into our web service. If you want to host your own copy of our server, you can modify the function in the following way:

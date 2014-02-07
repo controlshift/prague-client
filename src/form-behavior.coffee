@@ -2,6 +2,22 @@
   $.DonationsInit = (opts) ->
     $("#donation-form").show()
 
+    config = $.extend({}, {
+      imgPath: './img/'
+    }, opts)
+
+    icons = {
+      '#dnt-progress-amount' : 'icon-amount.png',
+      '#dnt-progress-myinfo' : 'icon-myinfo.png',
+      '#dnt-progress-payment' : 'icon-payment.png',
+      '.donation-progress-arrow' : 'icon-arrow.png',
+      '.donation-text-field[type="cc-num"]' : 'icon-cc-none.png',
+      '.donation-select' : 'icon-dropdown-arrows.png'
+    }
+
+    for k, v of icons
+      $(k).css('background-image', "url('#{config['imgPath']}/#{v}')")
+
     validateFieldset = (FS) ->
       valid = true
       if $(".donation-input-set").index(FS) == 0 and FS.find(".donation-btn-active").length == 0

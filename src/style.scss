@@ -24,17 +24,14 @@
   #dnt-progress-amount {
     background-repeat: no-repeat;
     background-position: 19px 12px;
-    background-image: url('img/icon-amount.png');
   }
   #dnt-progress-myinfo {
     background-repeat: no-repeat;
     background-position: 19px 12px;
-    background-image: url('img/icon-myinfo.png');
   }
   #dnt-progress-payment {
     background-repeat: no-repeat;
     background-position: 10px 14px;
-    background-image: url('img/icon-payment.png');
   }
   .donation-progress-banner {
     height: 40px;
@@ -54,7 +51,6 @@
       padding-left: 14px;
     }
     .donation-progress-arrow {
-      background-image: url('img/icon-arrow.png');
       background-position: 5px 16px;
       color: white;
       display: inline-block;
@@ -131,7 +127,6 @@
       font-size: 13px;
     }
     .donation-text-field[type="cc-num"] {
-      background-image: url('img/icon-cc-none.png');
       background-repeat: no-repeat;
       background-position: 290px 5px;
     }
@@ -150,7 +145,6 @@
       -webkit-appearance: none;
       padding: 0px 15px;
       font-size: 13px;
-      background-image: url('img/icon-dropdown-arrows.png');
       background-repeat: no-repeat;
       background-position: 140px 5px;
     }
