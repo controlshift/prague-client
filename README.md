@@ -72,4 +72,6 @@ To install Grunt and everything:
 
 To start the server, compile and minify everything:
 
-```grunt```
+```
+grunt
+```
