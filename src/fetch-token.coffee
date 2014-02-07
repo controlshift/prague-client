@@ -1,7 +1,13 @@
 (($)->
-  $.DonationsConnectToServer = ->
-    Stripe.setPublishableKey "pk_test_LGrYxpfzI89s9yxXJfKcBB0R"
-    pusher = new Pusher('331ca3447b91e264a76f')
+  $.DonationsConnectToServer = (opts) ->
+    config = $.extend({}, {
+      stripePublicKey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
+      pusherPublicKey: '331ca3447b91e264a76f',
+      pathToServer: "http://localhost:3000"
+    }, opts)
+
+    Stripe.setPublishableKey config['stripePublicKey']
+    pusher = new Pusher(config['pusherPublicKey'])
 
     $.fn.serializeObject = ->
       serialObj = form2js(@attr('id'), '.', true)
@@ -33,7 +39,7 @@
         $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
         
         req = $.ajax(
-          url: "http://localhost:3000/charges"
+          url: "#{config['pathToServer']}/charges"
           type: "post"
           data: $("#donation-form").serializeObject()
         )

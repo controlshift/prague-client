@@ -30,21 +30,23 @@ And if you want some behavior to hide it, call this:
 
 Lastly, if you want to use our pretty icons, place them somewhere in your image folder. You can pass the path to the images like so when you initialize the form:
 
-    $.DonationsInit('/path/to/images');
+    $.DonationsInit({imgPath: '/path/to/images'});
 
 `DonationsInit` will take care of the rest. By default the path is `./img/`.
 
 ## Customizations
 
-If you want to apply custom stylings, you can just add another stylesheet below the one we provided and overwrite CSS as you normally would. Custom JS behavior can be added if you want to submit a Github issue so we can take a look at it. For the time being, we've made it pretty easy to modify the function `$.DonationsConnectToServer` because by default, it hooks into our web service. If you want to host your own copy of our server, you can modify the function in the following way:
+If you want to apply custom stylings, you can just add another stylesheet below the one we provided and overwrite CSS as you normally would. Custom JS behavior can be added if you want to submit a Github issue so we can take a look at it. 
 
-    (($)->
-      $.DonationsConnectToServer = ->
-        Stripe.setPublishableKey "YOUR_PUBLIC_STRIPE_KEY"
-        pusher = new Pusher('YOUR_PUBLIC_PUSHER_KEY')
+## Using your own backend server
 
-        # Insert your logic here
-    ) jQuery
+We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
+
+    $.DonationsInit({
+      stripePublicKey: "YOUR_STRIPE_PUBLIC_KEY",
+      pusherPublicKey: "YOUR_PUSHER_PUBLIC_KEY",
+      pathToServer: "http://localhost:3000"
+    });
 
 ## Contributing
 

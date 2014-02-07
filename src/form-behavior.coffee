@@ -124,7 +124,7 @@
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
     $('.donation-btn-lg').payment('restrictNumeric');
-    $.DonationsConnectToServer()
+    $.DonationsConnectToServer(config)
     this
 
   $.DonationsHide = (opts) ->
