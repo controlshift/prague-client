@@ -9,28 +9,38 @@ This is a jQuery donation webform widget to be used in conjunction with https://
 
 Stick this somewhere in your header:
 
-    <link href="jquery.donations.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-    <script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+```html
+<link href="jquery.donations.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+```
 
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the last line you should only need to include if you aren't already using jQuery.
 
 Stick this somewhere in below the `</body>` tag:
 
-    <script src="jquery.donations.js"></script>
+```html
+<script src="jquery.donations.js"></script>
+```
 
 You're all set! To get started, you can call the following to make the form appear:
 
-    $.DonationsInit();
+```javascript
+$.DonationsInit();
+```
 
 And if you want some behavior to hide it, call this:
 
-    $.DonationsHide();
+```javascript
+$.DonationsHide();
+```
 
 Lastly, if you want to use our pretty icons, place them somewhere in your image folder. You can pass the path to the images like so when you initialize the form:
 
-    $.DonationsInit({imgPath: '/path/to/images'});
+```javascript
+$.DonationsInit({imgPath: '/path/to/images'});
+```
 
 `DonationsInit` will take care of the rest. By default the path is `./img/`.
 
@@ -42,11 +52,13 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
-    $.DonationsInit({
-      stripePublicKey: "YOUR_STRIPE_PUBLIC_KEY",
-      pusherPublicKey: "YOUR_PUSHER_PUBLIC_KEY",
-      pathToServer: "http://localhost:3000"
-    });
+```javascript
+$.DonationsInit({
+  stripePublicKey: "YOUR_STRIPE_PUBLIC_KEY",
+  pusherPublicKey: "YOUR_PUSHER_PUBLIC_KEY",
+  pathToServer: "http://localhost:3000"
+});
+```
 
 ## Contributing
 
@@ -60,4 +72,4 @@ To install Grunt and everything:
 
 To start the server, compile and minify everything:
 
-`grunt`
+```grunt```
