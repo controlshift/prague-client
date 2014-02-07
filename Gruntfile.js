@@ -17,10 +17,10 @@ module.exports = function(grunt) {
         src: [ 'build' ]
       },
       stylesheets: {
-        src: [ 'build/**/*.css', '.sass-cache', '!build/application.css' ]
+        src: [ 'build/**/*.css', '.sass-cache', '!build/jquery.donations.css' ]
       },
       scripts: {
-        src: [ 'build/**/*.js', '!build/application.js' ]
+        src: [ 'build/**/*.js', '!build/jquery.donations.js' ]
       },
     },
 
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
     cssmin: {
       build: {
         files: {
-          'build/application.css': [ 'build/**/*.css' ]
+          'build/jquery.donations.css': [ 'build/**/*.css' ]
         }
       }
     },
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
           mangle: false
         },
         files: {
-          'build/application.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js' ]
+          'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js' ]
         }
       }
     },
