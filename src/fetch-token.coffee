@@ -18,7 +18,7 @@
 
 
     stripeResponseHandler = (status, response) ->
-      $form = $(".donation-form")
+      $form = $("#donation-form")
       if response.error
         
         # Show the errors on the form
@@ -35,7 +35,7 @@
         req = $.ajax(
           url: "http://localhost:3000/charges"
           type: "post"
-          data: $(".donation-form").serializeObject()
+          data: $("#donation-form").serializeObject()
         )
 
         req.done (response, textStatus, jqXHR) ->
@@ -48,7 +48,7 @@
         false
 
     jQuery ($) ->
-      $(".donation-form").submit (e) ->
+      $("#donation-form").submit (e) ->
         $form = $(this)
         # Disable the submit button to prevent repeated clicks
         $form.find("button").prop "disabled", true
