@@ -1,6 +1,6 @@
 (($)->
   $.DonationsInit = (opts) ->
-    $("#donation-form").show()
+    $(".donation-form").show()
 
     config = $.extend({}, {
       imgPath: './img/'
@@ -128,6 +128,6 @@
     this
 
   $.DonationsHide = (opts) ->
-    $("#donation-form").hide()
+    $(".donation-form").hide()
   return
 ) jQuery

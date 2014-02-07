@@ -1,4 +1,4 @@
-#donation-form {
+.donation-form {
   width: 400px;
   height: 550px;
   background-color: #eee;
@@ -147,6 +147,7 @@
       font-size: 13px;
       background-repeat: no-repeat;
       background-position: 140px 5px;
+      display: inline-block;
     }
     .donation-text-field-sm {
       width: 136px;
