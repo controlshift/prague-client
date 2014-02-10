@@ -3,6 +3,8 @@ Donation Labs Client
 
 This is a jQuery donation webform widget to be used in conjunction with https://github.com/controlshift/prague-server
 
+You can check out a demo [here](http://www.changesprout.com/prague-client/).
+
 ## Usage
 
 (Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
