@@ -25,4 +25,12 @@ describe "Form validations", ->
 
   it "should accept a valid date if given a year", ->
     spyOn($.fn, "val").and.returnValue("02")
-    expect($.DonationsInit().validField('2019', "year")).toEqual(true)
+    expect($.DonationsInit().validField("#{(new Date).getFullYear() + 1}", "year")).toEqual(true)
+
+  it "should accept a valid date if given a month", ->
+    spyOn($.fn, "val").and.returnValue("#{(new Date).getFullYear() + 1}")
+    expect($.DonationsInit().validField('02', "month")).toEqual(true)
+
+  it "should reject a date from a previous year", ->
+    spyOn($.fn, "val").and.returnValue("02")
+    expect($.DonationsInit().validField("#{(new Date).getFullYear() - 1}", "year")).toEqual(false)
