@@ -2,6 +2,8 @@
   $.DonationsInit = (opts) ->
     $("#donation-form").show()
 
+    form = @
+
     config = $.extend({}, {
       imgPath: './img/'
     }, opts)
@@ -26,7 +28,7 @@
       else
         $(".donation-error-label").first().hide()
       for field in FS.find(".donation-text-field, .donation-select")
-        unless validField($(field), $(field).attr("type"))
+        unless form.validField($(field).val(), $(field).attr("type"))
           valid = false
           $(field).addClass("donation-text-field-error")
           $(field).parent().find(".donation-error-label").show()
@@ -49,7 +51,7 @@
 
     $(".donation-text-field").blur ->
       thisField = $(this)
-      if validField(thisField, thisField.attr("type"))
+      if form.validField(thisField.val(), thisField.attr("type"))
         thisField.removeClass("donation-text-field-error")
         thisField.parent().find(".donation-error-label").hide()
         thisField.addClass("donation-text-field-completed")
@@ -107,24 +109,29 @@
       nextFS.show()
       currentFS.hide()
       
-    validField = (field, type) ->
+    @validField = (value, type) ->
       if type == "email"
         re = /[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-        return re.test(field.val())
+        return re.test(value)
       if type == "cc-num"
-        return $.payment.validateCardNumber(field.val())
+        return $.payment.validateCardNumber(value)
       if type == "cvc"
-        return $.payment.validateCardCVC(field.val())
+        return $.payment.validateCardCVC(value)
       if type == "month" or type == "year"
-        mo = $(".donation-select[type='month']").val()
-        yr = $(".donation-select[type='year']").val()
+        if type == "month"
+          yr = $(".donation-select[type='year']").val()
+          mo = value
+        if type == "year"
+          mo = $(".donation-select[type='month']").val()
+          yr = value
         return /\d+/.test(mo) and /\d+/.test(yr) and $.payment.validateCardExpiry(mo, yr)
-      return !!field.val()
+      return !!value
 
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
     $('.donation-btn-lg').payment('restrictNumeric');
     $.DonationsConnectToServer(config)
+
     this
 
   $.DonationsHide = (opts) ->
