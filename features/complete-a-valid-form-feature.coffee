@@ -29,7 +29,7 @@ casper.test.begin "completing a valid form", 3, (test) ->
     }, false)
     noErrors = @evaluate ->
       $(".donation-text-field-error").length
-    test.assertEquals(noErrors, 0)
+    test.assertEquals(noErrors, 0, "No errors are present")
     return
 
   casper.run ->
