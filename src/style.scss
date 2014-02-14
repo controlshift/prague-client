@@ -6,6 +6,7 @@
   border-radius: 5px;
   font-family: Helvetica, Arial, sans-serif;
   display: none;
+
   .donation-header {
     font-weight: bold;
     text-align: center;
@@ -110,6 +111,13 @@
       background-color: white;
       box-shadow: inset 0px 3px 3px 0px #eee;
     }
+    .donation-btn-lg:focus::-webkit-input-placeholder { color:transparent; }
+
+    .donation-btn-lg:focus:-moz-placeholder { color:transparent; }
+
+    .donation-btn-lg:focus::-moz-placeholder { color:transparent; }
+
+    .donation-btn-lg:focus:-ms-input-placeholder { color:transparent; }
     
     .donation-btn-active {
       border: 2px solid #0066b4;
@@ -163,6 +171,10 @@
       font-weight: bold;
       color: #444;
       display: block;
+      .what-is-cvv {
+        font-weight: normal;
+      }
+      
     }
     .donation-error-label {
       font-size: 12px;
@@ -200,6 +212,7 @@
       font-size: 18px;
       font-family: 'Helvetica Neue';
       letter-spacing: 2px;
+      cursor: pointer;
     }
   }
   .donation-submit {

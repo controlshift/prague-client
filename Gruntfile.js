@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         src: [ 'build/**/*.css', '.sass-cache', '!build/jquery.donations.css' ]
       },
       scripts: {
-        src: [ 'build/**/*.js', '!build/jquery.donations.js' ]
+        src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/spec.js', '!build/features.js' ]
       },
     },
 
@@ -48,6 +48,20 @@ module.exports = function(grunt) {
     },
 
     coffee: {
+      spec: {
+        expand: true,
+        cwd: 'spec',
+        src: [ '**/*spec.coffee' ],
+        dest: 'build',
+        ext: '.js'
+      },
+      features: {
+        expand: true,
+        cwd: 'features',
+        src: [ '**/*feature.coffee' ],
+        dest: 'build',
+        ext: '.js'
+      },
       build: {
         expand: true,
         cwd: 'src',
@@ -58,12 +72,28 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      spec: {
+        options: {
+          mangle: false
+        },
+        files: {
+          'build/spec.js' : [ 'build/**/*spec.js' ]
+        }
+      },
+      features: {
+        options: {
+          mangle: false
+        },
+        files: {
+          'build/features.js' : [ 'build/**/*feature.js' ]
+        }
+      },
       build: {
         options: {
           mangle: false
         },
         files: {
-          'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js' ]
+          'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js' ]
         }
       }
     },

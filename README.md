@@ -3,6 +3,8 @@ Donation Labs Client
 
 This is a jQuery donation webform widget to be used in conjunction with https://github.com/controlshift/prague-server
 
+You can check out a demo [here](http://www.changesprout.com/prague-client/).
+
 ## Usage
 
 (Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
@@ -66,6 +68,8 @@ In order to get started contributing, you must install Grunt and all the necessa
 
 To install Grunt and everything:
 
+    npm install phantomjs -g
+    npm install casperjs -g
     npm install -g grunt
     npm install -g grunt-cli
     npm install
@@ -74,4 +78,17 @@ To start the server, compile and minify everything:
 
 ```
 grunt
+```
+
+To just build and compile
+
+```
+grunt build
+```
+
+To run the unit tests, just open up `SpecRunner.html`. To run the integration tests, you must run
+
+```
+grunt build
+casperjs test build/features.js
 ```
