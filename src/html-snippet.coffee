@@ -102,7 +102,7 @@ $('body').append ->
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
-          Security Code*
+          CVV/CVC* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">What is this?</a>
           <span class="donation-error-label">Invalid</span>
         </span>
         <input name="cvc" type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
