@@ -103,11 +103,12 @@
 
     $(".donation-progress-header").click ->
       activeIndex = $(".donation-progress-header").index($(this))
-      updateHeadersUntil(activeIndex)
       nextFS = $(".donation-input-set").eq(activeIndex)
       currentFS = $(".donation-input-set").filter(':visible:first')
-      nextFS.show()
-      currentFS.hide()
+      if(validateFieldset(currentFS))
+        updateHeadersUntil(activeIndex)
+        nextFS.show()
+        currentFS.hide()
       
     @validField = (value, type) ->
       if type == "email"
