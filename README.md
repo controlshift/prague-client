@@ -68,6 +68,8 @@ In order to get started contributing, you must install Grunt and all the necessa
 
 To install Grunt and everything:
 
+    npm install phantomjs -g
+    npm install casperjs -g
     npm install -g grunt
     npm install -g grunt-cli
     npm install
@@ -76,4 +78,17 @@ To start the server, compile and minify everything:
 
 ```
 grunt
+```
+
+To just build and compile
+
+```
+grunt build
+```
+
+To run the unit tests, just open up `SpecRunner.html`. To run the integration tests, you must run
+
+```
+grunt build
+casperjs test build/features.js
 ```

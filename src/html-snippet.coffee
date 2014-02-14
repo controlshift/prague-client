@@ -88,16 +88,16 @@ $('body').append ->
           Card Number*
           <span class="donation-error-label">Invalid number</span>
         </span>
-        <input type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number">
+        <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
           Expiration*
           <span class="donation-error-label">Invalid</span>
         </span>
-        <select class="donation-select" type="month" data-stripe="exp-month">
+        <select name="month" class="donation-select" type="month" data-stripe="exp-month">
         </select>
-        <select class="donation-select" type="year" data-stripe="exp-year">
+        <select name="year" class="donation-select" type="year" data-stripe="exp-year">
         </select>
       </div>
       <div class="donation-input-row"> 
@@ -105,7 +105,7 @@ $('body').append ->
           Security Code*
           <span class="donation-error-label">Invalid</span>
         </span>
-        <input type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
+        <input name="cvc" type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
       </div>
       <button type="submit" class="donation-submit">
         <div class="donation-submit-header">
