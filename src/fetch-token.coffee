@@ -16,12 +16,13 @@
 
     subscribeToDonationChannel = (channelToken) ->
       pusher = new Pusher(config['pusherPublicKey'])
-      
+
       channel = pusher.subscribe(channelToken)
 
       channel.bind "charge_completed", (data) ->
         alert(data.status)
         alert(data.message)
+        $('.donation-loading-overlay').hide()
         pusher.disconnect()
 
 
@@ -32,6 +33,7 @@
         # Show the errors on the form
         $form.find(".payment-errors").text response.error.message
         $form.find("button").prop "disabled", false
+        $('.donation-loading-overlay').hide()
       else
         
         # token contains id, last4, and card type
@@ -51,13 +53,13 @@
           subscribeToDonationChannel(response.pusher_channel_token)
         req.fail (response, textStatus, errorThrown) ->
           $form.find(".payment-errors").text errorThrown
-
-        
+          $('.donation-loading-overlay').hide()
         false
 
     jQuery ($) ->
       $("#donation-form").submit (e) ->
         $form = $(this)
+        $('.donation-loading-overlay').show()
         # Disable the submit button to prevent repeated clicks
         $form.find("button").prop "disabled", true
         Stripe.createToken $form, stripeResponseHandler
