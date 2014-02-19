@@ -33,4 +33,9 @@ describe "Form validations", ->
 
   it "should reject a date from a previous year", ->
     spyOn($.fn, "val").and.returnValue("02")
-    expect($.DonationsInit().validField("#{(new Date).getFullYear() - 1}", "year")).toEqual("Invalid expiry date.")
+    expect($.DonationsInit().validField("#{(new Date).getFullYear() - 1}", "year")).toEqual("Expiry must be in the future.")
+
+  it "should return a message if something else goes wrong for the expiry date", ->
+    spyOn($.fn, "val").and.returnValue("02a")
+    expect($.DonationsInit().validField("#{(new Date).getFullYear() + 1}", "year")).toEqual("Invalid expiry date.")
+

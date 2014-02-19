@@ -131,7 +131,11 @@
         if type == "year"
           mo = $(".donation-select[type='month']").val()
           yr = value
-        return if /\d+/.test(mo) and /\d+/.test(yr) and $.payment.validateCardExpiry(mo, yr) then true else "Invalid expiry date."
+        unless /^\d+$/.test(mo) and /^\d+$/.test(yr)
+          return "Invalid expiry date."
+        unless $.payment.validateCardExpiry(mo, yr)
+          return "Expiry must be in the future."
+        return true
       return true
 
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
