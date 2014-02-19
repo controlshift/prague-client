@@ -28,9 +28,11 @@
       else
         $(".donation-error-label").first().hide()
       for field in FS.find(".donation-text-field, .donation-select")
-        unless form.validField($(field).val(), $(field).attr("type"))
+        validText = form.validField($(field).val(), $(field).attr("type"))
+        unless validText == true
           valid = false
           $(field).addClass("donation-text-field-error")
+          $(field).parent().find(".donation-error-label").text(validText)
           $(field).parent().find(".donation-error-label").show()
         else
           $(field).removeClass("donation-text-field-error")
@@ -51,12 +53,14 @@
 
     $(".donation-text-field").blur ->
       thisField = $(this)
-      if form.validField(thisField.val(), thisField.attr("type"))
+      validText = form.validField(thisField.val(), thisField.attr("type"))
+      if validText == true
         thisField.removeClass("donation-text-field-error")
         thisField.parent().find(".donation-error-label").hide()
         thisField.addClass("donation-text-field-completed")
       else
         thisField.addClass("donation-text-field-error")
+        thisField.parent().find(".donation-error-label").text(validText)
         thisField.parent().find(".donation-error-label").show()
         return
 
@@ -111,13 +115,15 @@
         currentFS.hide()
       
     @validField = (value, type) ->
+      if !value 
+        return "Can't be blank"
       if type == "email"
         re = /[a-z0-9!#$%&'*+/=?^_{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-        return re.test(value)
+        return if re.test(value) then true else "Invalid email format."
       if type == "cc-num"
-        return $.payment.validateCardNumber(value)
+        return if $.payment.validateCardNumber(value) then true else "Invalid card format."
       if type == "cvc"
-        return $.payment.validateCardCVC(value)
+        return if $.payment.validateCardCVC(value) then true else "Invalid CVC."
       if type == "month" or type == "year"
         if type == "month"
           yr = $(".donation-select[type='year']").val()
@@ -125,8 +131,8 @@
         if type == "year"
           mo = $(".donation-select[type='month']").val()
           yr = value
-        return /\d+/.test(mo) and /\d+/.test(yr) and $.payment.validateCardExpiry(mo, yr)
-      return !!value
+        return if /\d+/.test(mo) and /\d+/.test(yr) and $.payment.validateCardExpiry(mo, yr) then true else "Invalid expiry date."
+      return true
 
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
