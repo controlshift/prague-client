@@ -7,7 +7,6 @@
     }, opts)
 
     Stripe.setPublishableKey config['stripePublicKey']
-    pusher = new Pusher(config['pusherPublicKey'])
 
     $.fn.serializeObject = ->
       serialObj = form2js(@attr('id'), '.', true)
@@ -16,11 +15,14 @@
       serialObj
 
     subscribeToDonationChannel = (channelToken) ->
+      pusher = new Pusher(config['pusherPublicKey'])
+      
       channel = pusher.subscribe(channelToken)
 
       channel.bind "charge_completed", (data) ->
         alert(data.status)
         alert(data.message)
+        pusher.disconnect()
 
 
     stripeResponseHandler = (status, response) ->
