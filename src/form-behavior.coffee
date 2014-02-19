@@ -5,7 +5,7 @@
     form = @
 
     config = $.extend({}, {
-      imgPath: './img/'
+      imgPath: './img'
     }, opts)
 
     icons = {
@@ -14,7 +14,8 @@
       '#dnt-progress-payment' : 'icon-payment.png',
       '.donation-progress-arrow' : 'icon-arrow.png',
       '.donation-text-field[type="cc-num"]' : 'icon-cc-none.png',
-      '.donation-select' : 'icon-dropdown-arrows.png'
+      '.donation-select' : 'icon-dropdown-arrows.png',
+      '.donation-loading-overlay' : '712.GIF'
     }
 
     for k, v of icons
@@ -64,6 +65,11 @@
         thisField.parent().find(".donation-error-label").show()
         return
 
+    $(".donation-text-field[type=cc-num]").blur ->
+      ccNumField = $(@)
+      ccType = $.payment.cardType(ccNumField.val())
+      if ccType in ['amex','mastercard','visa','discover','dinersclub']
+        ccNumField.css('background-image', "url(#{config['imgPath']}/icon-cc-#{ccType}.png)")
 
     $(".donation-select[type='month']").html ->
       output = ["<option value='' disabled selected>Month</option>"]

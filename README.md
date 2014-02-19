@@ -44,7 +44,7 @@ Lastly, if you want to use our pretty icons, place them somewhere in your image 
 $.DonationsInit({imgPath: '/path/to/images'});
 ```
 
-`DonationsInit` will take care of the rest. By default the path is `./img/`.
+`DonationsInit` will take care of the rest. By default the path is `./img`.
 
 ## Customizations
 
