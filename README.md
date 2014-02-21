@@ -13,9 +13,6 @@ Stick this somewhere in your header:
 
 ```html
 <link href="jquery.donations.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-<script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 ```
 
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the last line you should only need to include if you aren't already using jQuery.
@@ -25,20 +22,6 @@ Stick this somewhere in below the `</body>` tag:
 ```html
 <script src="jquery.donations.js"></script>
 ```
-
-You're all set! To get started, you can call the following to make the form appear:
-
-```javascript
-$.DonationsInit();
-```
-
-And if you want some behavior to hide it, call this:
-
-```javascript
-$.DonationsHide();
-```
-
-Lastly, if you want to use our pretty icons, place them somewhere in your image folder. You can pass the path to the images like so when you initialize the form:
 
 ```javascript
 $.DonationsInit({imgPath: '/path/to/images'});

@@ -1,4 +1,45 @@
-(($)->
+`var $`
+
+loadExternalScripts = ->
+  scriptStrings = ["https://js.stripe.com/v2/","http://js.pusher.com/2.1/pusher.min.js"]
+  loadedScripts = 0
+  executeMain = ->
+    loadedScripts++
+    if loadedScripts == scriptStrings.length
+      initJQueryPayments(jQuery)
+      main()
+  for scrString in scriptStrings
+    script_tag = document.createElement("script")
+    script_tag.setAttribute "type", "text/javascript"
+    script_tag.setAttribute "src", scrString
+    if script_tag.readyState
+      script_tag.onreadystatechange = ->
+        executeMain() if @readyState is "complete" or @readyState is "loaded"
+        return
+    else
+      script_tag.onload = executeMain
+    (document.getElementsByTagName("head")[0] or document.documentElement).appendChild script_tag
+
+scriptLoadHandler = ->
+  `$ = jQuery = window.jQuery.noConflict(true)`
+  loadExternalScripts()
+  return
+
+if window.jQuery is `undefined` or window.jQuery.fn.jquery isnt "1.9.1"
+  script_tag = document.createElement("script")
+  script_tag.setAttribute "type", "text/javascript"
+  script_tag.setAttribute "src", "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
+  if script_tag.readyState
+    script_tag.onreadystatechange = ->
+      scriptLoadHandler()  if @readyState is "complete" or @readyState is "loaded"
+      return
+  else
+    script_tag.onload = scriptLoadHandler
+  (document.getElementsByTagName("head")[0] or document.documentElement).appendChild script_tag
+else
+  scriptLoadHandler()
+
+main = ->
   $('body').append ->
     """
 
@@ -118,7 +159,7 @@
     </form>
     """
 
-  $.DonationsInit = (opts) ->
+  DonationsInit = (opts) ->
     $("#donation-form").show()
 
     form = @
@@ -266,14 +307,14 @@
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
     $('.donation-btn-lg').payment('restrictNumeric');
-    $.DonationsConnectToServer(config)
+    DonationsConnectToServer(config)
 
     this
 
-  $.DonationsHide = (opts) ->
+  DonationsHide = (opts) ->
     $("#donation-form").hide()
 
-  $.DonationsConnectToServer = (opts) ->
+  DonationsConnectToServer = (opts) ->
     config = $.extend({}, {
       stripePublicKey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
       pusherPublicKey: '331ca3447b91e264a76f',
@@ -330,15 +371,15 @@
           $('.donation-loading-overlay').hide()
         false
 
-    jQuery ($) ->
-      $("#donation-form").submit (e) ->
-        $form = $(this)
-        $('.donation-loading-overlay').show()
-        # Disable the submit button to prevent repeated clicks
-        $form.find("button").prop "disabled", true
-        Stripe.createToken $form, stripeResponseHandler
-        
-        # Prevent the form from submitting with the default action
-        false
+    $("#donation-form").submit (e) ->
+      $form = $(this)
+      $('.donation-loading-overlay').show()
+      # Disable the submit button to prevent repeated clicks
+      $form.find("button").prop "disabled", true
+      Stripe.createToken $form, stripeResponseHandler
+      
+      # Prevent the form from submitting with the default action
+      false
+  DonationsInit()
   return
-) jQuery
+

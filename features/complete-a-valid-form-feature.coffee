@@ -1,7 +1,7 @@
 casper.test.begin "completing a valid form", 3, (test) ->
   casper.start "file:///Users/dylandrop/Documents/controlShift/donations/client/build/index.html"
-
   casper.then ->
+
     @evaluate ->
       $(".donation-btn:first").click()
     @evaluate ->
