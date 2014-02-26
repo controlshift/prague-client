@@ -48,6 +48,9 @@ module.exports = function(grunt) {
     },
 
     coffee: {
+      options: {
+        bare: true
+      },
       spec: {
         expand: true,
         cwd: 'spec',
