@@ -118,7 +118,7 @@ main = ->
           
           <input type="email" class="donation-text-field" autocompletetype="email" name="customer.email">
         </div>
-        <div class="donation-next-btn">
+        <div class="donation-next-btn" id="donation-second-next-btn">
           <div class="donation-next-btn-header">
             NEXT
           </div>
@@ -131,16 +131,16 @@ main = ->
             Card Number*
             <span class="donation-error-label">Invalid number</span>
           </span>
-          <input type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number">
+          <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number">
         </div>
         <div class="donation-input-row"> 
           <span class="donation-field-label">
             Expiration*
             <span class="donation-error-label">Invalid date</span>
           </span>
-          <select class="donation-select" type="month" data-stripe="exp-month">
+          <select name="month" class="donation-select" type="month" data-stripe="exp-month">
           </select>
-          <select class="donation-select" type="year" data-stripe="exp-year">
+          <select name="year" class="donation-select" type="year" data-stripe="exp-year">
           </select>
         </div>
         <div class="donation-input-row"> 
@@ -148,7 +148,7 @@ main = ->
             CVV/CVC* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">What is this?</a>
             <span class="donation-error-label">Invalid CVV number</span>
           </span>
-          <input type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
+          <input name="cvc" type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
         </div>
         <button type="submit" class="donation-submit">
           <div class="donation-submit-header">
