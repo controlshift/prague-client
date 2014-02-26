@@ -20,13 +20,13 @@ Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="jquery.donations.js"></script>
+<script src="jquery.donations.js" id="donation-script"></script>
 ```
 
 If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" data-imgPath="/path/to/images"></script>
+<script src="jquery.donations.js" id="donation-script" data-imgPath="/path/to/images"></script>
 ```
 
 By default the path is `./img`.
@@ -40,7 +40,7 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
 ```html
-<script src="jquery.donations.js" 
+<script src="jquery.donations.js" id="donation-script"
   data-stripePublicKey="YOUR_STRIPE_KEY"
   data-pusherPublicKey="YOUR_PUSHER_KEY"
   data-pathToServer="http://localhost:3000"></script>
