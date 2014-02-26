@@ -7,7 +7,7 @@ loadExternalScripts = ->
     loadedScripts++
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
-      donationsForm.init()
+      donationsForm.init($("#donation-script").data())
   for scrString in scriptStrings
     script_tag = document.createElement("script")
     script_tag.setAttribute "type", "text/javascript"

@@ -23,11 +23,13 @@ Stick this somewhere in below the `</body>` tag:
 <script src="jquery.donations.js"></script>
 ```
 
-```javascript
-$.DonationsInit({imgPath: '/path/to/images'});
+If you need to change the path where your images are stored, you can pass options like so:
+
+```html
+<script src="jquery.donations.js" data-imgPath="/path/to/images"></script>
 ```
 
-`DonationsInit` will take care of the rest. By default the path is `./img`.
+By default the path is `./img`.
 
 ## Customizations
 
@@ -37,12 +39,11 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
-```javascript
-$.DonationsInit({
-  stripePublicKey: "YOUR_STRIPE_PUBLIC_KEY",
-  pusherPublicKey: "YOUR_PUSHER_PUBLIC_KEY",
-  pathToServer: "http://localhost:3000"
-});
+```html
+<script src="jquery.donations.js" 
+  data-stripePublicKey="YOUR_STRIPE_KEY"
+  data-pusherPublicKey="YOUR_PUSHER_KEY"
+  data-pathToServer="http://localhost:3000"></script>
 ```
 
 ## Contributing
@@ -73,5 +74,5 @@ To run the unit tests, just open up `SpecRunner.html`. To run the integration te
 
 ```
 grunt build
-casperjs test build/features.js
+casperjs test build/features.js --verbose
 ```
