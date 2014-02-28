@@ -9,12 +9,6 @@ You can check out a demo [here](http://www.changesprout.com/prague-client/).
 
 (Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
 
-Stick this somewhere in your header:
-
-```html
-<link href="jquery.donations.css" rel="stylesheet" type="text/css">
-```
-
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the last line you should only need to include if you aren't already using jQuery.
 
 Stick this somewhere in below the `</body>` tag:
