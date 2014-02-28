@@ -18,28 +18,30 @@ loadExternalResource = (type, source, callback, params) ->
   else
     tag.onload = ->
       callback(params)
+      return
   (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
 
 loadExternalScripts = ->
-  scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js"]
+  scriptStrings = ["https://js.stripe.com/v2/","http://js.pusher.com/2.1/pusher.min.js"]
   loadedScripts = 0
   executeMain = ->
     loadedScripts++
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
-      testMode = $("#donation-script").data('testMode') == "true"
-      cssSrc = if testMode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
-      loadExternalResource("css", cssSrc, donationsForm.init, $("#donation-script").data())
+      donationsForm.init($("#donation-script").data())
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
+  testMode = $("#donation-script").data('testMode')
+  cssSrc = if testMode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
+  loadExternalResource("css", cssSrc, (->))
   loadExternalScripts()
   return
 
-if window.jQuery is `undefined` or window.jQuery.fn.jquery isnt "1.9.1"
-  loadExternalResource("js", "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", scriptLoadHandler)
+if window.jQuery is `undefined` or (window.jQuery.fn.jquery and parseInt(window.jQuery.fn.jquery[0]) >= 1 and parseInt(window.jQuery.fn.jquery[1]) >= 9 and parseInt(window.jQuery.fn.jquery[2]) >= 1)
+  loadExternalResource("js","https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",scriptLoadHandler)
 else
   scriptLoadHandler()
 
