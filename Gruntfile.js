@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         src: [ 'build/**/*.css', '.sass-cache', '!build/jquery.donations.css' ]
       },
       scripts: {
-        src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/spec.js', '!build/features.js' ]
+        src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/jquery.donations.test.js', '!build/spec.js', '!build/features.js' ]
       },
     },
 
@@ -68,6 +68,16 @@ module.exports = function(grunt) {
         src: [ '**/*.coffee' ],
         dest: 'build',
         ext: '.js'
+      },
+      buildTest: {
+        options: {
+          bare: true
+        },
+        expand: true,
+        cwd: 'src',
+        src: [ '**/*.coffee' ],
+        dest: 'build',
+        ext: '.js'
       }
     },
 
@@ -94,6 +104,14 @@ module.exports = function(grunt) {
         },
         files: {
           'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js' ]
+        }
+      },
+      buildTest: {
+        options: {
+          mangle: false
+        },
+        files: {
+          'build/jquery.donations.test.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/jquery.donations.js' ]
         }
       }
     },

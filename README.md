@@ -9,42 +9,21 @@ You can check out a demo [here](http://www.changesprout.com/prague-client/).
 
 (Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
 
-Stick this somewhere in your header:
-
-```html
-<link href="jquery.donations.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-<script src="http://js.pusher.com/2.1/pusher.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-```
-
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the last line you should only need to include if you aren't already using jQuery.
 
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="jquery.donations.js"></script>
+<script src="jquery.donations.js" id="donation-script"></script>
 ```
 
-You're all set! To get started, you can call the following to make the form appear:
+If you need to change the path where your images are stored, you can pass options like so:
 
-```javascript
-$.DonationsInit();
+```html
+<script src="jquery.donations.js" id="donation-script" data-imgPath="/path/to/images"></script>
 ```
 
-And if you want some behavior to hide it, call this:
-
-```javascript
-$.DonationsHide();
-```
-
-Lastly, if you want to use our pretty icons, place them somewhere in your image folder. You can pass the path to the images like so when you initialize the form:
-
-```javascript
-$.DonationsInit({imgPath: '/path/to/images'});
-```
-
-`DonationsInit` will take care of the rest. By default the path is `./img`.
+By default the path is `./img`.
 
 ## Customizations
 
@@ -54,12 +33,11 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
-```javascript
-$.DonationsInit({
-  stripePublicKey: "YOUR_STRIPE_PUBLIC_KEY",
-  pusherPublicKey: "YOUR_PUSHER_PUBLIC_KEY",
-  pathToServer: "http://localhost:3000"
-});
+```html
+<script src="jquery.donations.js" id="donation-script"
+  data-stripePublicKey="YOUR_STRIPE_KEY"
+  data-pusherPublicKey="YOUR_PUSHER_KEY"
+  data-pathToServer="http://localhost:3000"></script>
 ```
 
 ## Contributing
@@ -90,5 +68,5 @@ To run the unit tests, just open up `SpecRunner.html`. To run the integration te
 
 ```
 grunt build
-casperjs test build/features.js
+casperjs test build/features.js --verbose
 ```
