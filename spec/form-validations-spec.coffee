@@ -1,4 +1,7 @@
 describe "Form validations", ->
+  beforeEach ->
+    donationsForm.hide()
+  
   it "should return true for any basic input", ->
     expect(donationsForm.validField('fds')).toBeTruthy()
 

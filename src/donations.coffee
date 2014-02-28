@@ -42,13 +42,16 @@ else
 `var donationsForm = {};`
 
 donationsForm.init = (opts) ->
+  config = $.extend({}, {
+    imgPath: './img'
+  }, opts)
   
   $('body').append ->
     """
 
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
-      <input type="hidden" name="organization_slug" value="org">
+      <input type="hidden" name="organization_slug" value="#{config['org']}">
       <input type="hidden" name="customer.charges_attributes[0].currency" value="usd">
       <div class="donation-header">
         <div class="donation-header-main-message">
@@ -165,10 +168,6 @@ donationsForm.init = (opts) ->
   $("#donation-form").show()
 
   form = @
-
-  config = $.extend({}, {
-    imgPath: './img'
-  }, opts)
 
   icons = {
     '#dnt-progress-amount' : 'icon-amount.png',
