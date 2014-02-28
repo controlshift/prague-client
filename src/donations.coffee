@@ -40,7 +40,7 @@ scriptLoadHandler = ->
   loadExternalScripts()
   return
 
-if window.jQuery is `undefined` or (window.jQuery.fn.jquery and (parseInt(window.jQuery.fn.jquery[0]) <= 1 or parseInt(window.jQuery.fn.jquery[1]) <= 9 and parseInt(window.jQuery.fn.jquery[2]) <= 1))
+if window.jQuery is `undefined` or (window.jQuery.fn.jquery and (parseInt(window.jQuery.fn.jquery[0]) != 1 or parseInt(window.jQuery.fn.jquery[1]) < 9))
   loadExternalResource("js","https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",scriptLoadHandler)
 else
   scriptLoadHandler()
