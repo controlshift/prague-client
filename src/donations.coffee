@@ -49,7 +49,7 @@ donationsForm.init = (opts) ->
   config = $.extend({}, {
     imgPath: './img'
   }, opts)
-  console.log "called4"
+  
   $('body').append ->
     """
 
