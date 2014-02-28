@@ -7,20 +7,18 @@ You can check out a demo [here](http://www.changesprout.com/prague-client/).
 
 ## Usage
 
-(Example is in `build/` along with the most recent minified CSS, JS, and icons files.)
-
-Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, the last line you should only need to include if you aren't already using jQuery.
+Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, you can either download the images and host them directly (they live in build/) or specify the path to the images as is shown below, fetching them externally. This is easier but also slower for your users.
 
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="jquery.donations.js" id="donation-script"></script>
+<script src="jquery.donations.js" id="donation-script" data-org="org-from-server"></script>
 ```
 
 If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-imgPath="/path/to/images"></script>
+<script src="jquery.donations.js" id="donation-script" data-imgPath="http://www.changesprout.com/prague-client/build/img"></script>
 ```
 
 By default the path is `./img`.

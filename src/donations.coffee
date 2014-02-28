@@ -64,7 +64,7 @@ donationsForm.init = (opts) ->
           I'M DONATING
         </div>
         <div class="donation-subheader-amount">
-          $0
+          <span class='donation-currency'>$</span>0
         </div>
       </div>
       <div class="donation-progress-banner">
@@ -85,17 +85,17 @@ donationsForm.init = (opts) ->
           <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
         </span>
         <div class="donation-input-row">
-          <div class="donation-btn donation-btn-sm" >$15</div>
-          <div class="donation-btn donation-btn-sm">$35</div>
-          <div class="donation-btn donation-btn-sm">$50</div>
+          <div class="donation-btn donation-btn-sm" ><span class='donation-currency'>$</span>15</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>35</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>50</div>
         </div>
         <div class="donation-input-row">      
-          <div class="donation-btn donation-btn-sm">$100</div>
-          <div class="donation-btn donation-btn-sm">$250</div>
-          <div class="donation-btn donation-btn-sm">$500</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>100</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>250</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>500</div>
         </div>
         <div class="donation-input-row"> 
-          <div class="donation-btn donation-btn-sm">$1000</div>
+          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>1000</div>
           <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
         </div>
         <div class="donation-next-btn">
@@ -170,6 +170,16 @@ donationsForm.init = (opts) ->
       </div>
     </form>
     """
+
+  $.ajax
+    type: 'get',
+    url: 'https://freegeoip.net/json/',
+    dataType: 'jsonp',
+    success: (data) ->
+      currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
+      symbol = donationsForm.getSymbolFromCurrency(currency)
+      $("input[name='customer.charges_attributes[0].currency']").val(currency)
+      $(".donation-currency").html(symbol)
 
   $("#donation-form").show()
 
@@ -293,6 +303,20 @@ donationsForm.init = (opts) ->
   donationsForm.connectToServer(config)
 
   this
+
+donationsForm.getCurrencyFromCountryCode = (code) ->
+  europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
+  currencies = {
+    'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN'
+  }
+  currency = currencies[code]
+  return if currency? then currency else (if code in europeanCountries then 'EUR' else 'USD')
+
+donationsForm.getSymbolFromCurrency = (currency) ->
+  symbols = {
+    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;'
+  }
+  return symbols[currency] or '$'
 
 donationsForm.validField = (value, type) ->
   if !value 
