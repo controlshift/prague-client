@@ -1,24 +1,37 @@
 `var $`
 
+loadExternalResource = (type, source, callback, params) ->
+  tag = null
+  if type == "js"
+    tag = document.createElement("script")
+    tag.setAttribute "type", "text/javascript"
+    tag.setAttribute "src", source
+  else if type == "css"
+    tag = document.createElement("link")
+    tag.setAttribute "type", "text/css"
+    tag.setAttribute "rel", "stylesheet"
+    tag.setAttribute "href", source
+  if tag.readyState
+    tag.onreadystatechange = ->
+      callback(params) if @readyState is "complete" or @readyState is "loaded"
+      return
+  else
+    tag.onload = ->
+      callback(params)
+  (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
+
 loadExternalScripts = ->
-  scriptStrings = ["https://js.stripe.com/v2/","http://js.pusher.com/2.1/pusher.min.js"]
+  scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js"]
   loadedScripts = 0
   executeMain = ->
     loadedScripts++
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
-      donationsForm.init($("#donation-script").data())
+      testMode = $("#donation-script").data('testMode') == "true"
+      cssSrc = if testMode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
+      loadExternalResource("css", cssSrc, donationsForm.init, $("#donation-script").data())
   for scrString in scriptStrings
-    script_tag = document.createElement("script")
-    script_tag.setAttribute "type", "text/javascript"
-    script_tag.setAttribute "src", scrString
-    if script_tag.readyState
-      script_tag.onreadystatechange = ->
-        executeMain() if @readyState is "complete" or @readyState is "loaded"
-        return
-    else
-      script_tag.onload = executeMain
-    (document.getElementsByTagName("head")[0] or document.documentElement).appendChild script_tag
+    loadExternalResource("js", scrString, executeMain)
 
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
@@ -26,16 +39,7 @@ scriptLoadHandler = ->
   return
 
 if window.jQuery is `undefined` or window.jQuery.fn.jquery isnt "1.9.1"
-  script_tag = document.createElement("script")
-  script_tag.setAttribute "type", "text/javascript"
-  script_tag.setAttribute "src", "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"
-  if script_tag.readyState
-    script_tag.onreadystatechange = ->
-      scriptLoadHandler()  if @readyState is "complete" or @readyState is "loaded"
-      return
-  else
-    script_tag.onload = scriptLoadHandler
-  (document.getElementsByTagName("head")[0] or document.documentElement).appendChild script_tag
+  loadExternalResource("js", "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", scriptLoadHandler)
 else
   scriptLoadHandler()
 
@@ -45,7 +49,7 @@ donationsForm.init = (opts) ->
   config = $.extend({}, {
     imgPath: './img'
   }, opts)
-  
+  console.log "called4"
   $('body').append ->
     """
 
