@@ -28,9 +28,30 @@ loadExternalScripts = ->
     loadedScripts++
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
+      googleAnalyticsInit()
       donationsForm.init($("#donation-script").data())
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
+
+googleAnalyticsInit = ->
+  ((i, s, o, g, r, a, m) ->
+    i["GoogleAnalyticsObject"] = r
+    i[r] = i[r] or ->
+      (i[r].q = i[r].q or []).push arguments
+      return
+
+    i[r].l = 1 * new Date()
+
+    a = s.createElement(o)
+    m = s.getElementsByTagName(o)[0]
+
+    a.async = 1
+    a.src = g
+    m.parentNode.insertBefore a, m
+    return
+  ) window, document, "script", "//www.google-analytics.com/analytics.js", "gaDonations"
+  gaDonations "create", "UA-48690908-1", "controlshiftlabs.com"
+  gaDonations "send", "pageview"
 
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
@@ -98,7 +119,7 @@ donationsForm.init = (opts) ->
           <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>1000</div>
           <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
         </div>
-        <div class="donation-next-btn">
+        <div class="donation-next-btn" id="donation-first-next-btn">
           <div class="donation-next-btn-header">
             NEXT
           </div>
@@ -201,6 +222,7 @@ donationsForm.init = (opts) ->
   validateFieldset = (FS) ->
     valid = true
     if $(".donation-input-set").index(FS) == 0 and FS.find(".donation-btn-active").length == 0
+      gaDonations('send', 'event', 'error', 'initiated', 'amount', 1)
       $(".donation-error-label").first().show()
       return false
     else
@@ -208,6 +230,7 @@ donationsForm.init = (opts) ->
     for field in FS.find(".donation-text-field, .donation-select")
       validText = donationsForm.validField($(field).val(), $(field).attr("type"))
       unless validText == true
+        gaDonations('send', 'event', 'error', 'initiated', $(field).attr("name"), 1)
         valid = false
         $(field).addClass("donation-text-field-error")
         $(field).parent().find(".donation-error-label").text(validText)
@@ -220,11 +243,14 @@ donationsForm.init = (opts) ->
       
   $(".donation-next-btn").click ->
     if validateFieldset($(this).parent())
+      gaDonations('send', 'event', 'advance-button', 'click#success', $(this).attr('id'), 1)
       currentFS = $(this).parent()
       nextFS = $(this).parent().next()
       $(".donation-progress-header").eq($(".donation-input-set").index(nextFS)).addClass("dph-active");
       nextFS.show()
       currentFS.hide()
+    else
+      gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
 
   $(".donation-submit").click ->
     validateFieldset($(this).parent())
@@ -268,12 +294,14 @@ donationsForm.init = (opts) ->
     $(".donation-subheader-amount").text("#{amount}")
 
   $(".donation-btn-sm").click ->
+    gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
     updateDonationHeader($(this).text())
     $(".donation-btn-active").removeClass("donation-btn-active")
     $(this).addClass("donation-btn-active")
 
   $(".donation-btn-lg").change ->
     if !!($(this).val())
+      gaDonations('send', 'event', 'amount', 'click', $(this).val(), 1)
       $(".donation-btn-active").removeClass("donation-btn-active")
       $(this).addClass("donation-btn-active")
       updateDonationHeader("$#{$(this).val()}")
@@ -293,9 +321,12 @@ donationsForm.init = (opts) ->
     nextFS = $(".donation-input-set").eq(activeIndex)
     currentFS = $(".donation-input-set").filter(':visible:first')
     if(validateFieldset(currentFS))
+      gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
       updateHeadersUntil(activeIndex)
       nextFS.show()
       currentFS.hide()
+    else
+      gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
 
   $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
   $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
@@ -370,6 +401,8 @@ donationsForm.connectToServer = (opts) ->
       alert(data.message)
       $('.donation-loading-overlay').hide()
       pusher.disconnect()
+      if data.status == "success"
+        donationsForm.hide()
 
 
   stripeResponseHandler = (status, response) ->
@@ -377,6 +410,7 @@ donationsForm.connectToServer = (opts) ->
     if response.error
       
       # Show the errors on the form
+      gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
       $form.find(".payment-errors").text response.error.message
       $form.find("button").prop "disabled", false
       $('.donation-loading-overlay').hide()
@@ -395,14 +429,17 @@ donationsForm.connectToServer = (opts) ->
       )
 
       req.done (response, textStatus, jqXHR) ->
+        gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
         $form.find(".payment-errors").text "Success! Waiting to charge card..."
         subscribeToDonationChannel(response.pusher_channel_token)
       req.fail (response, textStatus, errorThrown) ->
+        gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
         $form.find(".payment-errors").text errorThrown
         $('.donation-loading-overlay').hide()
       false
 
   $("#donation-form").submit (e) ->
+    gaDonations('send', 'event', 'advance-button', 'click#submit', 'submit', 1)
     $form = $(this)
     $('.donation-loading-overlay').show()
     # Disable the submit button to prevent repeated clicks
