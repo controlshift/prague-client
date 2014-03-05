@@ -9,6 +9,12 @@ You can check out a demo [here](http://www.changesprout.com/prague-client/).
 
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, you can either download the images and host them directly (they live in build/) or specify the path to the images as is shown below, fetching them externally. This is easier but also slower for your users.
 
+First things first, stick this tag wherever you want the form on the page.
+
+```html
+<div class="donations-form-anchor"></div>
+```
+
 Stick this somewhere in below the `</body>` tag:
 
 ```html
@@ -18,7 +24,7 @@ Stick this somewhere in below the `</body>` tag:
 If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-imgPath="http://www.changesprout.com/prague-client/build/img"></script>
+<script src="jquery.donations.js" id="donation-script" data-imgpath="http://www.changesprout.com/prague-client/build/img"></script>
 ```
 
 By default the path is `./img`.
@@ -33,9 +39,9 @@ We've made it pretty easy to use your own copy of our Rails server if you want t
 
 ```html
 <script src="jquery.donations.js" id="donation-script"
-  data-stripePublicKey="YOUR_STRIPE_KEY"
-  data-pusherPublicKey="YOUR_PUSHER_KEY"
-  data-pathToServer="http://localhost:3000"></script>
+  data-stripepublickey="YOUR_STRIPE_KEY"
+  data-pusherpublickey="YOUR_PUSHER_KEY"
+  data-pathtoserver="http://localhost:3000"></script>
 ```
 
 ## Contributing

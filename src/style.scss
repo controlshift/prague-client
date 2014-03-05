@@ -1,11 +1,35 @@
+
+.donations-callback-flash {
+  width: 400px;
+  font-family: Helvetica, Arial, sans-serif;
+  position: absolute;
+  display: none;
+  background-color: #99E8B0;
+  border: 2px solid #00c63a;
+  padding: 20px;
+  position: fixed;
+  z-index: 1000;  
+  top: 50%;
+  left: 50%;
+  margin: -100px 0 0 -200px;  
+  width: 400px;  
+}
+
 .donation-form {
   width: 400px;
   height: 550px;
   background-color: #eee;
-  margin: 10px auto;
   border-radius: 5px;
   font-family: Helvetica, Arial, sans-serif;
   display: none;
+
+  .donation-payment-errors {
+    color: red;
+    display: none;
+    font-size: 12px;
+    position: absolute;
+    padding: 0px 40px;
+  }
 
   .donation-loading-overlay {
     display: none;
