@@ -55,8 +55,8 @@ googleAnalyticsInit = ->
 
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
-  testMode = $("#donation-script").data('testMode')
-  cssSrc = if testMode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
+  testmode = ($("#donation-script").data('testmode') == true)
+  cssSrc = if testmode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
   loadExternalScripts()
   return
@@ -70,11 +70,14 @@ else
 
 donationsForm.init = (opts) ->
   config = $.extend({}, {
-    imgPath: './img'
+    imgpath: './img'
   }, opts)
   
   $('body').append ->
     """
+    <div class="cleanslate donations-callback-flash">
+      Success! You'll receive a notification for your payment. 
+    </div>
 
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
@@ -183,6 +186,9 @@ donationsForm.init = (opts) ->
           </span>
           <input name="cvc" type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc">
         </div>
+        <div class="donation-payment-errors">
+          Something went wrong.
+        </div>
         <button type="submit" class="donation-submit">
           <div class="donation-submit-header">
             SUBMIT
@@ -217,7 +223,7 @@ donationsForm.init = (opts) ->
   }
 
   for k, v of icons
-    $(k).css('background-image', "url('#{config['imgPath']}/#{v}')")
+    $(k).css('background-image', "url('#{config['imgpath']}/#{v}')")
 
   validateFieldset = (FS) ->
     valid = true
@@ -272,7 +278,7 @@ donationsForm.init = (opts) ->
     ccNumField = $(@)
     ccType = $.payment.cardType(ccNumField.val())
     if ccType in ['amex','mastercard','visa','discover','dinersclub']
-      ccNumField.css('background-image', "url(#{config['imgPath']}/icon-cc-#{ccType}.png)")
+      ccNumField.css('background-image', "url(#{config['imgpath']}/icon-cc-#{ccType}.png)")
 
   $(".donation-select[type='month']").html ->
     output = ["<option value='' disabled selected>Month</option>"]
@@ -378,12 +384,12 @@ donationsForm.hide = (opts) ->
 
 donationsForm.connectToServer = (opts) ->
   config = $.extend({}, {
-    stripePublicKey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
-    pusherPublicKey: '331ca3447b91e264a76f',
-    pathToServer: "http://localhost:3000"
+    stripepublickey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
+    pusherpublickey: '331ca3447b91e264a76f',
+    pathtoserver: "http://localhost:3000"
   }, opts)
 
-  Stripe.setPublishableKey config['stripePublicKey']
+  Stripe.setPublishableKey config['stripepublickey']
 
   $.fn.serializeObject = ->
     serialObj = form2js(@attr('id'), '.', true)
@@ -392,17 +398,19 @@ donationsForm.connectToServer = (opts) ->
     serialObj
 
   subscribeToDonationChannel = (channelToken) ->
-    pusher = new Pusher(config['pusherPublicKey'])
+    pusher = new Pusher(config['pusherpublickey'])
 
     channel = pusher.subscribe(channelToken)
 
     channel.bind "charge_completed", (data) ->
-      alert(data.status)
-      alert(data.message)
+      # You can also use data.message
       $('.donation-loading-overlay').hide()
       pusher.disconnect()
       if data.status == "success"
         donationsForm.hide()
+        $(".donations-callback-flash").show(0).delay(8000).hide(0)
+      else 
+        $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
 
 
   stripeResponseHandler = (status, response) ->
@@ -411,7 +419,7 @@ donationsForm.connectToServer = (opts) ->
       
       # Show the errors on the form
       gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-      $form.find(".payment-errors").text response.error.message
+      $form.find(".donation-payment-errors").text response.error.message
       $form.find("button").prop "disabled", false
       $('.donation-loading-overlay').hide()
     else
@@ -423,18 +431,17 @@ donationsForm.connectToServer = (opts) ->
       $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
       
       req = $.ajax(
-        url: "#{config['pathToServer']}/charges"
+        url: "#{config['pathtoserver']}/charges"
         type: "post"
         data: $("#donation-form").serializeObject()
       )
 
       req.done (response, textStatus, jqXHR) ->
         gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
-        $form.find(".payment-errors").text "Success! Waiting to charge card..."
         subscribeToDonationChannel(response.pusher_channel_token)
       req.fail (response, textStatus, errorThrown) ->
         gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-        $form.find(".payment-errors").text errorThrown
+        $form.find(".donation-payment-errors").text(errorThrown or "Something went wrong.").show()
         $('.donation-loading-overlay').hide()
       false
 

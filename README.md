@@ -18,7 +18,7 @@ Stick this somewhere in below the `</body>` tag:
 If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-imgPath="http://www.changesprout.com/prague-client/build/img"></script>
+<script src="jquery.donations.js" id="donation-script" data-imgpath="http://www.changesprout.com/prague-client/build/img"></script>
 ```
 
 By default the path is `./img`.
@@ -33,9 +33,9 @@ We've made it pretty easy to use your own copy of our Rails server if you want t
 
 ```html
 <script src="jquery.donations.js" id="donation-script"
-  data-stripePublicKey="YOUR_STRIPE_KEY"
-  data-pusherPublicKey="YOUR_PUSHER_KEY"
-  data-pathToServer="http://localhost:3000"></script>
+  data-stripepublickey="YOUR_STRIPE_KEY"
+  data-pusherpublickey="YOUR_PUSHER_KEY"
+  data-pathtoserver="http://localhost:3000"></script>
 ```
 
 ## Contributing
