@@ -9,6 +9,12 @@ You can check out a demo [here](http://www.changesprout.com/prague-client/).
 
 Two things to note: we use Pusher, Stripe, and jQuery for this plugin. Also, you can either download the images and host them directly (they live in build/) or specify the path to the images as is shown below, fetching them externally. This is easier but also slower for your users.
 
+First things first, stick this tag wherever you want the form on the page.
+
+```html
+<div class="donations-form-anchor"></div>
+```
+
 Stick this somewhere in below the `</body>` tag:
 
 ```html

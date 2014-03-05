@@ -73,7 +73,7 @@ donationsForm.init = (opts) ->
     imgpath: './img'
   }, opts)
   
-  $('body').append ->
+  $('.donations-form-anchor').append ->
     """
     <div class="cleanslate donations-callback-flash">
       Success! You'll receive a notification for your payment. 
