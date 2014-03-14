@@ -70,15 +70,21 @@ else
 
 donationsForm.init = (opts) ->
   config = $.extend({}, {
-    imgpath: './img'
+    imgpath: './img',
+    metaviewporttag: true
   }, opts)
   
+  metaViewport = """<meta name="viewport" content="width=device-width, initial-scale=1">"""
+  if config['metaviewporttag'] == false
+    metaViewport = ''
+
   $('.donations-form-anchor').append ->
     """
     <div class="cleanslate donations-callback-flash">
       Success! You'll receive a notification for your payment. 
     </div>
 
+    #{metaViewport}
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
       <input type="hidden" name="organization_slug" value="#{config['org']}">
@@ -92,17 +98,19 @@ donationsForm.init = (opts) ->
         </div>
       </div>
       <div class="donation-progress-banner">
-        <span class="donation-progress-header dph-active" id="dnt-progress-amount">
-          Amount
-        </span>
-        <span class="donation-progress-arrow"></span>
-        <span class="donation-progress-header" id="dnt-progress-myinfo">
-          My Info
-        </span>
-        <span class="donation-progress-arrow"></span>
-        <span class="donation-progress-header" id="dnt-progress-payment">
-          Payment
-        </span>
+        <div class="donation-progress-banner-container">
+          <span class="donation-progress-header dph-active" id="dnt-progress-amount">
+            Amount
+          </span>
+          <span class="donation-progress-arrow"></span>
+          <span class="donation-progress-header" id="dnt-progress-myinfo">
+            My Info
+          </span>
+          <span class="donation-progress-arrow"></span>
+          <span class="donation-progress-header" id="dnt-progress-payment">
+            Payment
+          </span>
+        </div>
       </div>
       <div class="donation-input-set" id="input-set-first">
         <span class="donation-field-label">

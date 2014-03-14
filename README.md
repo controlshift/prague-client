@@ -29,6 +29,16 @@ If you need to change the path where your images are stored, you can pass option
 
 By default the path is `./img`.
 
+## Mobile
+
+We use [media queries](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries) to optimize for mobile. Basically what happens is if your screen size is between 200px and 480px, the form shrinks down to a smaller version of itself. The widget expands to 100% of its parent element's size, with the expectation that the form will fill up the entire page. It may be important to note that we add this meta tag into the DOM to get mobile to work correctly:
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1">
+```
+
+This makes sure that the web page is loaded with the width and height of the device, which is common of almost every responsive web page. If you prefer not to have this tag, specify `data-metaviewport="false"` in the script tag. 
+
 ## Customizations
 
 If you want to apply custom stylings, you can just add another stylesheet below the one we provided and overwrite CSS as you normally would. Custom JS behavior can be added if you want to submit a Github issue so we can take a look at it. 
