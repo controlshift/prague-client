@@ -267,3 +267,73 @@
     border: none;
   }
 }
+
+@media only screen 
+and (min-device-width : 200px) 
+and (max-device-width : 480px) {
+  .donation-form {
+    width: 100%;
+    height: 100%;
+    .donation-loading-overlay {
+      width: 100%;
+      height: 100%;
+    }
+    .donation-header {
+      height: 100px;
+      .donation-header-main-message {
+        padding-top: 20px;
+      }
+    }
+    .donation-input-set {
+      width: 100%;
+      .donation-input-row {
+        margin: 0px auto;
+        width: 250px;
+        padding-left: 40px;
+      }
+      .donation-btn {
+        width: 60px;
+        height: 36px;
+      }
+      .donation-btn-sm {
+        line-height: 36px;
+      }
+      .donation-btn-lg {
+        width: 130px;
+      }
+      .donation-text-field {
+        width: 200px;
+      }
+      .donation-select {
+        width: 106px;
+      }
+    }
+    .donation-next-btn, .donation-submit {
+      margin-top: 18px;
+    }
+    .donation-progress-banner {
+      .donation-progress-banner-container {
+        width: 260px;
+        margin: 0 auto;
+      }
+      .donation-progress-header {
+        padding-left: 20px;
+        font-size: 12px;
+        width: 40px;
+      }
+      .donation-progress-arrow {
+        width: 15px;
+      }
+    }
+    #dnt-progress-amount {
+      background-position: 10px 12px;
+      padding-left: 29px;
+    }
+    #dnt-progress-payment {
+      background-position: 0px 14px;
+    }
+    #dnt-progress-myinfo {
+      background-position: 0px 12px;
+    }
+  }
+}
