@@ -18,13 +18,13 @@ First things first, stick this tag wherever you want the form on the page.
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-org="org-from-server"></script>
+<script src="jquery.donations.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com"></script>
 ```
 
 If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-imgpath="http://www.changesprout.com/prague-client/build/img"></script>
+<script src="jquery.donations.js" id="donation-script" data-imgpath="http://www.changesprout.com/prague-client/build/img" data-pathtoserver="https://www.donatelab.com"></script>
 ```
 
 By default the path is `./img`.
