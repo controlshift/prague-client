@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "0.10"
+install:
+  - npm install phantomjs -g
+  - npm install casperjs -g
+  - npm install
+before_script:
+  - phantomjs --version
+  - casperjs --version
+script:
+  - casperjs test build/features.js
