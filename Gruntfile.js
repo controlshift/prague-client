@@ -10,7 +10,13 @@ module.exports = function(grunt) {
         dest: 'build',
         expand: true
       },
-    },
+      jasmine: {
+        cwd: 'spec',
+        src: [ 'jasmine-2.0.0/**', 'SpecRunner.html' ],
+        dest: 'build',
+        expand: true
+      },
+    }, 
 
     clean: {
       build: {
@@ -170,7 +176,7 @@ module.exports = function(grunt) {
   grunt.registerTask(
     'build', 
     'Compiles all of the assets and copies the files to the build directory.', 
-    [ 'clean:build', 'copy', 'stylesheets', 'scripts' ]
+    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine' ]
   );
 
   grunt.registerTask(
