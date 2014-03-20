@@ -4,22 +4,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     config: grunt.file.readJSON('config/production.json'),
 
-//    env : {
-//      options : {
-//        aws : {
-//           key : 'foo'
-//          }
-//
-//        //Shared Options Hash
-//      },
-//      development : {
-//        src : "config/development.json"
-//      },
-//      production : {
-//        src : "config/production.json"
-//      }
-//    },
- 
     copy: {
       build: {
         cwd: 'src',
@@ -28,6 +12,13 @@ module.exports = function(grunt) {
         expand: true
       }
     },
+    jasmine: {
+      cwd: 'spec',
+      src: [ 'jasmine-2.0.0/**', 'SpecRunner.html' ],
+      dest: 'build',
+      expand: true
+    },
+
 
     clean: {
       build: {
@@ -230,7 +221,7 @@ module.exports = function(grunt) {
   grunt.registerTask(
     'build', 
     'Compiles all of the assets and copies the files to the build directory.', 
-    [ 'clean:build', 'copy', 'stylesheets', 'scripts' ]
+    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine' ]
   );
 
   grunt.registerTask(
