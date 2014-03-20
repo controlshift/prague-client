@@ -171,12 +171,18 @@ module.exports = function(grunt) {
         upload: [
 
           {
-            // Wildcards are valid *for uploads only* until I figure out a good implementation
-            // for downloads.
-            src: 'build/**/*', //[ 'build/**/*', '!build/jasmine-2.0.0/*/', '!build/spec.js', '!build/index.html', '!build/SpecRunner.html', '!build/features.js', '!build/jquery.donations.test.js' ],
-
-            // But if you use wildcards, make sure your destination is a directory.
+            src: 'build/img/*',
             dest: ''
+          },
+
+          {
+            src: 'build/jquery.donations.js',
+            dest: 'jquery.donations.js'
+          },
+
+          {
+            src: 'build/jquery.donations.css',
+            dest: 'jquery.donations.css'
           }
         ]
       }
