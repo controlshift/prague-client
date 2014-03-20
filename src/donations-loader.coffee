@@ -23,7 +23,7 @@ loadExternalResource = (type, source, callback, params) ->
 
 loadExternalScripts = ->
   donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "http://www.changesprout.com/prague-client/build/jquery.donations.js"
-  scriptStrings = ["https://js.stripe.com/v2/","http://js.pusher.com/2.1/pusher.min.js", donationsJs]
+  scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs]
   loadedScripts = 0
   executeMain = ->
     loadedScripts++
