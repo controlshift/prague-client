@@ -2,7 +2,11 @@ module.exports = function(grunt) {
  
   // configure the tasks
   grunt.initConfig({
- 
+    env: {
+      production: 'config/production.json',
+      staging: 'config/staging.json'
+    },
+
     copy: {
       build: {
         cwd: 'src',
@@ -10,6 +14,13 @@ module.exports = function(grunt) {
         dest: 'build',
         expand: true
       },
+
+      jasmine: {
+        cwd: 'spec',
+        src: [ 'jasmine-2.0.0/**', 'SpecRunner.html' ],
+        dest: 'build',
+        expand: true
+      }
     },
 
     clean: {
@@ -20,7 +31,7 @@ module.exports = function(grunt) {
         src: [ 'build/**/*.css', '.sass-cache', '!build/jquery.donations.css' ]
       },
       scripts: {
-        src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/jquery.donations.test.js', '!build/spec.js', '!build/features.js' ]
+        src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/jquery.donations.loader.js', '!build/jquery.donations.test.js', '!build/spec.js', '!build/features.js' ]
       },
     },
 
@@ -65,7 +76,7 @@ module.exports = function(grunt) {
       build: {
         expand: true,
         cwd: 'src',
-        src: [ '**/*.coffee' ],
+        src: [ '**/donations-form.coffee' ],
         dest: 'build',
         ext: '.js'
       },
@@ -75,7 +86,17 @@ module.exports = function(grunt) {
         },
         expand: true,
         cwd: 'src',
-        src: [ '**/*.coffee' ],
+        src: [ '**/donations-form.coffee' ],
+        dest: 'build',
+        ext: '.js'
+      },
+      loader: {
+        options: {
+          bare: true
+        },
+        expand: true,
+        cwd: 'src',
+        src: [ '**/donations-loader.coffee' ],
         dest: 'build',
         ext: '.js'
       }
@@ -103,7 +124,7 @@ module.exports = function(grunt) {
           mangle: false
         },
         files: {
-          'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js' ]
+          'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/donations-loader.js' ]
         }
       },
       buildTest: {
@@ -111,7 +132,15 @@ module.exports = function(grunt) {
           mangle: false
         },
         files: {
-          'build/jquery.donations.test.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/jquery.donations.js' ]
+          'build/jquery.donations.test.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/jquery.donations.js', '!build/**/donations-loader.js' ]
+        }
+      },
+      loader: {
+        options: {
+          mangle: false
+        },
+        files: {
+          'build/jquery.donations.loader.js': [ 'build/**/donations-loader.js' ]
         }
       }
     },
@@ -139,8 +168,48 @@ module.exports = function(grunt) {
           hostname: '*'
         }
       }
+    },
+
+    s3: {
+      options: {
+        key: '<%= config.aws.key %>',
+        secret: '<%= config.aws.secret %>',
+        bucket: '<%= config.aws.bucket %>',
+        access: 'public-read',
+        headers: {
+          // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
+          "Cache-Control": "max-age=630720000, public",
+          "Expires": new Date(Date.now() + 63072000000).toUTCString()
+        }
+      },
+      dev: {
+        // These options override the defaults
+        options: {
+          encodePaths: true,
+          maxOperations: 20
+        },
+        // Files to be uploaded.
+        upload: [
+
+          {
+            src: 'build/img/*',
+            dest: ''
+          },
+
+          {
+            src: 'build/jquery.donations.js',
+            dest: 'jquery.donations.js'
+          },
+
+          {
+            src: 'build/jquery.donations.css',
+            dest: 'jquery.donations.css'
+          }
+        ]
+      }
+
     }
- 
+
   });
  
   // load the tasks
@@ -152,8 +221,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-s3');
+  
  
   // define the tasks
+  
+  grunt.registerTask(
+    'deploy-production', 
+    'Deploys the code to production', 
+    ['env:production', 's3']
+  );
 
   grunt.registerTask(
     'stylesheets', 
@@ -170,7 +247,7 @@ module.exports = function(grunt) {
   grunt.registerTask(
     'build', 
     'Compiles all of the assets and copies the files to the build directory.', 
-    [ 'clean:build', 'copy', 'stylesheets', 'scripts' ]
+    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine' ]
   );
 
   grunt.registerTask(
@@ -178,6 +255,14 @@ module.exports = function(grunt) {
     'Watches the project for changes, automatically builds them and runs a server.', 
     [ 'build', 'connect', 'watch' ]
   );
+
+  grunt.registerMultiTask('env', 'Set Environment.', function() {
+    var envConfig = grunt.config.get('env.' + this.target)
+    grunt.log.writeln('In ' + this.target + ' mode. Config file: ' + envConfig);
+    if(grunt.file.exists(envConfig)) {
+      grunt.config.set('config', grunt.file.readJSON(envConfig));
+    }
+  });
 
 
 };
