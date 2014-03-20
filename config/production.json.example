@@ -1,0 +1,7 @@
+{
+  "aws" : {
+    "bucket" : "your-bucket-name",
+    "key" : "ABC123",
+    "secret" : "ABC123"
+  }
+}

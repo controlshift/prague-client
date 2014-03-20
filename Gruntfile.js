@@ -2,6 +2,23 @@ module.exports = function(grunt) {
  
   // configure the tasks
   grunt.initConfig({
+    config: grunt.file.readJSON('config/production.json'),
+
+//    env : {
+//      options : {
+//        aws : {
+//           key : 'foo'
+//          }
+//
+//        //Shared Options Hash
+//      },
+//      development : {
+//        src : "config/development.json"
+//      },
+//      production : {
+//        src : "config/production.json"
+//      }
+//    },
  
     copy: {
       build: {
@@ -9,7 +26,7 @@ module.exports = function(grunt) {
         src: [ '**', '!**/*.scss', '!**/*.coffee' ],
         dest: 'build',
         expand: true
-      },
+      }
     },
 
     clean: {
@@ -21,7 +38,7 @@ module.exports = function(grunt) {
       },
       scripts: {
         src: [ 'build/**/*.js', '!build/jquery.donations.js', '!build/jquery.donations.test.js', '!build/spec.js', '!build/features.js' ]
-      },
+      }
     },
 
     sass: {
@@ -139,11 +156,46 @@ module.exports = function(grunt) {
           hostname: '*'
         }
       }
+    },
+
+    s3: {
+      options: {
+        key: '<%= config.aws.key %>',
+        secret: '<%= config.aws.secret %>',
+        bucket: '<%= config.aws.bucket %>',
+        access: 'public-read',
+        headers: {
+          // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
+          "Cache-Control": "max-age=630720000, public",
+          "Expires": new Date(Date.now() + 63072000000).toUTCString()
+        }
+      },
+      dev: {
+        // These options override the defaults
+        options: {
+          encodePaths: true,
+          maxOperations: 20
+        },
+        // Files to be uploaded.
+        upload: [
+
+          {
+            // Wildcards are valid *for uploads only* until I figure out a good implementation
+            // for downloads.
+            src: 'build/**/*', //[ 'build/**/*', '!build/jasmine-2.0.0/*/', '!build/spec.js', '!build/index.html', '!build/SpecRunner.html', '!build/features.js', '!build/jquery.donations.test.js' ],
+
+            // But if you use wildcards, make sure your destination is a directory.
+            dest: ''
+          }
+        ]
+      }
+
     }
- 
+
   });
  
   // load the tasks
+  grunt.loadNpmTasks('grunt-env');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -152,8 +204,16 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-s3');
+  
  
   // define the tasks
+  
+  grunt.registerTask(
+    'deploy-production', 
+    'Deploys the code to production', 
+    ['env:production', 's3']
+  );
 
   grunt.registerTask(
     'stylesheets', 
