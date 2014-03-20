@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "0.10"
+before_install: gem install sass
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
@@ -10,7 +11,8 @@ install:
 before_script:
   - phantomjs --version
   - casperjs --version
-  - grunt
+  - grunt &
+  - sleep 5 # give grunt background task some time to execute.
 script:
   - casperjs test build/features.js
   - phantomjs run_jasmine.js http://localhost:4000/SpecRunner.html

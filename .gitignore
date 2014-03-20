@@ -1,2 +1,4 @@
 /node_modules/
 /.sass-cache/
+config/production.json
+.idea
