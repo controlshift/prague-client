@@ -2,7 +2,14 @@ module.exports = function(grunt) {
  
   // configure the tasks
   grunt.initConfig({
-    config: grunt.file.readJSON('config/production.json'),
+    config: (function() {
+      if(grunt.file.exists('config/production.json')) {
+        return grunt.file.readJSON('config/production.json');
+      }
+      else {
+        return {};
+      }
+    })(),
 
     copy: {
       build: {
@@ -10,15 +17,15 @@ module.exports = function(grunt) {
         src: [ '**', '!**/*.scss', '!**/*.coffee' ],
         dest: 'build',
         expand: true
+      },
+
+      jasmine: {
+        cwd: 'spec',
+        src: [ 'jasmine-2.0.0/**', 'SpecRunner.html' ],
+        dest: 'build',
+        expand: true
       }
     },
-    jasmine: {
-      cwd: 'spec',
-      src: [ 'jasmine-2.0.0/**', 'SpecRunner.html' ],
-      dest: 'build',
-      expand: true
-    },
-
 
     clean: {
       build: {
