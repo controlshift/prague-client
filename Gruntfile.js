@@ -3,13 +3,18 @@ module.exports = function(grunt) {
   // configure the tasks
   grunt.initConfig({
     config: (function() {
-      if(grunt.file.exists('config/production.json')) {
-        return grunt.file.readJSON('config/production.json');
+      if(grunt.config.get('configuration_path') && grunt.file.exists(grunt.config.get('configuration_path'))) {
+        return grunt.file.readJSON(grunt.config.get('configuration_path'));
       }
       else {
         return {};
       }
     })(),
+
+    env: {
+      production: 'config/production.json',
+      staging: 'config/staging.json'
+    },
 
     copy: {
       build: {
@@ -199,7 +204,6 @@ module.exports = function(grunt) {
   });
  
   // load the tasks
-  grunt.loadNpmTasks('grunt-env');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
@@ -242,6 +246,14 @@ module.exports = function(grunt) {
     'Watches the project for changes, automatically builds them and runs a server.', 
     [ 'build', 'connect', 'watch' ]
   );
+
+  grunt.registerMultiTask('env', 'Set Environment.', function() {
+    var envConfig = grunt.config.get('env.' + this.target)
+    grunt.log.writeln('In ' + this.target + ' mode. Config file: ' + envConfig);
+    if(grunt.file.exists(envConfig)) {
+      grunt.config.set('config', grunt.file.readJSON(envConfig));
+    }
+  });
 
 
 };
