@@ -55,7 +55,7 @@ page.open(system.args[1], function(status){
     } else {
         waitFor(function(){
             return page.evaluate(function(){
-                return document.body.querySelector('.symbol-summary .pending') === null
+                return document.body.querySelector('.symbol-summary') && document.body.querySelector('.symbol-summary .pending') === null
             });
         }, function(){
             var exitCode = page.evaluate(function(){
