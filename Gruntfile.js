@@ -2,15 +2,6 @@ module.exports = function(grunt) {
  
   // configure the tasks
   grunt.initConfig({
-    config: (function() {
-      if(grunt.config.get('configuration_path') && grunt.file.exists(grunt.config.get('configuration_path'))) {
-        return grunt.file.readJSON(grunt.config.get('configuration_path'));
-      }
-      else {
-        return {};
-      }
-    })(),
-
     env: {
       production: 'config/production.json',
       staging: 'config/staging.json'
