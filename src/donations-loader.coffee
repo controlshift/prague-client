@@ -30,7 +30,7 @@ loadExternalScripts = ->
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
-      donationsForm.init($("#donation-script").data())
+      donationsForm.init($, $("#donation-script").data())
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 

@@ -1,7 +1,8 @@
-
 `var donationsForm = {};`
+`var $;`
 
-donationsForm.init = (opts) ->
+donationsForm.init = (jQuery, opts) ->
+  `$ = jQuery;`
   config = $.extend({}, {
     imgpath: './img',
     metaviewporttag: true

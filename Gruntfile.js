@@ -91,9 +91,6 @@ module.exports = function(grunt) {
         ext: '.js'
       },
       loader: {
-        options: {
-          bare: true
-        },
         expand: true,
         cwd: 'src',
         src: [ '**/donations-loader.coffee' ],
@@ -121,7 +118,7 @@ module.exports = function(grunt) {
       },
       build: {
         options: {
-          mangle: false
+          mangle: { toplevel: false }
         },
         files: {
           'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/donations-loader.js' ]
@@ -137,7 +134,7 @@ module.exports = function(grunt) {
       },
       loader: {
         options: {
-          mangle: false
+          mangle: { toplevel: true }
         },
         files: {
           'build/jquery.donations.loader.js': [ 'build/**/donations-loader.js' ]
