@@ -170,6 +170,44 @@ module.exports = function(grunt) {
       }
     },
 
+    ver: {
+      myapp: {
+        phases: [
+          {
+            files: [
+              'build/jquery.donations.js',
+              'build/jquery.donations.css'
+            ]
+          }
+        ],
+        versionFile: 'build/version.json'
+      }
+    },
+
+    replace: {
+      dist: {
+        options: {
+          patterns: [
+            {
+              match: "jquery.donations.js",
+              replacement: "<%= vconfig['jquery.donations.js'] %>"
+            },
+            {
+              match: "jquery.donations.css",
+              replacement: "<%= vconfig['jquery.donations.css'] %>"
+            }
+          ],
+          usePrefix: false
+        },
+        files: [
+          {
+            src: ['build/jquery.donations.loader.js'], 
+            dest: 'build/jquery.donations.loader.js'
+          }
+        ]
+      }
+    },
+
     s3: {
       options: {
         key: '<%= config.aws.key %>',
@@ -222,7 +260,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-s3');
-  
+  grunt.loadNpmTasks('grunt-ver');
+  grunt.loadNpmTasks('grunt-replace');
  
   // define the tasks
   
@@ -247,7 +286,7 @@ module.exports = function(grunt) {
   grunt.registerTask(
     'build', 
     'Compiles all of the assets and copies the files to the build directory.', 
-    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine' ]
+    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine', 'ver', 'versionread', 'replace' ]
   );
 
   grunt.registerTask(
@@ -262,6 +301,10 @@ module.exports = function(grunt) {
     if(grunt.file.exists(envConfig)) {
       grunt.config.set('config', grunt.file.readJSON(envConfig));
     }
+  });
+
+  grunt.registerTask('versionread', function() {
+    grunt.config.set('vconfig', grunt.file.readJSON('build/version.json'));
   });
 
 

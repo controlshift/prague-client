@@ -1,5 +1,8 @@
 {
-  "repository" :{ "type" : "git", "url" : "https://github.com/controlshift/prague-client.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/controlshift/prague-client.git"
+  },
   "name": "Prague",
   "description": "Online donations",
   "author": "ControlShift Labs",
@@ -17,5 +20,9 @@
     "grunt-contrib-uglify": "0.2.x",
     "grunt-contrib-watch": "0.5.x"
   },
-  "engine": "node >= 0.10"
+  "engine": "node >= 0.10",
+  "devDependencies": {
+    "grunt-ver": "~0.5.1",
+    "grunt-replace": "~0.7.4"
+  }
 }
