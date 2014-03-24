@@ -20,13 +20,13 @@ First things first, stick this tag wherever you want the form on the page.
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com"></script>
+<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
 ```
 
-If you need to change the path where your images are stored, you can pass options like so:
+It is recommended that you store and host the images locally for performance. If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-imgpath="https://s3.amazonaws.com/prague-production" data-pathtoserver="https://www.donatelab.com"></script>
+<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-imgpath="./img" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
 ```
 
 By default the path is `./img`.

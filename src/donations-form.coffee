@@ -4,7 +4,7 @@
 donationsForm.init = (jQuery, opts) ->
   `$ = jQuery;`
   config = $.extend({}, {
-    imgpath: './img',
+    imgpath: 'https://d3dy5gmtp8yhk7.cloudfront.net',
     metaviewporttag: true
   }, opts)
   
