@@ -232,13 +232,13 @@ module.exports = function(grunt) {
           },
 
           {
-            src: 'build/jquery.donations.js',
-            dest: 'jquery.donations.js'
+            src: 'build/jquery.donations.*.js',
+            dest: ''
           },
 
           {
-            src: 'build/jquery.donations.css',
-            dest: 'jquery.donations.css'
+            src: 'build/jquery.donations.*.css',
+            dest: ''
           }
         ]
       }
