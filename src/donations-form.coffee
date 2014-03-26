@@ -51,17 +51,17 @@ donationsForm.init = (jQuery, opts) ->
           <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
         </span>
         <div class="donation-input-row">
-          <div class="donation-btn donation-btn-sm" ><span class='donation-currency'>$</span>#{config['amt1'] or 15}</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt2'] or 35}</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt3'] or 50}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '1'}" ><span class='donation-currency'>$</span>#{config['amt1'] or 15}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '2'}"><span class='donation-currency'>$</span>#{config['amt2'] or 35}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '3'}"><span class='donation-currency'>$</span>#{config['amt3'] or 50}</div>
         </div>
         <div class="donation-input-row">      
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt4'] or 100}</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt5'] or 250}</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt6'] or 500}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '4'}"><span class='donation-currency'>$</span>#{config['amt4'] or 100}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '5'}"><span class='donation-currency'>$</span>#{config['amt5'] or 250}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '6'}"><span class='donation-currency'>$</span>#{config['amt6'] or 500}</div>
         </div>
         <div class="donation-input-row"> 
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>#{config['amt7'] or 1000}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '7'}"><span class='donation-currency'>$</span>#{config['amt7'] or 1000}</div>
           <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
         </div>
         <div class="donation-next-btn" id="donation-first-next-btn">
