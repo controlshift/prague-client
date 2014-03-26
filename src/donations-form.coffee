@@ -6,7 +6,7 @@ donationsForm.init = (jQuery, opts) ->
   config = $.extend({}, {
     imgpath: 'https://d3dy5gmtp8yhk7.cloudfront.net',
     metaviewporttag: true
-  }, opts)
+  }, donationsForm.parseQueryString(document.URL.split("?")[1]), opts)
   
   metaViewport = """<meta name="viewport" content="width=device-width, initial-scale=1">"""
   if config['metaviewporttag'] == false
@@ -282,6 +282,17 @@ donationsForm.init = (jQuery, opts) ->
   donationsForm.connectToServer(config)
 
   this
+
+donationsForm.parseQueryString = (q) ->
+  hash = {}
+  if q isnt `undefined` and q isnt ""
+    q = q.split("&")
+    i = 0
+    while i < q.length
+      vars = q[i].split("=")
+      hash[vars[0]] = vars[1]
+      i++
+  return hash
 
 donationsForm.getCurrencyFromCountryCode = (code) ->
   europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']

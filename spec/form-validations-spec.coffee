@@ -42,3 +42,13 @@ describe "Form validations", ->
     spyOn($.fn, "val").and.returnValue("02a")
     expect(donationsForm.validField("#{(new Date).getFullYear() + 1}", "year")).toEqual("Invalid expiry date.")
 
+describe "Parsing query strings", ->
+  beforeEach ->
+    donationsForm.hide()
+  
+  it "should return the expected hash", ->
+    expect(donationsForm.parseQueryString("foo=bar&foo2=bar2")).toEqual({'foo' : 'bar', 'foo2' : 'bar2'})
+
+  it "should return an empty hash when the query string is undefined or blank", ->
+    expect(donationsForm.parseQueryString("")).toEqual({})
+    expect(donationsForm.parseQueryString(undefined)).toEqual({})
