@@ -31,6 +31,38 @@ It is recommended that you store and host the images locally for performance. If
 
 By default the path is `./img`.
 
+## Parameters
+
+There are two ways to pass parameters. One way is by putting a parameter in the script tag as shown above. You must prefix the parameter name with `data-`. For example:
+
+```html
+<script src="" ... data-optionname="example"></script>
+```
+
+The other way is to pass parameters via URL query string. You do NOT need to prefix the parameter name in this case. However, you need to properly format the query string, by starting with a `?` and separating each parameter with an `&`, as per convention. For example:
+
+```
+https://mynonprofit.org/?optionname=foo&optionname2=bar
+```
+
+The parameters supplied 
+
+The options as of right now are:
+
+`imgpath`: A path to where your images live. Recommended to download these and add them to your server.
+
+`pathtoserver`: A path to where the server lives. We recommend to use ours, but if you want your own the link to the server's source code is available above.
+
+`amt1`, `amt2`, `amt3`, `amt4`, `amt5`, `amt6`, `amt7`: Specifies amount of the corresponding button -- we give a default value. Use numeric values with no currency symbols.
+
+`select`: Specifies which button should be selected by default (if none, don't use this parameter). Valid options are 1, 2, 3, 4, 5, 6, or 7.
+
+`metaviewport`: Specifies whether the `metaviewport` tag should or should not be added. Set this to `"false"` (or `false` if using query strings) if this should not be used. 
+
+`stripepublickey`: Pretty self-explanatory, only use if you are hosting your own server.
+
+`pusherpublickey`: Again, only use if you are hosting your own server.
+
 ## Mobile
 
 We use [media queries](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries) to optimize for mobile. Basically what happens is if your screen size is between 200px and 480px, the form shrinks down to a smaller version of itself. The widget expands to 100% of its parent element's size, with the expectation that the form will fill up the entire page. It may be important to note that we add this meta tag into the DOM to get mobile to work correctly:
