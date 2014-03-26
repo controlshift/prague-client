@@ -45,7 +45,7 @@ The other way is to pass parameters via URL query string. You do NOT need to pre
 https://mynonprofit.org/?optionname=foo&optionname2=bar
 ```
 
-The parameters supplied 
+The parameters supplied in the query string will be overwritten by those in the script tag. We did this mostly for safety.
 
 The options as of right now are:
 
