@@ -21,6 +21,16 @@ loadExternalResource = (type, source, callback, params) ->
       return
   (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
 
+`var globalDefaults = {};`
+getGlobalDefaults = ->
+  $.ajax
+    type: 'get',
+    url: "#{$('#donation-script').data('pathtoserver')}\/organizations\/#{$('#donation-script').data('org')}.json",
+    dataType: 'jsonp',
+    success: (data) -> 
+      console.log data
+      globalDefaults = data
+
 loadExternalScripts = ->
   donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"
   scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs]
@@ -30,7 +40,7 @@ loadExternalScripts = ->
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
-      donationsForm.init($, $("#donation-script").data())
+      donationsForm.init($, $.extend({}, globalDefaults, $("#donation-script").data()))
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 
@@ -59,6 +69,7 @@ scriptLoadHandler = ->
   testmode = ($("#donation-script").data('testmode') == true)
   cssSrc = if testmode then "jquery.donations.css" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
+  getGlobalDefaults()
   loadExternalScripts()
   return
 
