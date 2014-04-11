@@ -140,15 +140,20 @@ donationsForm.init = (jQuery, opts) ->
     </form>
     """
 
-  $.ajax
-    type: 'get',
-    url: 'https://freegeoip.net/json/',
-    dataType: 'jsonp',
-    success: (data) ->
-      currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
-      symbol = donationsForm.getSymbolFromCurrency(currency)
-      $("input[name='customer.charges_attributes[0].currency']").val(currency)
-      $(".donation-currency").html(symbol)
+  if config['currency']?
+    symbol = donationsForm.getSymbolFromCurrency(config['currency'])
+    $("input[name='customer.charges_attributes[0].currency']").val(currency)
+    $(".donation-currency").html(symbol)
+  else
+    $.ajax
+      type: 'get',
+      url: 'https://freegeoip.net/json/',
+      dataType: 'jsonp',
+      success: (data) ->
+        currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
+        symbol = donationsForm.getSymbolFromCurrency(currency)
+        $("input[name='customer.charges_attributes[0].currency']").val(currency)
+        $(".donation-currency").html(symbol)
 
   $("#donation-form").show()
 
@@ -294,19 +299,20 @@ donationsForm.parseQueryString = (q) ->
       i++
   return hash
 
+donationsForm.currencies = {
+  'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
+}
+
 donationsForm.getCurrencyFromCountryCode = (code) ->
-  europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
-  currencies = {
-    'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN'
-  }
-  currency = currencies[code]
+  europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES']
+  currency = donationsForm.currencies[code]
   return if currency? then currency else (if code in europeanCountries then 'EUR' else 'USD')
 
 donationsForm.getSymbolFromCurrency = (currency) ->
   symbols = {
-    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;'
+    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$'
   }
-  return symbols[currency] or '$'
+  return symbols[currency] or currency
 
 donationsForm.validField = (value, type) ->
   if !value 
