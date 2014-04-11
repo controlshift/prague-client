@@ -139,11 +139,18 @@ donationsForm.init = (jQuery, opts) ->
       </div>
     </form>
     """
+  updateDonationHeader = (amount) ->
+    $(".donation-subheader-amount").text("#{amount}")
 
+  updateCurrencyFields = (symbol, currency) ->
+    currency = if currency? then currency else config['currency']
+    $("input[name='customer.charges_attributes[0].currency']").val(currency)
+    $(".donation-currency").html(symbol)
+    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
+    updateDonationHeader($(".donation-btn-active").text())
   if config['currency']?
     symbol = donationsForm.getSymbolFromCurrency(config['currency'])
-    $("input[name='customer.charges_attributes[0].currency']").val(currency)
-    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
+    updateCurrencyFields(symbol)
   else
     $.ajax
       type: 'get',
@@ -152,8 +159,7 @@ donationsForm.init = (jQuery, opts) ->
       success: (data) ->
         currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
         symbol = donationsForm.getSymbolFromCurrency(currency)
-        $("input[name='customer.charges_attributes[0].currency']").val(currency)
-        $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
+        updateCurrencyFields(symbol, currency)
 
   $("#donation-form").show()
 
@@ -242,9 +248,6 @@ donationsForm.init = (jQuery, opts) ->
     for yr in [year..year+19]
       output.push("<option value='#{yr}'>#{yr}</option>")
     return output
-
-  updateDonationHeader = (amount) ->
-    $(".donation-subheader-amount").text("#{amount}")
 
   $(".donation-btn-sm").click ->
     gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
