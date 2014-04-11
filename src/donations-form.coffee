@@ -143,7 +143,7 @@ donationsForm.init = (jQuery, opts) ->
   if config['currency']?
     symbol = donationsForm.getSymbolFromCurrency(config['currency'])
     $("input[name='customer.charges_attributes[0].currency']").val(currency)
-    $(".donation-currency").html(symbol)
+    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
   else
     $.ajax
       type: 'get',
@@ -153,7 +153,7 @@ donationsForm.init = (jQuery, opts) ->
         currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
         symbol = donationsForm.getSymbolFromCurrency(currency)
         $("input[name='customer.charges_attributes[0].currency']").val(currency)
-        $(".donation-currency").html(symbol)
+        $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
 
   $("#donation-form").show()
 
@@ -302,6 +302,31 @@ donationsForm.parseQueryString = (q) ->
 donationsForm.currencies = {
   'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
 }
+
+donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol) ->
+  seedVals = seedValues.split(",")
+  section = """ <span class="donation-field-label">
+                  <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
+                </span> """
+  section += "<div class='donation-input-row'>"
+  counter = 1
+  for val in seedVals
+    do ->
+      amount = parseFloat(val)*parseFloat(seedAmount)/100.0
+      section += """<div class="donation-btn donation-btn-sm #{'donation-btn-active' if selectNo is counter.toString()}" ><span class='donation-currency'>#{symbol}</span>#{amount}</div>"""
+      if counter % 3 == 0
+        section += "</div><div class='donation-input-row'>"
+    counter += 1
+  # account for weird spacing issues if length is 5
+  if seedVals.length % 5 == 0
+    section += "</div><div class='donation-input-row'>"
+  section += """<input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount"></div>
+    <div class="donation-next-btn" id="donation-first-next-btn">
+      <div class="donation-next-btn-header">
+        NEXT
+      </div>
+    </div>"""
+  return section
 
 donationsForm.getCurrencyFromCountryCode = (code) ->
   europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES']
