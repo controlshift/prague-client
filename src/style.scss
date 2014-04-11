@@ -31,6 +31,15 @@
     padding: 0px 40px;
   }
 
+  .donations-currency-select-row {
+    margin-top: 16px;
+    font-size: 12px;
+    margin-left: 40px;
+    .donations-currency-select {
+      display: inline;
+    }
+  }
+
   .donation-loading-overlay {
     display: none;
     height: 550px;
@@ -102,12 +111,13 @@
     }
   }
   #input-set-first {
+    padding-top: 5px;
     display: block;
   }
   .donation-input-set {
     height: 255px;
     width: 400px;
-    padding-top: 25px;
+    padding-top: 15px;
     position: absolute;
     display: none;
     

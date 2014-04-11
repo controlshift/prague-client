@@ -6,7 +6,7 @@ donationsForm.init = (jQuery, opts) ->
   config = $.extend({}, {
     imgpath: 'https://d3dy5gmtp8yhk7.cloudfront.net',
     metaviewporttag: true
-  }, donationsForm.parseQueryString(document.URL.split("?")[1]), opts)
+  }, opts, donationsForm.parseQueryString(document.URL.split("?")[1]))
   
   metaViewport = """<meta name="viewport" content="width=device-width, initial-scale=1">"""
   if config['metaviewporttag'] == false
@@ -28,7 +28,7 @@ donationsForm.init = (jQuery, opts) ->
           I'M DONATING
         </div>
         <div class="donation-subheader-amount">
-          <span class='donation-currency'>$</span>0
+          <span class='donation-currency'>$</span><span class='donation-header-amt'>0</span>
         </div>
       </div>
       <div class="donation-progress-banner">
@@ -47,21 +47,25 @@ donationsForm.init = (jQuery, opts) ->
         </div>
       </div>
       <div class="donation-input-set" id="input-set-first">
+        <div class="donations-currency-select-row">
+          Currency: 
+          <select class="donations-currency-select"></select>
+        </div>
         <span class="donation-field-label">
           <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
         </span>
         <div class="donation-input-row">
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '1'}" ><span class='donation-currency'>$</span>#{config['amt1'] or 15}</div>
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '2'}"><span class='donation-currency'>$</span>#{config['amt2'] or 35}</div>
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '3'}"><span class='donation-currency'>$</span>#{config['amt3'] or 50}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '1'}" ><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt1'] or 15}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '2'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt2'] or 35}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '3'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt3'] or 50}</span></div>
         </div>
         <div class="donation-input-row">      
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '4'}"><span class='donation-currency'>$</span>#{config['amt4'] or 100}</div>
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '5'}"><span class='donation-currency'>$</span>#{config['amt5'] or 250}</div>
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '6'}"><span class='donation-currency'>$</span>#{config['amt6'] or 500}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '4'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt4'] or 100}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '5'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt5'] or 250}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '6'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt6'] or 500}</span></div>
         </div>
         <div class="donation-input-row"> 
-          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '7'}"><span class='donation-currency'>$</span>#{config['amt7'] or 1000}</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '7'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt7'] or 1000}</span></div>
           <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
         </div>
         <div class="donation-next-btn" id="donation-first-next-btn">
@@ -139,18 +143,64 @@ donationsForm.init = (jQuery, opts) ->
       </div>
     </form>
     """
-  updateDonationHeader = (amount) ->
-    $(".donation-subheader-amount").text("#{amount}")
 
-  updateCurrencyFields = (symbol, currency) ->
+  bindSelect = ->
+    currOptions = []
+    for curr in donationsForm.currenciesArray
+      currOptions.push('<option value="',
+        curr, '">',
+        curr, '</option>')
+    $(".donations-currency-select").append(currOptions.join(''))
+    $(".donations-currency-select").change ->
+      selected = $("option:selected", this)
+      updateCurrencyFields(donationsForm.getSymbolFromCurrency(selected.val()), selected.val())
+  bindSelect()
+
+  bindButtons = ->
+    $('.donation-btn-lg').payment('restrictNumeric')
+    $(".donation-btn-sm").click ->
+      gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
+      $(".donation-header-amt").text($(this).find(".donation-amt").text())
+      $(".donation-btn-active").removeClass("donation-btn-active")
+      $(this).addClass("donation-btn-active")
+
+    $(".donation-btn-lg").change ->
+      lgButton = $(this)
+      if !!($(this).val())
+        gaDonations('send', 'event', 'amount', 'click', $(this).val(), 1)
+        $(".donation-btn-active").removeClass("donation-btn-active")
+        $(this).addClass("donation-btn-active")
+        $(".donation-header-amt").text(lgButton.val())
+
+    $(".donation-next-btn").click ->
+      if validateFieldset($(this).parent())
+        gaDonations('send', 'event', 'advance-button', 'click#success', $(this).attr('id'), 1)
+        currentFS = $(this).parent()
+        nextFS = $(this).parent().next()
+        $(".donation-progress-header").eq($(".donation-input-set").index(nextFS)).addClass("dph-active");
+        nextFS.show()
+        currentFS.hide()
+      else
+        gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
+
+    $(".donation-submit").click ->
+      validateFieldset($(this).parent())
+  bindButtons()
+
+  updateDonationHeader = ->
+    text = $(".donation-btn-active .donation-amt").text()
+    $(".donation-header-amt").text(if !!text then text else "0")
+  updateCurrencyFields = (symbol, currency, conversionRate) ->
     currency = if currency? then currency else config['currency']
     $("input[name='customer.charges_attributes[0].currency']").val(currency)
     $(".donation-currency").html(symbol)
-    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol))
-    updateDonationHeader($(".donation-btn-active").text())
+    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol, conversionRate))
+    updateDonationHeader()
+    bindButtons()
+    bindSelect()
   if config['currency']?
     symbol = donationsForm.getSymbolFromCurrency(config['currency'])
-    updateCurrencyFields(symbol)
+    updateCurrencyFields(symbol, config['currency'])
   else
     $.ajax
       type: 'get',
@@ -160,6 +210,11 @@ donationsForm.init = (jQuery, opts) ->
         currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
         symbol = donationsForm.getSymbolFromCurrency(currency)
         updateCurrencyFields(symbol, currency)
+        unless config['seedcurrency'] == currency
+          rate = donationsForm.conversionRt(config['seedcurrency'], currency, config['rates'])
+          updateCurrencyFields(symbol, currency, rate)
+        else
+          updateCurrencyFields(symbol, currency)
 
   $("#donation-form").show()
 
@@ -198,21 +253,6 @@ donationsForm.init = (jQuery, opts) ->
         $(field).removeClass("donation-text-field-error")
         $(field).parent().find(".donation-error-label").hide()
     valid
-    
-      
-  $(".donation-next-btn").click ->
-    if validateFieldset($(this).parent())
-      gaDonations('send', 'event', 'advance-button', 'click#success', $(this).attr('id'), 1)
-      currentFS = $(this).parent()
-      nextFS = $(this).parent().next()
-      $(".donation-progress-header").eq($(".donation-input-set").index(nextFS)).addClass("dph-active");
-      nextFS.show()
-      currentFS.hide()
-    else
-      gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
-
-  $(".donation-submit").click ->
-    validateFieldset($(this).parent())
 
   $(".donation-text-field").blur ->
     thisField = $(this)
@@ -249,19 +289,6 @@ donationsForm.init = (jQuery, opts) ->
       output.push("<option value='#{yr}'>#{yr}</option>")
     return output
 
-  $(".donation-btn-sm").click ->
-    gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
-    updateDonationHeader($(this).text())
-    $(".donation-btn-active").removeClass("donation-btn-active")
-    $(this).addClass("donation-btn-active")
-
-  $(".donation-btn-lg").change ->
-    if !!($(this).val())
-      gaDonations('send', 'event', 'amount', 'click', $(this).val(), 1)
-      $(".donation-btn-active").removeClass("donation-btn-active")
-      $(this).addClass("donation-btn-active")
-      updateDonationHeader("$#{$(this).val()}")
-
   updateHeadersUntil = (index) ->
     i = 1
     while i <= index
@@ -286,7 +313,6 @@ donationsForm.init = (jQuery, opts) ->
 
   $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
   $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
-  $('.donation-btn-lg').payment('restrictNumeric');
   donationsForm.connectToServer(config)
 
   this
@@ -306,17 +332,28 @@ donationsForm.currencies = {
   'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
 }
 
-donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol) ->
+donationsForm.currenciesArray = [
+  'USD', 'GBP', 'CAN', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
+]
+
+donationsForm.conversionRt = (currencyFrom, currencyTo, table) ->
+  return (1.0/table[currencyFrom]) * table[currencyTo]
+
+donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol, conversionRate = 1) ->
   seedVals = seedValues.split(",")
-  section = """ <span class="donation-field-label">
+  section = """ <div class="donations-currency-select-row">
+                  Currency: 
+                  <select class="donations-currency-select"></select>
+                </div>
+                <span class="donation-field-label">
                   <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
                 </span> """
   section += "<div class='donation-input-row'>"
   counter = 1
   for val in seedVals
     do ->
-      amount = parseFloat(val)*parseFloat(seedAmount)/100.0
-      section += """<div class="donation-btn donation-btn-sm #{'donation-btn-active' if selectNo is counter.toString()}" ><span class='donation-currency'>#{symbol}</span>#{amount}</div>"""
+      amount = conversionRate*parseFloat(val)*parseFloat(seedAmount)/100.0
+      section += """<div class="donation-btn donation-btn-sm #{'donation-btn-active' if selectNo is counter.toString()}" ><span class='donation-currency'>#{symbol}</span><span class='donation-amt'>#{amount}</span></div>"""
       if counter % 3 == 0
         section += "</div><div class='donation-input-row'>"
     counter += 1
@@ -338,7 +375,7 @@ donationsForm.getCurrencyFromCountryCode = (code) ->
 
 donationsForm.getSymbolFromCurrency = (currency) ->
   symbols = {
-    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$'
+    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAN' : 'C$'
   }
   return symbols[currency] or currency
 
