@@ -27,9 +27,9 @@ getGlobalDefaults = ->
     type: 'get',
     url: "#{$('#donation-script').data('pathtoserver')}\/organizations\/#{$('#donation-script').data('org')}.json",
     dataType: 'jsonp',
-    success: (data) -> 
-      console.log data
-      globalDefaults = data
+    success: (dat) -> 
+      globalDefaults = dat
+      $("#donation-script").trigger("donations:defaultsloaded", dat)
 
 loadExternalScripts = ->
   donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"

@@ -144,11 +144,12 @@ donationsForm.init = (jQuery, opts) ->
     </form>
     """
 
-  bindSelect = ->
+  bindSelect = (currency) ->
     currOptions = []
     for curr in donationsForm.currenciesArray
+      selectThis = if curr == currency then "selected" else ""
       currOptions.push('<option value="',
-        curr, '">',
+        curr, '" ', selectThis, ">",
         curr, '</option>')
     $(".donations-currency-select").append(currOptions.join(''))
     $(".donations-currency-select").change ->
@@ -197,7 +198,7 @@ donationsForm.init = (jQuery, opts) ->
     $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol, conversionRate))
     updateDonationHeader()
     bindButtons()
-    bindSelect()
+    bindSelect(currency)
   if config['currency']?
     symbol = donationsForm.getSymbolFromCurrency(config['currency'])
     updateCurrencyFields(symbol, config['currency'])
@@ -211,8 +212,17 @@ donationsForm.init = (jQuery, opts) ->
         symbol = donationsForm.getSymbolFromCurrency(currency)
         updateCurrencyFields(symbol, currency)
         unless config['seedcurrency'] == currency
-          rate = donationsForm.conversionRt(config['seedcurrency'], currency, config['rates'])
-          updateCurrencyFields(symbol, currency, rate)
+          updateWithRates = (rates) ->
+            rates = if config['rates'] then config['rates'] else rates
+            console.log(config['seedcurrency'])
+            console.log(rates)
+            rate = donationsForm.conversionRt(config['seedcurrency'], currency, rates)
+            updateCurrencyFields(symbol, currency, rate)
+          if config['rates']? or $("#donation-script").data('globaldefaults')?
+            updateWithRates()
+          else
+            $("#donation-script").on 'donations:defaultsloaded', (event, dat) ->
+              updateWithRates(dat['rates'])
         else
           updateCurrencyFields(symbol, currency)
 
@@ -337,7 +347,7 @@ donationsForm.currenciesArray = [
 ]
 
 donationsForm.conversionRt = (currencyFrom, currencyTo, table) ->
-  return (1.0/table[currencyFrom]) * table[currencyTo]
+  return (1.0/table[currencyTo]) * table[currencyFrom]
 
 donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol, conversionRate = 1) ->
   seedVals = seedValues.split(",")
@@ -352,7 +362,7 @@ donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol, conv
   counter = 1
   for val in seedVals
     do ->
-      amount = conversionRate*parseFloat(val)*parseFloat(seedAmount)/100.0
+      amount = (conversionRate*parseFloat(val)*parseFloat(seedAmount)/100.0).toFixed()
       section += """<div class="donation-btn donation-btn-sm #{'donation-btn-active' if selectNo is counter.toString()}" ><span class='donation-currency'>#{symbol}</span><span class='donation-amt'>#{amount}</span></div>"""
       if counter % 3 == 0
         section += "</div><div class='donation-input-row'>"
@@ -431,7 +441,7 @@ donationsForm.connectToServer = (opts) ->
       $('.donation-loading-overlay').hide()
       pusher.disconnect()
       if data.status == "success"
-        $(".donations-form-anchor").trigger("donations:success")
+        $("#donation-script").trigger("donations:success")
         donationsForm.hide()
         $(".donations-callback-flash").show(0).delay(8000).hide(0)
       else 
