@@ -442,6 +442,8 @@ donationsForm.connectToServer = (opts) ->
       pusher.disconnect()
       if data.status == "success"
         $("#donation-script").trigger("donations:success")
+        if config['redirectto']?
+          window.location.replace(config['redirectto'])
         donationsForm.hide()
         $(".donations-callback-flash").show(0).delay(8000).hide(0)
       else 
