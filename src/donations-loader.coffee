@@ -30,6 +30,10 @@ getGlobalDefaults = ->
     success: (dat) -> 
       globalDefaults = dat
       $("#donation-script").trigger("donations:defaultsloaded", dat)
+      $('.donations-form-anchor').append($("<div>")
+        .attr('id', 'donations-config')
+        .attr('hidden', true)
+        .attr('defaults', JSON.stringify(dat)))
 
 loadExternalScripts = ->
   donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"

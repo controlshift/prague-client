@@ -214,12 +214,10 @@ donationsForm.init = (jQuery, opts) ->
         unless config['seedcurrency'] == currency
           updateWithRates = (rates) ->
             rates = if config['rates'] then config['rates'] else rates
-            console.log(config['seedcurrency'])
-            console.log(rates)
             rate = donationsForm.conversionRt(config['seedcurrency'], currency, rates)
             updateCurrencyFields(symbol, currency, rate)
-          if config['rates']? or $("#donation-script").data('globaldefaults')?
-            updateWithRates()
+          if config['rates']? or $("#donations-config").attr('defaults')?
+            updateWithRates(JSON.parse($("#donations-config").attr('defaults')).rates)
           else
             $("#donation-script").on 'donations:defaultsloaded', (event, dat) ->
               updateWithRates(dat['rates'])
@@ -467,10 +465,14 @@ donationsForm.connectToServer = (opts) ->
       # Insert the token into the form so it gets submitted to the server
       $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
       
+      fullConfig = $.extend(JSON.parse($("#donations-config").attr('defaults')), config)
+      addtionalParams = {}
+      $.extend(addtionalParams, { key : val} if key.substring(0,2) == "ak") for key, val of fullConfig
+
       req = $.ajax(
         url: "#{config['pathtoserver']}/charges"
         type: "post"
-        data: $("#donation-form").serializeObject()
+        data: $.extend({}, $("#donation-form").serializeObject(), addtionalParams)
       )
 
       req.done (response, textStatus, jqXHR) ->
