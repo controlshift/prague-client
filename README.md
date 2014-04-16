@@ -63,6 +63,14 @@ The options as of right now are:
 
 `pusherpublickey`: Again, only use if you are hosting your own server.
 
+## Callbacks
+
+For the time being there is only one callback -- the success callback, after a user has successfully been charged. You can capture this like so:
+
+```javascript
+$(".donations-form-anchor").on("donations:success", function() { ... });
+```
+
 ## Mobile
 
 We use [media queries](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries) to optimize for mobile. Basically what happens is if your screen size is between 200px and 480px, the form shrinks down to a smaller version of itself. The widget expands to 100% of its parent element's size, with the expectation that the form will fill up the entire page. It may be important to note that we add this meta tag into the DOM to get mobile to work correctly:

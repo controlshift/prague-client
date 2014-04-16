@@ -431,6 +431,7 @@ donationsForm.connectToServer = (opts) ->
       $('.donation-loading-overlay').hide()
       pusher.disconnect()
       if data.status == "success"
+        $(".donations-form-anchor").trigger("donations:success")
         donationsForm.hide()
         $(".donations-callback-flash").show(0).delay(8000).hide(0)
       else 
