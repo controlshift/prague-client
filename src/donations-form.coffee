@@ -466,13 +466,11 @@ donationsForm.connectToServer = (opts) ->
       $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
       
       fullConfig = $.extend(JSON.parse($("#donations-config").attr('defaults')), config)
-      addtionalParams = {}
-      $.extend(addtionalParams, { key : val} if key.substring(0,2) == "ak") for key, val of fullConfig
 
       req = $.ajax(
         url: "#{config['pathtoserver']}/charges"
         type: "post"
-        data: $.extend({}, $("#donation-form").serializeObject(), addtionalParams)
+        data: $.extend({}, $("#donation-form").serializeObject(), {'config' : addtionalParams})
       )
 
       req.done (response, textStatus, jqXHR) ->
