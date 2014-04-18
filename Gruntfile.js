@@ -210,6 +210,7 @@ module.exports = function(grunt) {
         key: '<%= config.aws.key %>',
         secret: '<%= config.aws.secret %>',
         bucket: '<%= config.aws.bucket %>',
+        gzip: true,
         access: 'public-read',
         headers: {
           // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
