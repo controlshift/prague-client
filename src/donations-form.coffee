@@ -22,6 +22,7 @@ donationsForm.init = (jQuery, opts) ->
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
       <input type="hidden" name="organization_slug" value="#{config['org']}">
+      <input type="hidden" name="customer.country" value="US">
       <input type="hidden" name="customer.charges_attributes[0].currency" value="usd">
       <div class="donation-header">
         <div class="donation-header-main-message">
@@ -208,7 +209,9 @@ donationsForm.init = (jQuery, opts) ->
       url: 'https://freegeoip.net/json/',
       dataType: 'jsonp',
       success: (data) ->
-        currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
+        country = data['country_code']
+        currency = donationsForm.getCurrencyFromCountryCode(country)
+        $("input[name='customer.country']").val(country)
         symbol = donationsForm.getSymbolFromCurrency(currency)
         updateCurrencyFields(symbol, currency)
         unless config['seedcurrency'] == currency
