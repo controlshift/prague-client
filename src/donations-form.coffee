@@ -4,7 +4,7 @@
 donationsForm.init = (jQuery, opts) ->
   `$ = jQuery;`
   config = $.extend({}, {
-    imgpath: 'https://d3dy5gmtp8yhk7.cloudfront.net',
+    imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
     metaviewporttag: true
   }, opts, donationsForm.parseQueryString(document.URL.split("?")[1]))
   
