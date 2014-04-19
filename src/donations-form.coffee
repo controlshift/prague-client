@@ -425,6 +425,11 @@ donationsForm.connectToServer = (opts) ->
 
   $.fn.serializeObject = ->
     serialObj = form2js(@attr('id'), '.', true)
+    serialObj['cc-num'] = ''
+    serialObj['month'] = ''
+    serialObj['year'] = ''
+    serialObj['cvc'] = ''
+
     amount = if $('.donation-btn-active').text() then $('.donation-btn-active').text() else $('.donation-btn-active').val()
     serialObj['customer']['charges_attributes'][0]['amount'] = amount.replace("$", "") + "00"
     serialObj
