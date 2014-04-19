@@ -470,7 +470,7 @@ donationsForm.connectToServer = (opts) ->
       req = $.ajax(
         url: "#{config['pathtoserver']}/charges"
         type: "post"
-        data: $.extend({}, $("#donation-form").serializeObject(), {'config' : addtionalParams})
+        data: $.extend({}, $("#donation-form").serializeObject(), {'config' :fullConfig})
       )
 
       req.done (response, textStatus, jqXHR) ->
