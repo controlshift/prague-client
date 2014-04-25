@@ -311,11 +311,15 @@ donationsForm.init = (jQuery, opts) ->
     activeIndex = $(".donation-progress-header").index($(this))
     nextFS = $(".donation-input-set").eq(activeIndex)
     currentFS = $(".donation-input-set").filter(':visible:first')
-    if(validateFieldset(currentFS))
+    showFieldset = ->
       gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
       updateHeadersUntil(activeIndex)
       nextFS.show()
       currentFS.hide()
+    if $(this).hasClass("dph-active")
+      showFieldset()
+    else if(validateFieldset(currentFS))
+      showFieldset()
     else
       gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
 
