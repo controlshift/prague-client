@@ -21,6 +21,7 @@
   border-radius:0;
   border-style:none;
   border-width:medium;
+  box-sizing: content-box;
   bottom:auto;
   clear:none;
   clip:auto;
