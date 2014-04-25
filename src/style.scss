@@ -138,12 +138,13 @@
       float: left;
       font-size: 20px;
       margin-right: 5px;
-    }
-      
-    .donation-btn:hover {
       cursor: pointer;
+
+      .donation-currency, .donation-amt {
+        cursor: pointer;
+      }
     }
-    
+
     .donation-btn-sm {
       text-align: center;
       font-weight: 600;

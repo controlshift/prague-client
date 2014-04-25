@@ -4,7 +4,7 @@
 donationsForm.init = (jQuery, opts) ->
   `$ = jQuery;`
   config = $.extend({}, {
-    imgpath: 'https://d3dy5gmtp8yhk7.cloudfront.net',
+    imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
     metaviewporttag: true
   }, opts, donationsForm.parseQueryString(document.URL.split("?")[1]))
   
@@ -22,6 +22,7 @@ donationsForm.init = (jQuery, opts) ->
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
       <input type="hidden" name="organization_slug" value="#{config['org']}">
+      <input type="hidden" name="customer.country" value="US">
       <input type="hidden" name="customer.charges_attributes[0].currency" value="usd">
       <div class="donation-header">
         <div class="donation-header-main-message">
@@ -208,7 +209,9 @@ donationsForm.init = (jQuery, opts) ->
       url: 'https://freegeoip.net/json/',
       dataType: 'jsonp',
       success: (data) ->
-        currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
+        country = data['country_code']
+        currency = donationsForm.getCurrencyFromCountryCode(country)
+        $("input[name='customer.country']").val(country)
         symbol = donationsForm.getSymbolFromCurrency(currency)
         updateCurrencyFields(symbol, currency)
         unless config['seedcurrency'] == currency
@@ -429,6 +432,11 @@ donationsForm.connectToServer = (opts) ->
 
   $.fn.serializeObject = ->
     serialObj = form2js(@attr('id'), '.', true)
+    serialObj['cc-num'] = ''
+    serialObj['month'] = ''
+    serialObj['year'] = ''
+    serialObj['cvc'] = ''
+
     amount = if $('.donation-btn-active').text() then $('.donation-btn-active').text() else $('.donation-btn-active').val()
     serialObj['customer']['charges_attributes'][0]['amount'] = amount.replace("$", "") + "00"
     serialObj
@@ -474,7 +482,7 @@ donationsForm.connectToServer = (opts) ->
       req = $.ajax(
         url: "#{config['pathtoserver']}/charges"
         type: "post"
-        data: $.extend({}, $("#donation-form").serializeObject(), {'config' : addtionalParams})
+        data: $.extend({}, $("#donation-form").serializeObject(), {'config' :fullConfig})
       )
 
       req.done (response, textStatus, jqXHR) ->
