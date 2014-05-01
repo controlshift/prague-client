@@ -21,7 +21,6 @@
   background-color: #eee;
   border-radius: 5px;
   font-family: Helvetica, Arial, sans-serif;
-  display: none;
 
   .donation-payment-errors {
     color: red;
@@ -38,6 +37,13 @@
     .donations-currency-select {
       display: inline;
     }
+  }
+
+  .donation-button-set {
+    height: 200px;
+    margin-top: 16px;
+    font-size: 12px;
+    margin-left: 40px;
   }
 
   .donation-loading-overlay {

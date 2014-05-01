@@ -44,7 +44,8 @@ loadExternalScripts = ->
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
-      donationsForm.init($, $.extend({}, globalDefaults, $("#donation-script").data()))
+      $('.donations-form-anchor').append(html)
+      ko.applyBindings(new DonationsFormModel())
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 
