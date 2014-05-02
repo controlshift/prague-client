@@ -6,9 +6,9 @@ html = """
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
     <div class="donation-loading-overlay"></div>
-    <input type="hidden" name="organization_slug" value="org">
-    <input type="hidden" name="customer.country" value="US">
-    <input type="hidden" name="customer.charges_attributes[0].currency" value="usd">
+    <input type="hidden" name="organization_slug" data-bind="value: org">
+    <input type="hidden" name="customer.country" data-bind="value: countryCode">
+    <input type="hidden" name="customer.charges_attributes[0].currency" data-bind="value: selectedCurrency">
     <div class="donation-header">
       <div class="donation-header-main-message">
         I'M DONATING

@@ -7,8 +7,6 @@ class DonationsFormModel
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
 
-    console.log(config)
-
     ko.validation.configure({
       insertMessages: false
     });
@@ -28,6 +26,12 @@ class DonationsFormModel
       , message: 'Invalid credit card number'
     }
     ko.validation.registerExtenders()
+
+    self.org = ko.observable(config['org'])
+
+    self.countryCode = ko.observable("US")
+
+    self.initializeIcons(config['imgpath'])
 
     self.amounts = ko.observableArray([15,35,50,100,250,500,100])
     self.computeAmounts = (seedvalues, seedamount) ->
@@ -121,3 +125,17 @@ class DonationsFormModel
         hash[vars[0]] = vars[1]
         i++
     return hash
+
+  initializeIcons: (path) ->
+    icons = {
+      '#dnt-progress-amount' : 'icon-amount.png',
+      '#dnt-progress-myinfo' : 'icon-myinfo.png',
+      '#dnt-progress-payment' : 'icon-payment.png',
+      '.donation-progress-arrow' : 'icon-arrow.png',
+      '.donation-text-field[type="cc-num"]' : 'icon-cc-none.png',
+      '.donation-select' : 'icon-dropdown-arrows.png',
+      '.donation-loading-overlay' : '712.GIF'
+    }
+
+    for k, v of icons
+      $(k).css('background-image', "url('#{path}/#{v}')")
