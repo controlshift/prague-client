@@ -1,8 +1,25 @@
 class DonationsFormModel
-  constructor: () ->
+  constructor: (jQuery) ->
+    `$ = jQuery;`
     ko.validation.configure({
-        insertMessages: false
+      insertMessages: false,
     });
+    ko.validation.rules['ccDate'] = {
+        validator: (val, otherVal) ->
+          return $.payment.validateCardExpiry(val.month, val.year);
+        , message: 'Invalid date'
+    }
+    ko.validation.rules['ccNum'] = {
+        validator: (val, otherVal) ->
+          return $.payment.validateCardNumber(val);
+        , message: 'Invalid credit card number'
+    }
+    ko.validation.rules['cvc'] = {
+        validator: (val, otherVal) ->
+          return $.payment.validateCardCVC(val);
+        , message: 'Invalid credit card number'
+    }
+    ko.validation.registerExtenders()
     self = @
     self.amounts = ko.observableArray [
       { amount: 15 },
@@ -54,9 +71,23 @@ class DonationsFormModel
       required: { message: "Can't be blank" },
       email: { message: "Invalid email" }
     })
-    self.cardNumber = ko.observable().extend({ required: { message: "Can't be blank" } })
-    self.cardDate = ko.observable().extend({ required: { message: "Can't be blank" } })
-    self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true })
+    self.cardNumber = ko.observable().extend({ required: { message: "Can't be blank" }, ccNum: true })
+    self.cardMonth = ko.observable()
+    self.ccMonths = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    self.cardYear = ko.observable("#{new Date().getFullYear() + 1}")
+    self.ccYears = (->
+      output = []
+      year = new Date().getFullYear()
+      for yr in [year..year+19]
+        output.push("#{yr}")
+      return output
+    )()
+    self.cardDate = ko.computed(->
+      { month: self.cardMonth(), year: self.cardYear() }
+    , this).extend({ ccDate: true, observable: true })
+    self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true, cvc: true })
+    $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
+    $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
 
     self.inputSet1 = ko.validatedObservable({ amount: self.selectedAmount })
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})

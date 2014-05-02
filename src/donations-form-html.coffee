@@ -99,7 +99,7 @@ html = """
       <div class="donation-input-row">
         <span class="donation-field-label">
           Card Number*
-          <span class="donation-error-label" data-bind="validationMessage: cardNumber"  data-bind="validationMessage: cardNumber">Invalid number</span>
+          <span class="donation-error-label" data-bind="validationMessage: cardNumber"  data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
         <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber">
       </div>
@@ -108,9 +108,9 @@ html = """
           Expiration*
           <span class="donation-error-label" data-bind="validationMessage: cardDate">Invalid date</span>
         </span>
-        <select name="month" class="donation-select" type="month" data-stripe="exp-month" data-bind="value: cardDate">
+        <select name="month" class="donation-select" type="month" data-stripe="exp-month" data-bind="value: cardMonth, options: ccMonths">
         </select>
-        <select name="year" class="donation-select" type="year" data-stripe="exp-year" data-bind="value: cardDate">
+        <select name="year" class="donation-select" type="year" data-stripe="exp-year" data-bind="value: cardYear, options: ccYears">
         </select>
       </div>
       <div class="donation-input-row"> 
