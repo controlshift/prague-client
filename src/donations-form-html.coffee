@@ -42,7 +42,7 @@ html = """
       </span>
       <div class="donation-button-set" data-bind="foreach: amounts">
         <div class="donation-btn donation-btn-sm" data-bind="css: { 'donation-btn-active' : $parent.selectedBtn() === $index() }, click: function() { $parent.setActiveAmount($index()); }">
-          <span class='donation-currency' data-bind="html: $parent.currencySymbol">$</span><span class='donation-amt' data-bind="text: amount"></span>
+          <span class='donation-currency' data-bind="html: $parent.currencySymbol">$</span><span class='donation-amt' data-bind="text: $data"></span>
         </div>
         <!-- ko if: $index() === ($parent.amountsLength() - 1) -->
           <input class="donation-btn donation-btn-lg" data-bind="value: $parent.inputtedAmount, event: { change: $parent.clearSelectedButton } " type="text" placeholder="Other amount">

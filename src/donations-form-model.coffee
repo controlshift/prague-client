@@ -1,6 +1,12 @@
 class DonationsFormModel
-  constructor: (jQuery) ->
+  constructor: (jQuery, opts) ->
+    self = @
     `$ = jQuery;`
+    config = $.extend({}, {
+      imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
+      metaviewporttag: true
+    }, self.parseQueryString(document.URL.split("?")[1]))
+
     ko.validation.configure({
       insertMessages: false,
     });
@@ -20,16 +26,12 @@ class DonationsFormModel
         , message: 'Invalid credit card number'
     }
     ko.validation.registerExtenders()
-    self = @
-    self.amounts = ko.observableArray [
-      { amount: 15 },
-      { amount: 35 },
-      { amount: 50 },
-      { amount: 100 },
-      { amount: 250 },
-      { amount: 500 },
-      { amount: 1000 }
-    ]
+
+    self.amounts = ko.observableArray([15,35,50,100,250,500,100])
+
+    self.amountsLength = ko.computed(->
+      self.amounts().length
+    , this)
     self.currencies = {
       'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
     }
@@ -45,9 +47,6 @@ class DonationsFormModel
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
     , this)
 
-    self.amountsLength = ko.computed ->
-      7
-
     self.selectedBtn = ko.observable(-1)
     # Button amount
     self.selectedAmount = ko.observable("0")
@@ -56,12 +55,12 @@ class DonationsFormModel
 
     self.displayAmount = ko.computed(->
       self.inputtedAmount() or self.selectedAmount()
-    , this).extend({ required: { message: "Please select an amount" }, notEqual: "0" })
+    , this).extend({ required: { message: "Please select an amount" }, notEqual: "0", digit: true })
 
     self.setActiveAmount = (index, amount) ->
       if index > -1
         self.inputtedAmount(null)
-        self.selectedAmount(self.amounts()[index].amount)
+        self.selectedAmount(self.amounts()[index])
         self.selectedBtn(index)
 
     self.clearSelectedButton = ->
@@ -102,3 +101,14 @@ class DonationsFormModel
     self.inputSet1 = ko.validatedObservable({ amount: self.displayAmount })
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})
     self.inputSet3 = ko.validatedObservable({ cardNumber: self.cardNumber, cardDate: self.cardDate, cvc: self.cvc})
+
+  parseQueryString: (q) ->
+    hash = {}
+    if q isnt `undefined` and q isnt ""
+      q = q.split("&")
+      i = 0
+      while i < q.length
+        vars = q[i].split("=")
+        hash[vars[0]] = vars[1]
+        i++
+    return hash
