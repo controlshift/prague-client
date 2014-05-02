@@ -14,7 +14,7 @@ html = """
         I'M DONATING
       </div>
       <div class="donation-subheader-amount">
-        <span class='donation-currency' data-bind="html: currencySymbol">$</span><span class='donation-header-amt' data-bind="text: selectedAmount()">0</span>
+        <span class='donation-currency' data-bind="html: currencySymbol">$</span><span class='donation-header-amt' data-bind="text: displayAmount()">0</span>
       </div>
     </div>
     <div class="donation-progress-banner">
@@ -38,14 +38,14 @@ html = """
         <select class="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>
       <span class="donation-field-label">
-        <span class="donation-error-label" id="d-error-label-first" data-bind="validationMessage: selectedAmount"></span>
+        <span class="donation-error-label" id="d-error-label-first" data-bind="validationMessage: displayAmount"></span>
       </span>
       <div class="donation-button-set" data-bind="foreach: amounts">
         <div class="donation-btn donation-btn-sm" data-bind="css: { 'donation-btn-active' : $parent.selectedBtn() === $index() }, click: function() { $parent.setActiveAmount($index()); }">
           <span class='donation-currency' data-bind="html: $parent.currencySymbol">$</span><span class='donation-amt' data-bind="text: amount"></span>
         </div>
         <!-- ko if: $index() === ($parent.amountsLength() - 1) -->
-          <input class="donation-btn donation-btn-lg" data-bind="value: $parent.selectedAmount" type="text" placeholder="Other amount">
+          <input class="donation-btn donation-btn-lg" data-bind="value: $parent.inputtedAmount, event: { change: $parent.clearSelectedButton } " type="text" placeholder="Other amount">
         <!-- /ko -->
       </div>
       <div class="donation-next-btn" id="donation-first-next-btn" data-bind="click: function()

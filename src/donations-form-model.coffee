@@ -47,15 +47,25 @@ class DonationsFormModel
 
     self.amountsLength = ko.computed ->
       7
+
     self.selectedBtn = ko.observable(-1)
+    # Button amount
+    self.selectedAmount = ko.observable("0")
+    # Input amount
+    self.inputtedAmount = ko.observable(null)
+
+    self.displayAmount = ko.computed(->
+      self.inputtedAmount() or self.selectedAmount()
+    , this).extend({ required: { message: "Please select an amount" }, notEqual: "0" })
+
     self.setActiveAmount = (index, amount) ->
-      if index == self.amountsLength()
-        self.selectedBtn(-1)
-      else if index > -1
+      if index > -1
+        self.inputtedAmount(null)
         self.selectedAmount(self.amounts()[index].amount)
         self.selectedBtn(index)
 
-    self.selectedAmount = ko.observable().extend({ required: { message: "Please select an amount" } })
+    self.clearSelectedButton = ->
+      self.selectedBtn(-1)
     
     self.visibleInputSet = ko.observable(0)
 
@@ -89,6 +99,6 @@ class DonationsFormModel
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
 
-    self.inputSet1 = ko.validatedObservable({ amount: self.selectedAmount })
+    self.inputSet1 = ko.validatedObservable({ amount: self.displayAmount })
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})
     self.inputSet3 = ko.validatedObservable({ cardNumber: self.cardNumber, cardDate: self.cardDate, cvc: self.cvc})
