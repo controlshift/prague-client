@@ -5,7 +5,9 @@ class DonationsFormModel
     config = $.extend({}, {
       imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
       metaviewporttag: true
-    }, self.parseQueryString(document.URL.split("?")[1]))
+    }, opts, self.parseQueryString(document.URL.split("?")[1]))
+
+    console.log(config)
 
     ko.validation.configure({
       insertMessages: false
@@ -28,6 +30,13 @@ class DonationsFormModel
     ko.validation.registerExtenders()
 
     self.amounts = ko.observableArray([15,35,50,100,250,500,100])
+    self.computeAmounts = (seedvalues, seedamount) ->
+      arr = []
+      for entry in seedvalues
+        arr.push(Math.floor(parseInt(entry) / 100.0 * parseInt(seedamount)))
+      self.amounts(arr)
+    if config['seedvalues']? and config['seedamount']?
+      self.computeAmounts(config['seedvalues'].split(","), config['seedamount'])
 
     self.amountsLength = ko.computed(->
       self.amounts().length
@@ -39,7 +48,7 @@ class DonationsFormModel
     self.currenciesArray = ko.observableArray [
       'USD', 'GBP', 'CAN', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
     ]
-    self.selectedCurrency = ko.observable('USD')
+    self.selectedCurrency = ko.observable(config['seedcurrency'] or 'USD')
     self.currencySymbol = ko.computed(->
       symbols = {
         'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAN' : 'C$'
