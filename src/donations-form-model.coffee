@@ -8,22 +8,22 @@ class DonationsFormModel
     }, self.parseQueryString(document.URL.split("?")[1]))
 
     ko.validation.configure({
-      insertMessages: false,
+      insertMessages: false
     });
     ko.validation.rules['ccDate'] = {
-        validator: (val, otherVal) ->
-          return $.payment.validateCardExpiry(val.month, val.year);
-        , message: 'Invalid date'
+      validator: (val, otherVal) ->
+        return $.payment.validateCardExpiry(val.month, val.year);
+      , message: 'Invalid date'
     }
     ko.validation.rules['ccNum'] = {
-        validator: (val, otherVal) ->
-          return $.payment.validateCardNumber(val);
-        , message: 'Invalid credit card number'
+      validator: (val, otherVal) ->
+        return $.payment.validateCardNumber(val);
+      , message: 'Invalid credit card number'
     }
     ko.validation.rules['cvc'] = {
-        validator: (val, otherVal) ->
-          return $.payment.validateCardCVC(val);
-        , message: 'Invalid credit card number'
+      validator: (val, otherVal) ->
+        return $.payment.validateCardCVC(val);
+      , message: 'Invalid credit card number'
     }
     ko.validation.registerExtenders()
 
