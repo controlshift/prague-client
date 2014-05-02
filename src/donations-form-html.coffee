@@ -38,17 +38,17 @@ html = """
         <select class="donations-currency-select"></select>
       </div>
       <span class="donation-field-label">
-        <span class="donation-error-label" id="d-error-label-first" data-bind="visible: selectedAmount.hasError, text: selectedAmount.validationMessage"></span>
+        <span class="donation-error-label" id="d-error-label-first" data-bind="visible: selectedAmount.hasError(), text: selectedAmount.validationMessage()"></span>
       </span>
       <div class="donation-button-set" data-bind="foreach: amounts">
         <div class="donation-btn donation-btn-sm" data-bind="css: { 'donation-btn-active' : $parent.selectedBtn() === $index() }, click: function() { $parent.setActiveAmount($index()); }">
           <span class='donation-currency'>$</span><span class='donation-amt' data-bind="text: amount"></span>
         </div>
         <!-- ko if: $index() === ($parent.amountsLength() - 1) -->
-          <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
+          <input class="donation-btn donation-btn-lg" data-bind="value: $parent.selectedAmount" type="text" placeholder="Other amount">
         <!-- /ko -->
       </div>
-      <div class="donation-next-btn" id="donation-first-next-btn" data-bind="click: $root.selectedAmount.validate ">
+      <div class="donation-next-btn" id="donation-first-next-btn" data-bind="click: function() { $root.selectedAmount.validate($root.selectedAmount()) }">
         <div class="donation-next-btn-header">
           NEXT
         </div>
