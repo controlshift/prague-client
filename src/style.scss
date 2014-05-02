@@ -196,7 +196,7 @@
     .donation-select {
       height: 33px;
       margin-right: 7px;
-      width: 120px;
+      width: 125px;
       margin-top: 10px;
       background-color: white; 
       border: 2px solid #d1d2cd;
@@ -206,7 +206,7 @@
       padding: 0px 15px;
       font-size: 13px;
       background-repeat: no-repeat;
-      background-position: 140px 5px;
+      background-position: 138px 7px;
       display: inline-block;
     }
     .donation-text-field-sm {
@@ -265,6 +265,9 @@
       letter-spacing: 2px;
       cursor: pointer;
     }
+  }
+  #donation-first-next-btn {
+    margin-top: 25px;
   }
   .donation-submit {
     background: #00c63a;
