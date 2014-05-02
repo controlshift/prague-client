@@ -37,8 +37,11 @@ class DonationsFormModel
     self.amounts = ko.observableArray([15,35,50,100,250,500,100])
     self.computeAmounts = (seedvalues, seedamount) ->
       arr = []
+      count = 0
       for entry in seedvalues
-        arr.push(Math.floor(parseInt(entry) / 100.0 * parseInt(seedamount)))
+        if count < 7
+          arr.push(Math.floor(parseInt(entry) / 100.0 * parseInt(seedamount)))
+        count += 1
       self.amounts(arr)
     if config['seedvalues']? and config['seedamount']?
       self.computeAmounts(config['seedvalues'].split(","), config['seedamount'])
