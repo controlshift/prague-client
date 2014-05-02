@@ -31,7 +31,8 @@ class DonationsFormModel
 
     self.countryCode = ko.observable("US")
 
-    self.initializeIcons(config['imgpath'])
+    self.imgPath = ko.observable(config['imgpath'])
+    self.initializeIcons(self.imgPath())
 
     self.amounts = ko.observableArray([15,35,50,100,250,500,100])
     self.computeAmounts = (seedvalues, seedamount) ->
@@ -110,6 +111,14 @@ class DonationsFormModel
     self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true, cvc: true })
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
+
+    self.ccBackground = ko.computed(->
+      ccType = $.payment.cardType(self.cardNumber())
+      if ccType in ['amex','mastercard','visa','discover','dinersclub']
+        return "url(#{self.imgPath()}/icon-cc-#{ccType}.png)"
+      else
+        return "url(#{self.imgPath()}/icon-cc-none.png)"
+    , this)
 
     self.inputSet1 = ko.validatedObservable({ amount: self.displayAmount })
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})

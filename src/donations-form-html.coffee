@@ -99,9 +99,9 @@ html = """
       <div class="donation-input-row">
         <span class="donation-field-label">
           Card Number*
-          <span class="donation-error-label" data-bind="validationMessage: cardNumber"  data-bind="validationMessage: cardDate">Invalid number</span>
+          <span class="donation-error-label" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
-        <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber">
+        <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, style: { backgroundImage: ccBackground() } ">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
