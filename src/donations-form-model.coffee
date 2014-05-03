@@ -23,7 +23,7 @@ class DonationsFormModel
     ko.validation.rules['cvc'] = {
       validator: (val, otherVal) ->
         return $.payment.validateCardCVC(val);
-      , message: 'Invalid credit card number'
+      , message: 'Invalid CVC number'
     }
     ko.validation.registerExtenders()
 
