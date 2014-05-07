@@ -20,16 +20,56 @@ First things first, stick this tag wherever you want the form on the page.
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com"></script>
+<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
 ```
 
-If you need to change the path where your images are stored, you can pass options like so:
+It is recommended that you store and host the images locally for performance. If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="jquery.donations.js" id="donation-script" data-imgpath="http://www.changesprout.com/prague-client/build/img" data-pathtoserver="https://www.donatelab.com"></script>
+<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-imgpath="./img" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
 ```
 
 By default the path is `./img`.
+
+## Parameters
+
+There are two ways to pass parameters. One way is by putting a parameter in the script tag as shown above. You must prefix the parameter name with `data-`. For example:
+
+```html
+<script src="" ... data-optionname="example"></script>
+```
+
+The other way is to pass parameters via URL query string. You do NOT need to prefix the parameter name in this case. However, you need to properly format the query string, by starting with a `?` and separating each parameter with an `&`, as per convention. For example:
+
+```
+https://mynonprofit.org/?optionname=foo&optionname2=bar
+```
+
+The parameters supplied in the query string will be overwritten by those in the script tag. We did this mostly for safety.
+
+The options as of right now are:
+
+`imgpath`: A path to where your images live. Recommended to download these and add them to your server.
+
+`pathtoserver`: A path to where the server lives. We recommend to use ours, but if you want your own the link to the server's source code is available above.
+
+`amt1`, `amt2`, `amt3`, `amt4`, `amt5`, `amt6`, `amt7`: Specifies amount of the corresponding button -- we give a default value. Use numeric values with no currency symbols.
+
+`select`: Specifies which button should be selected by default (if none, don't use this parameter). Valid options are 1, 2, 3, 4, 5, 6, or 7.
+
+`metaviewport`: Specifies whether the `metaviewport` tag should or should not be added. Set this to `"false"` (or `false` if using query strings) if this should not be used. 
+
+`stripepublickey`: Pretty self-explanatory, only use if you are hosting your own server.
+
+`pusherpublickey`: Again, only use if you are hosting your own server.
+
+## Callbacks
+
+For the time being there is only one callback -- the success callback, after a user has successfully been charged. You can capture this like so:
+
+```javascript
+$(".donations-form-anchor").on("donations:success", function() { ... });
+```
 
 ## Mobile
 
@@ -50,7 +90,7 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
 ```html
-<script src="jquery.donations.js" id="donation-script"
+<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script"
   data-stripepublickey="YOUR_STRIPE_KEY"
   data-pusherpublickey="YOUR_PUSHER_KEY"
   data-pathtoserver="http://localhost:3000"></script>

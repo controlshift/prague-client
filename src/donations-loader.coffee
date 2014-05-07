@@ -21,16 +21,31 @@ loadExternalResource = (type, source, callback, params) ->
       return
   (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
 
+`var globalDefaults = {};`
+getGlobalDefaults = ->
+  $.ajax
+    type: 'get',
+    url: "#{$('#donation-script').data('pathtoserver')}\/organizations\/#{$('#donation-script').data('org')}.json",
+    dataType: 'jsonp',
+    success: (dat) -> 
+      globalDefaults = dat
+      $("#donation-script").trigger("donations:defaultsloaded", dat)
+      $('.donations-form-anchor').append($("<div>")
+        .attr('id', 'donations-config')
+        .attr('hidden', true)
+        .attr('defaults', JSON.stringify(dat)))
+
 loadExternalScripts = ->
-  donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "http://www.changesprout.com/prague-client/build/jquery.donations.js"
-  scriptStrings = ["https://js.stripe.com/v2/","http://js.pusher.com/2.1/pusher.min.js", donationsJs]
+  donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"
+  scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs]
   loadedScripts = 0
   executeMain = ->
     loadedScripts++
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
-      donationsForm.init($("#donation-script").data())
+      $('.donations-form-anchor').append(html)
+      ko.applyBindings(new DonationsFormModel($, $("#donation-script").data()))
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 
@@ -57,8 +72,9 @@ googleAnalyticsInit = ->
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
   testmode = ($("#donation-script").data('testmode') == true)
-  cssSrc = if testmode then "jquery.donations.css" else "http://www.changesprout.com/prague-client/build/jquery.donations.css"
+  cssSrc = if testmode then "jquery.donations.css" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
+  getGlobalDefaults()
   loadExternalScripts()
   return
 

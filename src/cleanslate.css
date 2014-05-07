@@ -1,20 +1,7 @@
-/*!
+/*
 * CleanSlate
 *   github.com/premasagar/cleanslate
 *
-*//*
-    An extreme CSS reset stylesheet, for normalising the styling of a container element and its children.
-
-    by Premasagar Rose
-        dharmafly.com
-
-    license
-        opensource.org/licenses/mit-license.php
-
-    **
-        
-    v0.9.2
-        
 */
 
 /* == BLANKET RESET RULES == */
@@ -34,6 +21,7 @@
   border-radius:0;
   border-style:none;
   border-width:medium;
+  box-sizing: content-box;
   bottom:auto;
   clear:none;
   clip:auto;

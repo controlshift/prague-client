@@ -21,14 +21,28 @@
   background-color: #eee;
   border-radius: 5px;
   font-family: Helvetica, Arial, sans-serif;
-  display: none;
 
   .donation-payment-errors {
     color: red;
-    display: none;
     font-size: 12px;
     position: absolute;
     padding: 0px 40px;
+  }
+
+  .donations-currency-select-row {
+    margin-top: 16px;
+    font-size: 12px;
+    margin-left: 40px;
+    .donations-currency-select {
+      display: inline;
+    }
+  }
+
+  .donation-button-set {
+    height: 200px;
+    margin-top: 16px;
+    font-size: 12px;
+    margin-left: 40px;
   }
 
   .donation-loading-overlay {
@@ -102,15 +116,14 @@
     }
   }
   #input-set-first {
+    padding-top: 5px;
     display: block;
   }
   .donation-input-set {
     height: 255px;
     width: 400px;
-    padding-top: 25px;
-    position: absolute;
-    display: none;
-    
+    padding-top: 15px;
+    position: absolute;    
     
     .donation-input-row {
       margin-left: 40px;
@@ -126,14 +139,16 @@
       width: 100px;
       height: 60px;
       float: left;
+      margin-bottom: 5px;
       font-size: 20px;
       margin-right: 5px;
-    }
-      
-    .donation-btn:hover {
       cursor: pointer;
+
+      .donation-currency, .donation-amt {
+        cursor: pointer;
+      }
     }
-    
+
     .donation-btn-sm {
       text-align: center;
       font-weight: 600;
@@ -181,7 +196,7 @@
     .donation-select {
       height: 33px;
       margin-right: 7px;
-      width: 160px; 
+      width: 125px;
       margin-top: 10px;
       background-color: white; 
       border: 2px solid #d1d2cd;
@@ -191,7 +206,7 @@
       padding: 0px 15px;
       font-size: 13px;
       background-repeat: no-repeat;
-      background-position: 140px 5px;
+      background-position: 138px 7px;
       display: inline-block;
     }
     .donation-text-field-sm {
@@ -218,7 +233,6 @@
       color: red;
       margin-left: 12px;
       font-weight: normal;
-      display: none;
     }
     #d-error-label-first {
       margin-left: 40px;
@@ -251,6 +265,9 @@
       letter-spacing: 2px;
       cursor: pointer;
     }
+  }
+  #donation-first-next-btn {
+    margin-top: 25px;
   }
   .donation-submit {
     background: #00c63a;
@@ -294,6 +311,7 @@ and (max-device-width : 480px) {
       .donation-btn {
         width: 60px;
         height: 36px;
+        margin-bottom: 5px;
       }
       .donation-btn-sm {
         line-height: 36px;

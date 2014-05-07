@@ -76,7 +76,7 @@ module.exports = function(grunt) {
       build: {
         expand: true,
         cwd: 'src',
-        src: [ '**/donations-form.coffee' ],
+        src: [ '**/donations-form*.coffee' ],
         dest: 'build',
         ext: '.js'
       },
@@ -86,14 +86,11 @@ module.exports = function(grunt) {
         },
         expand: true,
         cwd: 'src',
-        src: [ '**/donations-form.coffee' ],
+        src: [ '**/donations-form*.coffee' ],
         dest: 'build',
         ext: '.js'
       },
       loader: {
-        options: {
-          bare: true
-        },
         expand: true,
         cwd: 'src',
         src: [ '**/donations-loader.coffee' ],
@@ -121,7 +118,7 @@ module.exports = function(grunt) {
       },
       build: {
         options: {
-          mangle: false
+          mangle: { toplevel: false }
         },
         files: {
           'build/jquery.donations.js': [ 'build/**/jquery.payment.js', 'build/**/form2js.js', 'build/**/*.js', '!build/**/*spec.js', '!build/**/*feature.js', '!build/**/*features.js', '!build/**/donations-loader.js' ]
@@ -137,7 +134,7 @@ module.exports = function(grunt) {
       },
       loader: {
         options: {
-          mangle: false
+          mangle: { toplevel: true }
         },
         files: {
           'build/jquery.donations.loader.js': [ 'build/**/donations-loader.js' ]
@@ -170,11 +167,50 @@ module.exports = function(grunt) {
       }
     },
 
+    ver: {
+      myapp: {
+        phases: [
+          {
+            files: [
+              'build/jquery.donations.js',
+              'build/jquery.donations.css'
+            ]
+          }
+        ],
+        versionFile: 'build/version.json'
+      }
+    },
+
+    replace: {
+      dist: {
+        options: {
+          patterns: [
+            {
+              match: "jquery.donations.js",
+              replacement: "<%= vconfig['jquery.donations.js'] %>"
+            },
+            {
+              match: "jquery.donations.css",
+              replacement: "<%= vconfig['jquery.donations.css'] %>"
+            }
+          ],
+          usePrefix: false
+        },
+        files: [
+          {
+            src: ['build/jquery.donations.loader.js'], 
+            dest: 'build/jquery.donations.loader.js'
+          }
+        ]
+      }
+    },
+
     s3: {
       options: {
         key: '<%= config.aws.key %>',
         secret: '<%= config.aws.secret %>',
         bucket: '<%= config.aws.bucket %>',
+        gzip: true,
         access: 'public-read',
         headers: {
           // Two Year cache policy (1000 * 60 * 60 * 24 * 730)
@@ -197,13 +233,13 @@ module.exports = function(grunt) {
           },
 
           {
-            src: 'build/jquery.donations.js',
-            dest: 'jquery.donations.js'
+            src: 'build/jquery.donations.*.js',
+            dest: ''
           },
 
           {
-            src: 'build/jquery.donations.css',
-            dest: 'jquery.donations.css'
+            src: 'build/jquery.donations.*.css',
+            dest: ''
           }
         ]
       }
@@ -222,7 +258,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-s3');
-  
+  grunt.loadNpmTasks('grunt-ver');
+  grunt.loadNpmTasks('grunt-replace');
  
   // define the tasks
   
@@ -247,7 +284,7 @@ module.exports = function(grunt) {
   grunt.registerTask(
     'build', 
     'Compiles all of the assets and copies the files to the build directory.', 
-    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine' ]
+    [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine', 'ver', 'versionread', 'replace' ]
   );
 
   grunt.registerTask(
@@ -262,6 +299,10 @@ module.exports = function(grunt) {
     if(grunt.file.exists(envConfig)) {
       grunt.config.set('config', grunt.file.readJSON(envConfig));
     }
+  });
+
+  grunt.registerTask('versionread', function() {
+    grunt.config.set('vconfig', grunt.file.readJSON('build/version.json'));
   });
 
 

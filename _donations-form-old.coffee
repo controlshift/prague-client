@@ -1,11 +1,12 @@
-
 `var donationsForm = {};`
+`var $;`
 
-donationsForm.init = (opts) ->
+donationsForm.init = (jQuery, opts) ->
+  `$ = jQuery;`
   config = $.extend({}, {
-    imgpath: './img',
+    imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
     metaviewporttag: true
-  }, opts)
+  }, opts, donationsForm.parseQueryString(document.URL.split("?")[1]))
   
   metaViewport = """<meta name="viewport" content="width=device-width, initial-scale=1">"""
   if config['metaviewporttag'] == false
@@ -21,13 +22,14 @@ donationsForm.init = (opts) ->
     <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
       <div class="donation-loading-overlay"></div>
       <input type="hidden" name="organization_slug" value="#{config['org']}">
+      <input type="hidden" name="customer.country" value="US">
       <input type="hidden" name="customer.charges_attributes[0].currency" value="usd">
       <div class="donation-header">
         <div class="donation-header-main-message">
           I'M DONATING
         </div>
         <div class="donation-subheader-amount">
-          <span class='donation-currency'>$</span>0
+          <span class='donation-currency'>$</span><span class='donation-header-amt'>0</span>
         </div>
       </div>
       <div class="donation-progress-banner">
@@ -46,21 +48,25 @@ donationsForm.init = (opts) ->
         </div>
       </div>
       <div class="donation-input-set" id="input-set-first">
+        <div class="donations-currency-select-row">
+          Currency: 
+          <select class="donations-currency-select"></select>
+        </div>
         <span class="donation-field-label">
           <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
         </span>
         <div class="donation-input-row">
-          <div class="donation-btn donation-btn-sm" ><span class='donation-currency'>$</span>15</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>35</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>50</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '1'}" ><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt1'] or 15}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '2'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt2'] or 35}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '3'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt3'] or 50}</span></div>
         </div>
         <div class="donation-input-row">      
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>100</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>250</div>
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>500</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '4'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt4'] or 100}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '5'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt5'] or 250}</span></div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '6'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt6'] or 500}</span></div>
         </div>
         <div class="donation-input-row"> 
-          <div class="donation-btn donation-btn-sm"><span class='donation-currency'>$</span>1000</div>
+          <div class="donation-btn donation-btn-sm #{'donation-btn-active' if config['select'] is '7'}"><span class='donation-currency'>$</span><span class='donation-amt'>#{config['amt7'] or 1000}</span></div>
           <input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount">
         </div>
         <div class="donation-next-btn" id="donation-first-next-btn">
@@ -139,15 +145,87 @@ donationsForm.init = (opts) ->
     </form>
     """
 
-  $.ajax
-    type: 'get',
-    url: 'https://freegeoip.net/json/',
-    dataType: 'jsonp',
-    success: (data) ->
-      currency = donationsForm.getCurrencyFromCountryCode(data['country_code'])
-      symbol = donationsForm.getSymbolFromCurrency(currency)
-      $("input[name='customer.charges_attributes[0].currency']").val(currency)
-      $(".donation-currency").html(symbol)
+  bindSelect = (currency) ->
+    currOptions = []
+    for curr in donationsForm.currenciesArray
+      selectThis = if curr == currency then "selected" else ""
+      currOptions.push('<option value="',
+        curr, '" ', selectThis, ">",
+        curr, '</option>')
+    $(".donations-currency-select").append(currOptions.join(''))
+    $(".donations-currency-select").change ->
+      selected = $("option:selected", this)
+      updateCurrencyFields(donationsForm.getSymbolFromCurrency(selected.val()), selected.val())
+  bindSelect()
+
+  bindButtons = ->
+    $('.donation-btn-lg').payment('restrictNumeric')
+    $(".donation-btn-sm").click ->
+      gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
+      $(".donation-header-amt").text($(this).find(".donation-amt").text())
+      $(".donation-btn-active").removeClass("donation-btn-active")
+      $(this).addClass("donation-btn-active")
+
+    $(".donation-btn-lg").change ->
+      lgButton = $(this)
+      if !!($(this).val())
+        gaDonations('send', 'event', 'amount', 'click', $(this).val(), 1)
+        $(".donation-btn-active").removeClass("donation-btn-active")
+        $(this).addClass("donation-btn-active")
+        $(".donation-header-amt").text(lgButton.val())
+
+    $(".donation-next-btn").click ->
+      if validateFieldset($(this).parent())
+        gaDonations('send', 'event', 'advance-button', 'click#success', $(this).attr('id'), 1)
+        currentFS = $(this).parent()
+        nextFS = $(this).parent().next()
+        $(".donation-progress-header").eq($(".donation-input-set").index(nextFS)).addClass("dph-active");
+        nextFS.show()
+        currentFS.hide()
+      else
+        gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
+
+    $(".donation-submit").click ->
+      validateFieldset($(this).parent())
+  bindButtons()
+
+  updateDonationHeader = ->
+    text = $(".donation-btn-active .donation-amt").text()
+    $(".donation-header-amt").text(if !!text then text else "0")
+  updateCurrencyFields = (symbol, currency, conversionRate) ->
+    currency = if currency? then currency else config['currency']
+    $("input[name='customer.charges_attributes[0].currency']").val(currency)
+    $(".donation-currency").html(symbol)
+    $("#input-set-first").html(donationsForm.donationsButtons(config['seedamount'], config['seedvalues'], config['select'], symbol, conversionRate))
+    updateDonationHeader()
+    bindButtons()
+    bindSelect(currency)
+  if config['currency']?
+    symbol = donationsForm.getSymbolFromCurrency(config['currency'])
+    updateCurrencyFields(symbol, config['currency'])
+  else
+    $.ajax
+      type: 'get',
+      url: 'https://freegeoip.net/json/',
+      dataType: 'jsonp',
+      success: (data) ->
+        country = data['country_code']
+        currency = donationsForm.getCurrencyFromCountryCode(country)
+        $("input[name='customer.country']").val(country)
+        symbol = donationsForm.getSymbolFromCurrency(currency)
+        updateCurrencyFields(symbol, currency)
+        unless config['seedcurrency'] == currency
+          updateWithRates = (rates) ->
+            rates = if config['rates'] then config['rates'] else rates
+            rate = donationsForm.conversionRt(config['seedcurrency'], currency, rates)
+            updateCurrencyFields(symbol, currency, rate)
+          if config['rates']? or $("#donations-config").attr('defaults')?
+            updateWithRates(JSON.parse($("#donations-config").attr('defaults')).rates)
+          else
+            $("#donation-script").on 'donations:defaultsloaded', (event, dat) ->
+              updateWithRates(dat['rates'])
+        else
+          updateCurrencyFields(symbol, currency)
 
   $("#donation-form").show()
 
@@ -186,21 +264,6 @@ donationsForm.init = (opts) ->
         $(field).removeClass("donation-text-field-error")
         $(field).parent().find(".donation-error-label").hide()
     valid
-    
-      
-  $(".donation-next-btn").click ->
-    if validateFieldset($(this).parent())
-      gaDonations('send', 'event', 'advance-button', 'click#success', $(this).attr('id'), 1)
-      currentFS = $(this).parent()
-      nextFS = $(this).parent().next()
-      $(".donation-progress-header").eq($(".donation-input-set").index(nextFS)).addClass("dph-active");
-      nextFS.show()
-      currentFS.hide()
-    else
-      gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
-
-  $(".donation-submit").click ->
-    validateFieldset($(this).parent())
 
   $(".donation-text-field").blur ->
     thisField = $(this)
@@ -237,22 +300,6 @@ donationsForm.init = (opts) ->
       output.push("<option value='#{yr}'>#{yr}</option>")
     return output
 
-  updateDonationHeader = (amount) ->
-    $(".donation-subheader-amount").text("#{amount}")
-
-  $(".donation-btn-sm").click ->
-    gaDonations('send', 'event', 'amount', 'click', $(this).text(), 1)
-    updateDonationHeader($(this).text())
-    $(".donation-btn-active").removeClass("donation-btn-active")
-    $(this).addClass("donation-btn-active")
-
-  $(".donation-btn-lg").change ->
-    if !!($(this).val())
-      gaDonations('send', 'event', 'amount', 'click', $(this).val(), 1)
-      $(".donation-btn-active").removeClass("donation-btn-active")
-      $(this).addClass("donation-btn-active")
-      updateDonationHeader("$#{$(this).val()}")
-
   updateHeadersUntil = (index) ->
     i = 1
     while i <= index
@@ -267,34 +314,85 @@ donationsForm.init = (opts) ->
     activeIndex = $(".donation-progress-header").index($(this))
     nextFS = $(".donation-input-set").eq(activeIndex)
     currentFS = $(".donation-input-set").filter(':visible:first')
-    if(validateFieldset(currentFS))
+    showFieldset = ->
       gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
       updateHeadersUntil(activeIndex)
       nextFS.show()
       currentFS.hide()
+    if $(this).hasClass("dph-active")
+      showFieldset()
+    else if(validateFieldset(currentFS))
+      showFieldset()
     else
       gaDonations('send', 'event', 'advance-button', 'click#with-errors', $(this).attr('id'), 1)
 
   $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
   $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
-  $('.donation-btn-lg').payment('restrictNumeric');
   donationsForm.connectToServer(config)
 
   this
 
+donationsForm.parseQueryString = (q) ->
+  hash = {}
+  if q isnt `undefined` and q isnt ""
+    q = q.split("&")
+    i = 0
+    while i < q.length
+      vars = q[i].split("=")
+      hash[vars[0]] = vars[1]
+      i++
+  return hash
+
+donationsForm.currencies = {
+  'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
+}
+
+donationsForm.currenciesArray = [
+  'USD', 'GBP', 'CAN', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
+]
+
+donationsForm.conversionRt = (currencyFrom, currencyTo, table) ->
+  return (1.0/table[currencyTo]) * table[currencyFrom]
+
+donationsForm.donationsButtons = (seedAmount, seedValues, selectNo, symbol, conversionRate = 1) ->
+  seedVals = seedValues.split(",")
+  section = """ <div class="donations-currency-select-row">
+                  Currency: 
+                  <select class="donations-currency-select"></select>
+                </div>
+                <span class="donation-field-label">
+                  <span class="donation-error-label" id="d-error-label-first">You must choose an amount.</span>
+                </span> """
+  section += "<div class='donation-input-row'>"
+  counter = 1
+  for val in seedVals
+    do ->
+      amount = (conversionRate*parseFloat(val)*parseFloat(seedAmount)/100.0).toFixed()
+      section += """<div class="donation-btn donation-btn-sm #{'donation-btn-active' if selectNo is counter.toString()}" ><span class='donation-currency'>#{symbol}</span><span class='donation-amt'>#{amount}</span></div>"""
+      if counter % 3 == 0
+        section += "</div><div class='donation-input-row'>"
+    counter += 1
+  # account for weird spacing issues if length is 5
+  if seedVals.length % 5 == 0
+    section += "</div><div class='donation-input-row'>"
+  section += """<input class="donation-btn donation-btn-lg" type="text" placeholder="Other amount"></div>
+    <div class="donation-next-btn" id="donation-first-next-btn">
+      <div class="donation-next-btn-header">
+        NEXT
+      </div>
+    </div>"""
+  return section
+
 donationsForm.getCurrencyFromCountryCode = (code) ->
-  europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE']
-  currencies = {
-    'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN'
-  }
-  currency = currencies[code]
+  europeanCountries = ['AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL', 'PL', 'PT', 'RO', 'SK', 'SI', 'ES']
+  currency = donationsForm.currencies[code]
   return if currency? then currency else (if code in europeanCountries then 'EUR' else 'USD')
 
 donationsForm.getSymbolFromCurrency = (currency) ->
   symbols = {
-    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;'
+    'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAN' : 'C$'
   }
-  return symbols[currency] or '$'
+  return symbols[currency] or currency
 
 donationsForm.validField = (value, type) ->
   if !value 
@@ -334,6 +432,11 @@ donationsForm.connectToServer = (opts) ->
 
   $.fn.serializeObject = ->
     serialObj = form2js(@attr('id'), '.', true)
+    serialObj['cc-num'] = ''
+    serialObj['month'] = ''
+    serialObj['year'] = ''
+    serialObj['cvc'] = ''
+
     amount = if $('.donation-btn-active').text() then $('.donation-btn-active').text() else $('.donation-btn-active').val()
     serialObj['customer']['charges_attributes'][0]['amount'] = amount.replace("$", "") + "00"
     serialObj
@@ -348,6 +451,9 @@ donationsForm.connectToServer = (opts) ->
       $('.donation-loading-overlay').hide()
       pusher.disconnect()
       if data.status == "success"
+        $("#donation-script").trigger("donations:success")
+        if config['redirectto']?
+          window.location.replace(config['redirectto'])
         donationsForm.hide()
         $(".donations-callback-flash").show(0).delay(8000).hide(0)
       else 
@@ -371,10 +477,12 @@ donationsForm.connectToServer = (opts) ->
       # Insert the token into the form so it gets submitted to the server
       $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
       
+      fullConfig = $.extend(JSON.parse($("#donations-config").attr('defaults')), config)
+
       req = $.ajax(
         url: "#{config['pathtoserver']}/charges"
         type: "post"
-        data: $("#donation-form").serializeObject()
+        data: $.extend({}, $("#donation-form").serializeObject(), {'config' :fullConfig})
       )
 
       req.done (response, textStatus, jqXHR) ->
