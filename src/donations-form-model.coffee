@@ -60,6 +60,26 @@ class DonationsFormModel
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
     , this)
 
+    self.selectedBtn = ko.observable(-1)
+    # Button amount
+    self.selectedAmount = ko.observable("0")
+    # Input amount
+    self.inputtedAmount = ko.observable(null)
+
+    self.displayAmount = ko.computed(->
+      self.inputtedAmount() or self.selectedAmount()
+    , this).extend({ required: { message: "Please select an amount" }, min: 1, digit: true })
+    
+    self.setActiveAmount = (index, amount) ->
+      if index > -1
+        self.inputtedAmount(null)
+        self.selectedAmount(self.amounts()[index])
+        self.selectedBtn(index)
+
+    self.clearSelectedButton = ->
+      self.selectedAmount(0)
+      self.selectedBtn(-1)
+
     self.amounts = ko.computed(->
       arr = []
       for entry, count in self.seedValues
@@ -77,25 +97,6 @@ class DonationsFormModel
     self.amountsLength = ko.computed(->
       self.amounts().length
     , this)
-
-    self.selectedBtn = ko.observable(-1)
-    # Button amount
-    self.selectedAmount = ko.observable("0")
-    # Input amount
-    self.inputtedAmount = ko.observable(null)
-
-    self.displayAmount = ko.computed(->
-      self.inputtedAmount() or self.selectedAmount()
-    , this).extend({ required: { message: "Please select an amount" }, notEqual: "0", digit: true })
-
-    self.setActiveAmount = (index, amount) ->
-      if index > -1
-        self.inputtedAmount(null)
-        self.selectedAmount(self.amounts()[index])
-        self.selectedBtn(index)
-
-    self.clearSelectedButton = ->
-      self.selectedBtn(-1)
     
     self.visibleInputSet = ko.observable(0)
 
