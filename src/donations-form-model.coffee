@@ -34,34 +34,48 @@ class DonationsFormModel
     self.imgPath = ko.observable(config['imgpath'])
     self.initializeIcons(self.imgPath())
 
-    self.amounts = ko.observableArray([15,35,50,100,250,500,100])
-    self.computeAmounts = (seedvalues, seedamount) ->
-      arr = []
-      count = 0
-      for entry in seedvalues
-        if count < 7
-          arr.push(Math.floor(parseInt(entry) / 100.0 * parseInt(seedamount)))
-        count += 1
-      self.amounts(arr)
-    if config['seedvalues']? and config['seedamount']?
-      self.computeAmounts(config['seedvalues'].split(","), config['seedamount'])
+    self.seedAmount = config['seedamount'] || 100
+    self.seedValues = if config['seedvalues']? then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
 
-    self.amountsLength = ko.computed(->
-      self.amounts().length
-    , this)
     self.currencies = {
-      'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAN', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
+      'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
     }
 
     self.currenciesArray = ko.observableArray [
-      'USD', 'GBP', 'CAN', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
+      'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
     ]
-    self.selectedCurrency = ko.observable(config['seedcurrency'] or 'USD')
+    self.seededCurrency = config['seedcurrency'] or 'USD'
+
+    initializeCurrency = ->
+      if config['currencyconversion'] == "detect"
+        return self.currencies[config['country']]
+      else
+        return self.seededCurrency
+
+    self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
       symbols = {
-        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAN' : 'C$'
+        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : 'C$'
       }
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
+    , this)
+
+    self.amounts = ko.computed(->
+      arr = []
+      for entry, count in self.seedValues
+        baseAmount = Math.floor(parseInt(entry) / 100.0 * parseInt(self.seedAmount))
+        if count < 7 # limit 7 buttons
+          if config['currencyconversion'] in ["detect", "choose"]
+            conversionRateToCurrency = config[self.selectedCurrency()] or 1
+            conversionRateFromCurrency = config[self.seededCurrency] or 1
+            arr.push(Math.floor(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
+          else
+            arr.push(baseAmount)
+      return arr
+    , this)
+
+    self.amountsLength = ko.computed(->
+      self.amounts().length
     , this)
 
     self.selectedBtn = ko.observable(-1)
