@@ -6,7 +6,7 @@ class DonationsFormModel
       imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
-
+    
     ko.validation.configure({
       insertMessages: false
     });

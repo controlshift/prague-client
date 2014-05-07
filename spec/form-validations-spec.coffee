@@ -1,58 +1,101 @@
 describe "DonationsFormModel", ->
-  `var target;`
+  `var donationsForm;`
+  `var configHash;`
   beforeEach ->
-    `target = new DonationsFormModel($)`
+    loadLocalJson = ->
+      json = null
+      $.ajax
+        async: false
+        dataType: 'json'
+        url: 'config.json'
+        success: (dat) ->
+          json = dat
+      return json
+    `configHash = loadLocalJson();`
+    `donationsForm = new DonationsFormModel($, configHash)`
     return
 
   describe "Form validations", ->
     it "should check for presence of first name", ->
-      target.firstName("Foo")
-      expect(target.firstName.isValid()).toBeTruthy()
-      target.firstName(null)
-      expect(target.firstName.isValid()).toBeFalsy()
+      donationsForm.firstName("Foo")
+      expect(donationsForm.firstName.isValid()).toBeTruthy()
+      donationsForm.firstName(null)
+      expect(donationsForm.firstName.isValid()).toBeFalsy()
 
     it "should return true for a valid email", ->
-      target.email("a@b.com")
-      expect(target.email.isValid()).toBeTruthy()
+      donationsForm.email("a@b.com")
+      expect(donationsForm.email.isValid()).toBeTruthy()
 
     it "should return false for an invalid email", ->
-      target.email("ab.com")
-      expect(target.email.isValid()).toBeFalsy()
+      donationsForm.email("ab.com")
+      expect(donationsForm.email.isValid()).toBeFalsy()
 
     it "should accept a valid cvc", ->
-      target.cvc("432")
-      expect(target.cvc.isValid()).toBeTruthy()
+      donationsForm.cvc("432")
+      expect(donationsForm.cvc.isValid()).toBeTruthy()
 
     it "should reject an invalid cvc", ->
-      target.cvc("432a")
-      expect(target.cvc.isValid()).toBeFalsy()
+      donationsForm.cvc("432a")
+      expect(donationsForm.cvc.isValid()).toBeFalsy()
 
     it "should accept a valid credit card #", ->
-      target.cardNumber("4242 4242 4242 4242")
-      expect(target.cardNumber.isValid()).toBeTruthy()
+      donationsForm.cardNumber("4242 4242 4242 4242")
+      expect(donationsForm.cardNumber.isValid()).toBeTruthy()
 
     it "should reject an invalid credit card #", ->
-      target.cardNumber("4242 4242")
-      expect(target.cardNumber.isValid()).toBeFalsy()
+      donationsForm.cardNumber("4242 4242")
+      expect(donationsForm.cardNumber.isValid()).toBeFalsy()
 
     it "should accept a valid date", ->
-      target.cardMonth('01')
-      target.cardYear("#{(new Date).getFullYear() + 1}")
-      expect(target.cardDate.isValid()).toBeTruthy()
+      donationsForm.cardMonth('01')
+      donationsForm.cardYear("#{(new Date).getFullYear() + 1}")
+      expect(donationsForm.cardDate.isValid()).toBeTruthy()
 
     it "should reject an old date", ->
-      target.cardMonth('01')
-      target.cardYear("#{(new Date).getFullYear() - 1}")
-      expect(target.cardDate.isValid()).toBeFalsy()
+      donationsForm.cardMonth('01')
+      donationsForm.cardYear("#{(new Date).getFullYear() - 1}")
+      expect(donationsForm.cardDate.isValid()).toBeFalsy()
     return
 
   describe "Parsing query strings", ->
     it "should return the expected hash", ->
-      expect(target.parseQueryString("foo=bar&foo2=bar2")).toEqual({'foo' : 'bar', 'foo2' : 'bar2'})
+      expect(donationsForm.parseQueryString("foo=bar&foo2=bar2")).toEqual({'foo' : 'bar', 'foo2' : 'bar2'})
 
     it "should return an empty hash when the query string is undefined or blank", ->
-      expect(target.parseQueryString("")).toEqual({})
-      expect(target.parseQueryString(undefined)).toEqual({})
+      expect(donationsForm.parseQueryString("")).toEqual({})
+      expect(donationsForm.parseQueryString(undefined)).toEqual({})
+
+    return
+
+  describe "Currency conversion", ->
+    `var formWithConversion;`
+    beforeEach ->
+      conversionHash = $.extend({
+        'seedamount' : 100,
+        'seedvalues' : "100,200,300",
+        'currencyconversion' : 'choose'
+      }, configHash)
+
+      `formWithConversion = new DonationsFormModel($, conversionHash);`
+      return
+    
+    # Note: the BBD is pegged to the USD at 0.5 BBD to 1 USD
+
+    it "should convert amounts if currencyconversion=choose", ->
+      formWithConversion.selectedCurrency('BBD')
+      expect(formWithConversion.amounts()).toEqual([200,400,600])
+
+    it "should convert amounts if currencyconversion=detect and the country is different", ->
+      detectHash = $.extend({
+        'seedamount' : 100,
+        'seedvalues' : "100,200,300",
+        'seedcurrency' : 'BBD',
+        'currencyconversion' : 'choose'
+      }, configHash)
+
+      detectForm = new DonationsFormModel($, detectHash);
+      detectForm.selectedCurrency('USD')
+      expect(detectForm.amounts()).toEqual([50,100,150])
 
     return
   return
