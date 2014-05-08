@@ -1,0 +1,7 @@
+{
+    "name": "prague-client",
+    "version": "0.0.1",
+    "dependencies": {
+        "jasmine": "https://github.com/pivotal/jasmine/raw/master/dist/jasmine-standalone-2.0.0.zip"
+    }
+}

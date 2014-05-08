@@ -23,6 +23,19 @@
   "engine": "node >= 0.10",
   "devDependencies": {
     "grunt-ver": "~0.5.1",
-    "grunt-replace": "~0.7.4"
+    "grunt-replace": "~0.7.4",
+    "gulp": "~3.6.2",
+    "gulp-coffee": "~1.4.2",
+    "gulp-watch": "~0.6.4",
+    "gulp-s3": "~0.2.0",
+    "gulp-replace": "~0.3.0",
+    "gulp-plumber": "~0.6.1",
+    "gulp-clean": "~0.2.4",
+    "gulp-connect": "~2.0.5",
+    "gulp-less": "~1.2.3",
+    "gulp-sass": "~0.7.1",
+    "gulp-gzip": "0.0.8",
+    "gulp-uglify": "~0.2.1",
+    "gulp-jade": "~0.5.0"
   }
 }

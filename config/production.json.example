@@ -1,7 +1,5 @@
-{
-  "aws" : {
+module.exports = {
     "bucket" : "your-bucket-name",
     "key" : "ABC123",
     "secret" : "ABC123"
-  }
 }
