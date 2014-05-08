@@ -23,7 +23,8 @@ var gulp = require('gulp'),
     destinations = {
         build: 'build/',
         js: 'jhey/js/',
-        html: 'build/'
+        html: 'build/',
+        docs: 'build'
     },
     options = {
         s3: {
