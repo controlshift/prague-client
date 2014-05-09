@@ -44,7 +44,9 @@ class DonationsFormModel
     self.currenciesArray = ko.observableArray [
       'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
     ]
+    self.currenciesEnabled = ko.observable(config['currencyconversion'] isnt "none")
     self.seededCurrency = config['seedcurrency'] or 'USD'
+    self.formCurrency = config['formcurrency'] or self.seededCurrency
 
     initializeCurrency = ->
       unless config['currencyconversion'] in ["none", "choose"]
@@ -85,7 +87,7 @@ class DonationsFormModel
       for entry, count in self.seedValues
         baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
         if count < 7 # limit 7 buttons
-          if config['currencyconversion'] isnt "none"
+          if self.currenciesEnabled()
             conversionRateToCurrency = config[self.selectedCurrency()] or 1
             conversionRateFromCurrency = config[self.seededCurrency] or 1
             arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
