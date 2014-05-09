@@ -123,7 +123,11 @@ html = """
       <div class="donation-payment-errors" data-bind="visible: false">
         Something went wrong.
       </div>
-      <button type="submit" class="donation-submit">
+      <button type="submit" class="donation-submit" data-bind="click: function()
+          { 
+            if(inputSet3.isValid()) { submitForm(); } 
+            else { inputSet3.errors.showAllMessages();}
+          }">
         <div class="donation-submit-header">
           SUBMIT
         </div>
