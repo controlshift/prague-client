@@ -8,6 +8,7 @@ var gulp = require('gulp'),
     plumber = require('gulp-plumber'),
     connect = require('gulp-connect'),
     uglify = require('gulp-uglify'),
+    concat = require('gulp-concat'),
     s3 = require('gulp-s3'),
     gzip = require('gulp-gzip'),
     aws = require('./config/production.json.example'),
@@ -18,13 +19,29 @@ var gulp = require('gulp'),
         clean: ['jhey/css/', 'jhey/js/'],
         coffee: 'src/coffee/**/*.coffee',
         jade: 'src/jade/**/*.jade',
-        overwatch: 'build/**/*.*'
+        overwatch: 'build/**/*.*',
+        asset_scripts: [
+            'vendor/form2js/src/form2js.js',
+            'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
+            'vendor/jquery/dist/jquery.min.js',
+            'vendor/jquery.payment/lib/jquery.payment.js',
+            'vendor/knockout-validation/Dist/knockout.validation.min.js',
+            'vendor/knockout/index.js'
+        ],
+        asset_styles: [
+            'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
+        ],
+        asset_images: [
+            'vendor/jasmine/lib/jasmine-2.0.0/**/*.png'
+        ]
     },
     destinations = {
+        images: 'build/img',
         build: 'build/',
-        js: 'jhey/js/',
         html: 'build/',
-        docs: 'build'
+        docs: 'build/',
+        js: 'build/js/',
+        css: 'build/css/'
     },
     options = {
         s3: {
@@ -57,28 +74,29 @@ gulp.task('clean', function(event) {
 });
 /** Scss:compile; compiles scss sources**/
 gulp.task('scss:compile', function(event) {
-    // looks like it has a dependency on sass, minification and clean up.
-    // maybe introduce concatenation if needed because can be better to do it that way
-    // if there are many style files.
     return gulp.src(sources.scss)
         .pipe(plumber())
         .pipe(sass(
-            {
-                outputStyle: "compressed"
-            }
+            // {
+            //     outputStyle: "compressed"
+            // }
         ))
         .pipe(gulp.dest(destinations.build));
 });
 gulp.task('coffee:compile', function(event) {
-    return gulp.src(sources.coffee)
+    return gulp.src('src/coffee/test/*.coffee')
         .pipe(plumber())
         .pipe(coffee())
-        .pipe(uglify())
-        .pipe(gulp.dest(destinations.js));
+        .pipe(gulp.dest(destinations.build + 'test/'));
+
 });
-gulp.task('scripts', function(event) {
-    // run a coffee build task, then an uglify task, then clean out the scripts folder.
-});
+// gulp.task('scripts', function(event) {
+//     gulp.src('src/coffee/test/*.coffee')
+//         .pipe(plumber())
+//         .pipe(coffee())
+//         .pipe(gulp.dest(destinations.build));
+//     return
+// });
 gulp.task('jade:compile', function(event) {
     return gulp.src(sources.jade)
         .pipe(plumber())
@@ -87,10 +105,18 @@ gulp.task('jade:compile', function(event) {
         }))
         .pipe(gulp.dest(destinations.html))
 });
-gulp.task('build', function(event) {
-    // so the build task relies on cleaning out the build first then copying the build?
-    // run the stylesheets, scripts, ver, versionread, and replace tasks
-    // along with jasmine?
+gulp.task('image-assets:load', function(event) {
+    return gulp.src(sources.asset_images, {base: "./"})
+        .pipe(gulp.dest(destinations.images));
 });
+gulp.task('script-assets:load', function(event) {
+    return gulp.src(sources.asset_scripts, {base: "./"})
+        .pipe(gulp.dest(destinations.js));
+});
+gulp.task('style-assets:load', function(event) {
+    return gulp.src(sources.asset_styles, {base: "./"})
+        .pipe(gulp.dest(destinations.css));
+});
+gulp.task('assets:load', ['image-assets:load', 'script-assets:load', 'style-assets:load']);
 gulp.task('dev', ['serve']);
 gulp.task('default', ['dev', 'deploy:s3']);

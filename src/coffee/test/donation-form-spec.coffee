@@ -78,7 +78,7 @@ describe "DonationsFormModel", ->
 
       `formWithConversion = new DonationsFormModel($, conversionHash);`
       return
-    
+
     # Note: the BBD is pegged to the USD at 0.5 BBD to 1 USD
 
     it "should convert amounts if currencyconversion=choose", ->

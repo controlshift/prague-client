@@ -27,9 +27,9 @@ getGlobalDefaults = (callback) ->
     type: 'get',
     url: "#{$('#donation-script').data('pathtoserver')}\/config\/#{$('#donation-script').data('org')}.json",
     dataType: 'jsonp',
-    complete: (dat) -> 
+    complete: (dat) ->
       callback(dat, $.extend($("#donation-script").data()))
-      
+
 
 loadExternalScripts = ->
   testmode = ($("#donation-script").data('testmode') == true)
@@ -55,7 +55,7 @@ loadExternalScripts = ->
         return json
 
       if testmode then initializeForm($.extend(loadLocalJson(), $("#donation-script").data())) else getGlobalDefaults(initializeForm)
-      
+
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 

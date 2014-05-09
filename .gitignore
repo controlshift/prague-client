@@ -2,3 +2,4 @@
 /.sass-cache/
 config/production.json
 .idea
+vendor/

@@ -2,7 +2,11 @@
     "name": "prague-client",
     "version": "0.0.1",
     "dependencies": {
-        "jasmine": "https://github.com/pivotal/jasmine/raw/master/dist/jasmine-standalone-2.0.0.zip",
-        "knockout": "latest"
+        "jquery": "latest",
+        "form2js": "latest",
+        "jquery.payment": "latest",
+        "knockout": "http://knockoutjs.com/downloads/knockout-3.1.0.js",
+        "knockout-validation": "latest",
+        "jasmine": "https://github.com/pivotal/jasmine/raw/master/dist/jasmine-standalone-2.0.0.zip"
     }
 }
