@@ -108,6 +108,18 @@ describe "DonationsFormModel", ->
       detectForm.selectedCurrency('USD')
       expect(detectForm.amounts()).toEqual([100,200,300])
 
+    it "should allow me to specify a form currency", ->
+      chooseHash = $.extend({
+        'seedamount' : 100,
+        'seedvalues' : "100,200,300",
+        'currencyconversion' : 'choose',
+        'formcurrency' : 'AUD'
+      }, configHash)
+
+      chooseForm = new DonationsFormModel($, chooseHash)
+      expect(chooseForm.currencySymbol()).toEqual("AU$")
+
+
     it "should round numbers up to 1 if they are 0", ->
       expect(formWithConversion.round(0)).toEqual(1)
 
