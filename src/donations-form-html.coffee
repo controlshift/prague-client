@@ -33,7 +33,7 @@ html = """
       </div>
     </div>
     <div class="donation-input-set" id="input-set-first" data-bind="visible: visibleInputSet() === 0">
-      <div class="donations-currency-select-row">
+      <div class="donations-currency-select-row" data-bind="visible: currenciesEnabled()">
         Currency: 
         <select class="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>

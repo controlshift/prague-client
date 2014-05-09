@@ -6,7 +6,7 @@ class DonationsFormModel
       imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
-
+    
     ko.validation.configure({
       insertMessages: false
     });
@@ -44,13 +44,15 @@ class DonationsFormModel
     self.currenciesArray = ko.observableArray [
       'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
     ]
+    self.currenciesEnabled = ko.observable(config['currencyconversion'] isnt "none")
     self.seededCurrency = config['seedcurrency'] or 'USD'
+    self.formCurrency = config['formcurrency'] or self.seededCurrency
 
     initializeCurrency = ->
-      if config['currencyconversion'] == "detect"
+      unless config['currencyconversion'] in ["none", "choose"]
         return self.currencies[config['country']]
       else
-        return self.seededCurrency
+        return self.formCurrency
 
     self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
@@ -58,24 +60,6 @@ class DonationsFormModel
         'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : 'C$'
       }
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
-    , this)
-
-    self.amounts = ko.computed(->
-      arr = []
-      for entry, count in self.seedValues
-        baseAmount = Math.floor(parseInt(entry) / 100.0 * parseInt(self.seedAmount))
-        if count < 7 # limit 7 buttons
-          if config['currencyconversion'] in ["detect", "choose"]
-            conversionRateToCurrency = config[self.selectedCurrency()] or 1
-            conversionRateFromCurrency = config[self.seededCurrency] or 1
-            arr.push(Math.floor(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
-          else
-            arr.push(baseAmount)
-      return arr
-    , this)
-
-    self.amountsLength = ko.computed(->
-      self.amounts().length
     , this)
 
     self.selectedBtn = ko.observable(-1)
@@ -86,8 +70,8 @@ class DonationsFormModel
 
     self.displayAmount = ko.computed(->
       self.inputtedAmount() or self.selectedAmount()
-    , this).extend({ required: { message: "Please select an amount" }, notEqual: "0", digit: true })
-
+    , this).extend({ required: { message: "Please select an amount" }, min: 1, digit: true })
+    
     self.setActiveAmount = (index, amount) ->
       if index > -1
         self.inputtedAmount(null)
@@ -95,7 +79,26 @@ class DonationsFormModel
         self.selectedBtn(index)
 
     self.clearSelectedButton = ->
+      self.selectedAmount(0)
       self.selectedBtn(-1)
+
+    self.amounts = ko.computed(->
+      arr = []
+      for entry, count in self.seedValues
+        baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
+        if count < 7 # limit 7 buttons
+          if self.currenciesEnabled()
+            conversionRateToCurrency = config[self.selectedCurrency()] or 1
+            conversionRateFromCurrency = config[self.seededCurrency] or 1
+            arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
+          else
+            arr.push(self.round(baseAmount))
+      return arr
+    , this)
+
+    self.amountsLength = ko.computed(->
+      self.amounts().length
+    , this)
     
     self.visibleInputSet = ko.observable(0)
 
@@ -165,3 +168,7 @@ class DonationsFormModel
 
     for k, v of icons
       $(k).css('background-image', "url('#{path}/#{v}')")
+
+  round: (number) ->
+    temp = Math.round(parseFloat(number.toPrecision(2)))
+    if temp == 0 then 1 else temp
