@@ -88,7 +88,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(testScriptFilter.restore())
         .pipe(donationsFormFilter)
         .pipe(coffee())
-        .pipe(concat(concattedModels.js'))
+        .pipe(concat('concattedModels.js'))
         .pipe(donationsFormFilter.restore())
         .pipe(gulp.dest(destinations.public));
 });
@@ -126,7 +126,7 @@ gulp.task('style-assets:load', function(event) {
         .pipe(gulp.dest(destinations.css));
 });
 /** Assets:load; loads all css and js assets **/
-gulp.task('assets:load', ['image-assets:load', 'script-assets:load', 'style-assets:load']);
+gulp.task('assets:load', ['script-assets:load', 'style-assets:load']);
 /** Dev; sets up the development environment so you can hack away on a server **/
 gulp.task('dev', ['serve', 'watch']);
 gulp.task('default', ['dev']);
