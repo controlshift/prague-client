@@ -9,6 +9,7 @@ var gulp = require('gulp'),
     connect = require('gulp-connect'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
+    filter = require('gulp-filter'),
     s3 = require('gulp-s3'),
     gzip = require('gulp-gzip'),
     aws = require('./config/production.json.example'),
@@ -77,10 +78,19 @@ gulp.task('scss:compile', function(event) {
 });
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
-    return gulp.src('src/coffee/test/*.coffee')
+    var testScriptFilter = filter('test/*.coffee'),
+        loaderFilter = filter('donations-loader.coffee'),
+        donationsFormFilter = filter(['*form*.coffee']);
+    return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
+        .pipe(testScriptFilter)
         .pipe(coffee())
-        .pipe(gulp.dest(destinations.public + 'test/'));
+        .pipe(testScriptFilter.restore())
+        .pipe(donationsFormFilter)
+        .pipe(coffee())
+        .pipe(concat(concattedModels.js'))
+        .pipe(donationsFormFilter.restore())
+        .pipe(gulp.dest(destinations.public));
 });
 /** Jade:compile; compiles jade source **/
 gulp.task('jade:compile', function(event) {
@@ -91,6 +101,20 @@ gulp.task('jade:compile', function(event) {
         }))
         .pipe(gulp.dest(destinations.html))
 });
+/** Scss:watch; watch for scss source changes **/
+gulp.task('scss:watch', function(event) {
+    watch({glob: sources.scss }, ['scss:compile']);
+});
+/** Coffee:watch; watch for coffeescript source changes and compile as necessary **/
+gulp.task('coffee:watch', function(event) {
+    watch({glob: sources.coffee}, ['coffee:compile']);
+});
+/** Jade:watch; watch for jade source changes and compile as necessary **/
+gulp.task('jade:watch', function(event) {
+    watch({glob: sources.jade }, ['jade:compile']);
+});
+/** Watch; watch for source changes and run necessary compilation during development **/
+gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch']);
 /** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
     return gulp.src(sources.asset_scripts, {base: "./"})
@@ -104,5 +128,5 @@ gulp.task('style-assets:load', function(event) {
 /** Assets:load; loads all css and js assets **/
 gulp.task('assets:load', ['image-assets:load', 'script-assets:load', 'style-assets:load']);
 /** Dev; sets up the development environment so you can hack away on a server **/
-gulp.task('dev', ['serve']);
+gulp.task('dev', ['serve', 'watch']);
 gulp.task('default', ['dev']);
