@@ -47,7 +47,7 @@ class DonationsFormModel
     self.seededCurrency = config['seedcurrency'] or 'USD'
 
     initializeCurrency = ->
-      if config['currencyconversion'] == "detect"
+      unless config['currencyconversion'] in ["none", "choose"]
         return self.currencies[config['country']]
       else
         return self.seededCurrency
@@ -85,7 +85,7 @@ class DonationsFormModel
       for entry, count in self.seedValues
         baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
         if count < 7 # limit 7 buttons
-          if config['currencyconversion'] in ["detect", "choose"]
+          if config['currencyconversion'] isnt "none"
             conversionRateToCurrency = config[self.selectedCurrency()] or 1
             conversionRateFromCurrency = config[self.seededCurrency] or 1
             arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
