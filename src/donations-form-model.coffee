@@ -72,6 +72,14 @@ class DonationsFormModel
       self.inputtedAmount() or self.selectedAmount()
     , this).extend({ required: { message: "Please select an amount" }, min: 1, digit: true })
 
+    self.normalizedAmount = ko.computed(->
+      zeroDecimalCurrencies = ['BIF', 'CLP', 'JPY', 'KRW', 'PYG', 'VUV', 'XOF', 'CLP', 'GNF', 'KMF', 'MGA', 'RWF', 'XAF', 'XPF']
+      if self.selectedCurrency() in zeroDecimalCurrencies
+        self.displayAmount()
+      else
+        self.displayAmount() + "00"
+    , this)
+
     self.setActiveAmount = (index, amount) ->
       if index > -1
         self.inputtedAmount(null)
@@ -221,15 +229,28 @@ class DonationsFormModel
         $form.find("button").prop "disabled", false
         $('.donation-loading-overlay').hide()
       else
-        # token contains id, last4, and card type
-        token = response.id
-        
-        # Insert the token into the form so it gets submitted to the server
-        $form.append $("<input type=\"hidden\" name=\"card_token\" />").val(token)
+        charge = {}
+
+        charge.amount = self.normalizedAmount()
+        charge.currency = self.selectedCurrency
+
+        customer = {}
+        customer.first_name = self.firstName
+        customer.last_name = self.last_name
+        customer.email = self.email
+        customer.country = self.countryCode
+        customer.charges_attributes = [charge]
+
+        formPost = {}
+        formPost.customer = customer
+        formPost.card_token = response.id # from stripe
+        formPost.config = config
+        formPost.organization_slug = self.org
+
         req = $.ajax(
           url: "#{config['pathtoserver']}/charges"
           type: "post"
-          data: $.extend({}, $("#donation-form").serializeObject(), {'config' : config })
+          data: formPost
         )
         req.done (response, textStatus, jqXHR) ->
           gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
@@ -238,6 +259,7 @@ class DonationsFormModel
           gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
           $form.find(".donation-payment-errors").text(errorThrown or "Something went wrong.").show()
           $('.donation-loading-overlay').hide()
+          $form.find("button").prop "disabled", false
         false
 
     self.submitForm = ->
