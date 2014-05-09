@@ -14,12 +14,12 @@ var gulp = require('gulp'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
     sources = {
-        deployment: ['build/img/*.*', 'build/jquery.donations.*.js', 'build/jquery.donations.*.css'],
+        deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
         scss: 'src/style.scss',
         clean: ['jhey/css/', 'jhey/js/'],
         coffee: 'src/coffee/**/*.coffee',
         jade: 'src/jade/**/*.jade',
-        overwatch: 'build/**/*.*',
+        overwatch: 'public/**/*.*',
         asset_scripts: [
             'vendor/form2js/src/form2js.js',
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
@@ -30,18 +30,14 @@ var gulp = require('gulp'),
         ],
         asset_styles: [
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
-        ],
-        asset_images: [
-            'vendor/jasmine/lib/jasmine-2.0.0/**/*.png'
         ]
     },
     destinations = {
-        images: 'build/img',
-        build: 'build/',
-        html: 'build/',
-        docs: 'build/',
-        js: 'build/js/',
-        css: 'build/css/'
+        public: 'public/',
+        html: 'public/',
+        docs: 'public/',
+        js: 'public/js/',
+        css: 'public/css/'
     },
     options = {
         s3: {
@@ -50,13 +46,13 @@ var gulp = require('gulp'),
                 }
             }
     };
+/** serve; sets up a static server with livereload **/
 gulp.task('serve', function(event) {
     connect.server({
 		root: destinations.docs,
 		port: 1987,
 		livereload: true
 	});
-	// sets up a livereload that watches for any changes in the root
 	watch({glob: sources.overwatch})
 		.pipe(connect.reload());
 });
@@ -76,27 +72,17 @@ gulp.task('clean', function(event) {
 gulp.task('scss:compile', function(event) {
     return gulp.src(sources.scss)
         .pipe(plumber())
-        .pipe(sass(
-            // {
-            //     outputStyle: "compressed"
-            // }
-        ))
-        .pipe(gulp.dest(destinations.build));
+        .pipe(sass()) // use outputStyle: 'compressed' for minifications.
+        .pipe(gulp.dest(destinations.public));
 });
+/** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
     return gulp.src('src/coffee/test/*.coffee')
         .pipe(plumber())
         .pipe(coffee())
-        .pipe(gulp.dest(destinations.build + 'test/'));
-
+        .pipe(gulp.dest(destinations.public + 'test/'));
 });
-// gulp.task('scripts', function(event) {
-//     gulp.src('src/coffee/test/*.coffee')
-//         .pipe(plumber())
-//         .pipe(coffee())
-//         .pipe(gulp.dest(destinations.build));
-//     return
-// });
+/** Jade:compile; compiles jade source **/
 gulp.task('jade:compile', function(event) {
     return gulp.src(sources.jade)
         .pipe(plumber())
@@ -105,18 +91,18 @@ gulp.task('jade:compile', function(event) {
         }))
         .pipe(gulp.dest(destinations.html))
 });
-gulp.task('image-assets:load', function(event) {
-    return gulp.src(sources.asset_images, {base: "./"})
-        .pipe(gulp.dest(destinations.images));
-});
+/** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
     return gulp.src(sources.asset_scripts, {base: "./"})
         .pipe(gulp.dest(destinations.js));
 });
+/**Style-assets:load; load vendor styles **/
 gulp.task('style-assets:load', function(event) {
     return gulp.src(sources.asset_styles, {base: "./"})
         .pipe(gulp.dest(destinations.css));
 });
+/** Assets:load; loads all css and js assets **/
 gulp.task('assets:load', ['image-assets:load', 'script-assets:load', 'style-assets:load']);
+/** Dev; sets up the development environment so you can hack away on a server **/
 gulp.task('dev', ['serve']);
-gulp.task('default', ['dev', 'deploy:s3']);
+gulp.task('default', ['dev']);
