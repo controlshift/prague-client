@@ -97,5 +97,17 @@ describe "DonationsFormModel", ->
       detectForm.selectedCurrency('USD')
       expect(detectForm.amounts()).toEqual([50,100,150])
 
+    it "should round numbers up to 1 if they are 0", ->
+      expect(formWithConversion.round(0)).toEqual(1)
+
+    it "should in general round numbers to 2 significant digits", ->
+      expect(formWithConversion.round(4567)).toEqual(4600)
+
+    it "should round decimals", ->
+      expect(formWithConversion.round(4.532)).toEqual(5)
+
+    it "should leave numbers that are already in the desired format alone", ->
+      expect(formWithConversion.round(45)).toEqual(45)
+
     return
   return

@@ -83,14 +83,14 @@ class DonationsFormModel
     self.amounts = ko.computed(->
       arr = []
       for entry, count in self.seedValues
-        baseAmount = Math.floor(parseInt(entry) / 100.0 * parseInt(self.seedAmount))
+        baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
         if count < 7 # limit 7 buttons
           if config['currencyconversion'] in ["detect", "choose"]
             conversionRateToCurrency = config[self.selectedCurrency()] or 1
             conversionRateFromCurrency = config[self.seededCurrency] or 1
-            arr.push(Math.floor(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
+            arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
           else
-            arr.push(baseAmount)
+            arr.push(self.round(baseAmount))
       return arr
     , this)
 
@@ -166,3 +166,7 @@ class DonationsFormModel
 
     for k, v of icons
       $(k).css('background-image', "url('#{path}/#{v}')")
+
+  round: (number) ->
+    temp = Math.round(parseFloat(number.toPrecision(2)))
+    if temp == 0 then 1 else temp
