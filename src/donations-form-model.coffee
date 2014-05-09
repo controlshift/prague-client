@@ -52,7 +52,7 @@ class DonationsFormModel
       unless config['currencyconversion'] in ["none", "choose"]
         return self.currencies[config['country']]
       else
-        return self.seededCurrency
+        return self.formCurrency
 
     self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
