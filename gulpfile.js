@@ -31,6 +31,9 @@ var gulp = require('gulp'),
         ],
         asset_styles: [
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
+        ],
+        asset_images: [
+            'src/img/**/*.*'
         ]
     },
     destinations = {
@@ -38,7 +41,8 @@ var gulp = require('gulp'),
         html: 'public/',
         docs: 'public/',
         js: 'public/js/',
-        css: 'public/css/'
+        css: 'public/css/',
+        img: 'public/img/'
     },
     options = {
         s3: {
@@ -78,19 +82,19 @@ gulp.task('scss:compile', function(event) {
 });
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
-    var testScriptFilter = filter('test/*.coffee'),
-        loaderFilter = filter('donations-loader.coffee'),
-        donationsFormFilter = filter(['*form*.coffee']);
+    var loaderFilter = filter('donations-loader.js'),
+        donationsFormFilter = filter(['*form*.js']);
     return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
-        .pipe(testScriptFilter)
         .pipe(coffee())
-        .pipe(testScriptFilter.restore())
+        .pipe(loaderFilter)
+        .pipe(concat('jhey.donations.loader.js'))
+        .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
-        .pipe(coffee())
-        .pipe(concat('concattedModels.js'))
+        .pipe(concat('jhey.donations.js'))
         .pipe(donationsFormFilter.restore())
-        .pipe(gulp.dest(destinations.public));
+        .pipe(gulp.dest(destinations.public))
+        .pipe(gulp.dest(destinations.public + 'test/'));
 });
 /** Jade:compile; compiles jade source **/
 gulp.task('jade:compile', function(event) {
@@ -125,8 +129,13 @@ gulp.task('style-assets:load', function(event) {
     return gulp.src(sources.asset_styles, {base: "./"})
         .pipe(gulp.dest(destinations.css));
 });
+/** Image-assets:load; loads icons and images **/
+gulp.task('image-assets:load', function(event) {
+    return gulp.src(sources.asset_images, {base: "./src/img"})
+        .pipe(gulp.dest(destinations.img));
+});
 /** Assets:load; loads all css and js assets **/
-gulp.task('assets:load', ['script-assets:load', 'style-assets:load']);
+gulp.task('assets:load', ['script-assets:load', 'style-assets:load', 'image-assets:load']);
 /** Dev; sets up the development environment so you can hack away on a server **/
 gulp.task('dev', ['serve', 'watch']);
 gulp.task('default', ['dev']);
