@@ -101,7 +101,7 @@ html = """
           Card Number*
           <span class="donation-error-label" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
-        <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, style: { backgroundImage: ccBackground() } ">
+        <input name="cc-num" id="cc-num-input" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, event: {keydown: calcCardType}, style: { backgroundImage: ccBackground() } ">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">

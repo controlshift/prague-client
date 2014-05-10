@@ -140,10 +140,14 @@ class DonationsFormModel
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
 
+    self.ccType = ko.observable()
+    self.calcCardType = ->
+      self.ccType($.payment.cardType($('#cc-num-input').val()))
+      return true
+
     self.ccBackground = ko.computed(->
-      ccType = $.payment.cardType(self.cardNumber())
-      if ccType in ['amex','mastercard','visa','discover','dinersclub']
-        return "url(#{self.imgPath()}/icon-cc-#{ccType}.png)"
+      if self.ccType() in ['amex','mastercard','visa','discover','dinersclub']
+        return "url(#{self.imgPath()}/icon-cc-#{self.ccType()}.png)"
       else
         return "url(#{self.imgPath()}/icon-cc-none.png)"
     , this)
@@ -191,16 +195,6 @@ class DonationsFormModel
     }, opts)
 
     Stripe.setPublishableKey config['stripepublickey']
-
-    $.fn.serializeObject = ->
-      serialObj = form2js(@attr('id'), '.', true)
-      serialObj['cc-num'] = ''
-      serialObj['month'] = ''
-      serialObj['year'] = ''
-      serialObj['cvc'] = ''
-      amount = self.displayAmount()
-      serialObj['customer']['charges_attributes'][0]['amount'] = amount.replace(self.currencySymbol(), "") + "00"
-      serialObj
 
     subscribeToDonationChannel = (channelToken) ->
       pusher = new Pusher(config['pusherpublickey'])
