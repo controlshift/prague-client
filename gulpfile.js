@@ -83,18 +83,31 @@ gulp.task('scss:compile', function(event) {
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
     var loaderFilter = filter('donations-loader.js'),
-        donationsFormFilter = filter(['*form*.js']);
+        donationsFormFilter = filter('*form*.js'),
+        testFilter = filter(['test/*feature.js']);
     return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
         .pipe(coffee())
         .pipe(loaderFilter)
-        .pipe(concat('jhey.donations.loader.js'))
+        .pipe(concat('jquery.donations.loader.js'))
+        .pipe(gulp.dest(destinations.public + 'test/'))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
-        .pipe(concat('jhey.donations.js'))
+        .pipe(concat('jquery.donations.js'))
+        .pipe(gulp.dest(destinations.public + 'test/'))
         .pipe(donationsFormFilter.restore())
+        .pipe(testFilter)
+        .pipe(concat('test/casper.js'))
+        .pipe(testFilter.restore())
         .pipe(gulp.dest(destinations.public))
-        .pipe(gulp.dest(destinations.public + 'test/'));
+});
+/** Package:script:create; packages up scripts **/
+gulp.task('package:script:create', function(event) {
+    return console.log('this task concats the js with all the external libraries pulled in from bower.')
+});
+/** Package:style:create; packages up styles **/
+gulp.task('package:style:create', function(event) {
+    return console.log('this task concats the css with all the external libraries pulled in from bower.')
 });
 /** Jade:compile; compiles jade source **/
 gulp.task('jade:compile', function(event) {
@@ -121,6 +134,8 @@ gulp.task('jade:watch', function(event) {
 gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch']);
 /** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
+    gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
+        .pipe(gulp.dest(destinations.js));
     return gulp.src(sources.asset_scripts, {base: "./"})
         .pipe(gulp.dest(destinations.js));
 });

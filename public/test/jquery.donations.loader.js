@@ -1,1 +1,121 @@
-(function(){var a,b,c,d,e,f;d=function(a,b,c,d){var e;return e=null,"js"===a?(e=document.createElement("script"),e.setAttribute("type","text/javascript"),e.setAttribute("src",b)):"css"===a&&(e=document.createElement("link"),e.setAttribute("type","text/css"),e.setAttribute("rel","stylesheet"),e.setAttribute("href",b)),e.readyState?e.onreadystatechange=function(){("complete"===this.readyState||"loaded"===this.readyState)&&c(d)}:e.onload=function(){c(d)},(document.getElementsByTagName("head")[0]||document.documentElement).appendChild(e)};b=function(b){return a.ajax({type:"get",url:""+a("#donation-script").data("pathtoserver")+"/config/"+a("#donation-script").data("org")+".json",dataType:"jsonp",complete:function(c){return b(c,a.extend(a("#donation-script").data()))}})},e=function(){var e,f,g,h,i,j,k,l,m;for(j=a("#donation-script").data("testmode")===!0,e=j?"jquery.donations.69dc166d.js":"https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.69dc166d.js",i=["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js",e],g=0,f=function(){var d,e;return g++,g===i.length?(initJQueryPayments(jQuery),c(),d=function(b){return a(".donations-form-anchor").append(html),ko.applyBindings(new DonationsFormModel(a,b))},e=function(){var b;return b=null,a.ajax({async:!1,dataType:"json",url:"config.json",success:function(a){return b=a}}),b},j?d(a.extend(e(),a("#donation-script").data())):b(d)):void 0},m=[],k=0,l=i.length;l>k;k++)h=i[k],m.push(d("js",h,f));return m},c=function(){return function(a,b,c,d,e,f,g){a.GoogleAnalyticsObject=e,a[e]=a[e]||function(){(a[e].q=a[e].q||[]).push(arguments)},a[e].l=1*new Date,f=b.createElement(c),g=b.getElementsByTagName(c)[0],f.async=1,f.src=d,g.parentNode.insertBefore(f,g)}(window,document,"script","//www.google-analytics.com/analytics.js","gaDonations"),gaDonations("create","UA-48690908-1","controlshiftlabs.com"),gaDonations("send","pageview")},f=function(){a=jQuery=window.jQuery.noConflict(!0);var b,c;c=a("#donation-script").data("testmode")===!0,b=c?"jquery.donations.3516e2b1.css":"https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.3516e2b1.css",d("css",b,function(){}),e()},void 0===window.jQuery||window.jQuery.fn.jquery&&(1!==parseInt(window.jQuery.fn.jquery[0])||parseInt(window.jQuery.fn.jquery[1])<9)?d("js","https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",f):f()}).call(this);
+(function() {
+  var $;
+  var getGlobalDefaults, googleAnalyticsInit, loadExternalResource, loadExternalScripts, scriptLoadHandler;
+
+  loadExternalResource = function(type, source, callback, params) {
+    var tag;
+    tag = null;
+    if (type === "js") {
+      tag = document.createElement("script");
+      tag.setAttribute("type", "text/javascript");
+      tag.setAttribute("src", source);
+    } else if (type === "css") {
+      tag = document.createElement("link");
+      tag.setAttribute("type", "text/css");
+      tag.setAttribute("rel", "stylesheet");
+      tag.setAttribute("href", source);
+    }
+    if (tag.readyState) {
+      tag.onreadystatechange = function() {
+        if (this.readyState === "complete" || this.readyState === "loaded") {
+          callback(params);
+        }
+      };
+    } else {
+      tag.onload = function() {
+        callback(params);
+      };
+    }
+    return (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(tag);
+  };
+
+  var globalDefaults = {};;
+
+  getGlobalDefaults = function(callback) {
+    return $.ajax({
+      type: 'get',
+      url: "" + ($('#donation-script').data('pathtoserver')) + "\/config\/" + ($('#donation-script').data('org')) + ".json",
+      dataType: 'jsonp',
+      complete: function(dat) {
+        return callback(dat, $.extend($("#donation-script").data()));
+      }
+    });
+  };
+
+  loadExternalScripts = function() {
+    var donationsJs, executeMain, loadedScripts, scrString, scriptStrings, testmode, _i, _len, _results;
+    testmode = $("#donation-script").data('testmode') === true;
+    donationsJs = testmode ? "jquery.donations.js" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js";
+    scriptStrings = ["https://js.stripe.com/v2/", "https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs];
+    loadedScripts = 0;
+    executeMain = function() {
+      var initializeForm, loadLocalJson;
+      loadedScripts++;
+      if (loadedScripts === scriptStrings.length) {
+        initJQueryPayments(jQuery);
+        googleAnalyticsInit();
+        initializeForm = function(config) {
+          $('.donations-form-anchor').append(html);
+          return ko.applyBindings(new DonationsFormModel($, config));
+        };
+        loadLocalJson = function() {
+          var json;
+          json = null;
+          $.ajax({
+            async: false,
+            dataType: 'json',
+            url: 'config.json',
+            success: function(dat) {
+              return json = dat;
+            }
+          });
+          return json;
+        };
+        if (testmode) {
+          return initializeForm($.extend(loadLocalJson(), $("#donation-script").data()));
+        } else {
+          return getGlobalDefaults(initializeForm);
+        }
+      }
+    };
+    _results = [];
+    for (_i = 0, _len = scriptStrings.length; _i < _len; _i++) {
+      scrString = scriptStrings[_i];
+      _results.push(loadExternalResource("js", scrString, executeMain));
+    }
+    return _results;
+  };
+
+  googleAnalyticsInit = function() {
+    (function(i, s, o, g, r, a, m) {
+      i["GoogleAnalyticsObject"] = r;
+      i[r] = i[r] || function() {
+        (i[r].q = i[r].q || []).push(arguments);
+      };
+      i[r].l = 1 * new Date();
+      a = s.createElement(o);
+      m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m);
+    })(window, document, "script", "//www.google-analytics.com/analytics.js", "gaDonations");
+    gaDonations("create", "UA-48690908-1", "controlshiftlabs.com");
+    return gaDonations("send", "pageview");
+  };
+
+  scriptLoadHandler = function() {
+    $ = jQuery = window.jQuery.noConflict(true);
+    var cssSrc, testmode;
+    testmode = $("#donation-script").data('testmode') === true;
+    cssSrc = testmode ? "jquery.donations.css" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css";
+    loadExternalResource("css", cssSrc, (function() {}));
+    loadExternalScripts();
+  };
+
+  if (window.jQuery === undefined || (window.jQuery.fn.jquery && (parseInt(window.jQuery.fn.jquery[0]) !== 1 || parseInt(window.jQuery.fn.jquery[1]) < 9))) {
+    loadExternalResource("js", "https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", scriptLoadHandler);
+  } else {
+    scriptLoadHandler();
+  }
+
+}).call(this);
