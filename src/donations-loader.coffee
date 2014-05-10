@@ -22,21 +22,18 @@ loadExternalResource = (type, source, callback, params) ->
   (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
 
 `var globalDefaults = {};`
-getGlobalDefaults = ->
+getGlobalDefaults = (callback) ->
   $.ajax
     type: 'get',
-    url: "#{$('#donation-script').data('pathtoserver')}\/organizations\/#{$('#donation-script').data('org')}.json",
+    url: "#{$('#donation-script').data('pathtoserver')}\/config\/#{$('#donation-script').data('org')}.json",
     dataType: 'jsonp',
-    success: (dat) -> 
-      globalDefaults = dat
-      $("#donation-script").trigger("donations:defaultsloaded", dat)
-      $('.donations-form-anchor').append($("<div>")
-        .attr('id', 'donations-config')
-        .attr('hidden', true)
-        .attr('defaults', JSON.stringify(dat)))
+    complete: (dat) -> 
+      callback(dat, $.extend($("#donation-script").data()))
+      
 
 loadExternalScripts = ->
-  donationsJs = if ($("#donation-script").data('testmode') == true) then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"
+  testmode = ($("#donation-script").data('testmode') == true)
+  donationsJs = if testmode then "jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"
   scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs]
   loadedScripts = 0
   executeMain = ->
@@ -44,7 +41,21 @@ loadExternalScripts = ->
     if loadedScripts == scriptStrings.length
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
-      donationsForm.init($, $.extend({}, globalDefaults, $("#donation-script").data()))
+      initializeForm = (config) ->
+        $('.donations-form-anchor').append(html)
+        ko.applyBindings(new DonationsFormModel($, config))
+      loadLocalJson = ->
+        json = null
+        $.ajax
+          async: false
+          dataType: 'json'
+          url: 'config.json'
+          success: (dat) ->
+            json = dat
+        return json
+
+      if testmode then initializeForm($.extend(loadLocalJson(), $("#donation-script").data())) else getGlobalDefaults(initializeForm)
+      
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)
 
@@ -73,7 +84,6 @@ scriptLoadHandler = ->
   testmode = ($("#donation-script").data('testmode') == true)
   cssSrc = if testmode then "jquery.donations.css" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
-  getGlobalDefaults()
   loadExternalScripts()
   return
 

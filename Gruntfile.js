@@ -76,7 +76,7 @@ module.exports = function(grunt) {
       build: {
         expand: true,
         cwd: 'src',
-        src: [ '**/donations-form.coffee' ],
+        src: [ '**/donations-form*.coffee' ],
         dest: 'build',
         ext: '.js'
       },
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
         },
         expand: true,
         cwd: 'src',
-        src: [ '**/donations-form.coffee' ],
+        src: [ '**/donations-form*.coffee' ],
         dest: 'build',
         ext: '.js'
       },
