@@ -232,32 +232,34 @@ class DonationsFormModel
         charge = {}
 
         charge.amount = self.normalizedAmount()
-        charge.currency = self.selectedCurrency
+        charge.currency = self.selectedCurrency()
 
         customer = {}
-        customer.first_name = self.firstName
-        customer.last_name = self.last_name
-        customer.email = self.email
-        customer.country = self.countryCode
+        customer.first_name = self.firstName()
+        customer.last_name = self.lastName()
+        customer.email = self.email()
+        customer.country = self.countryCode()
         customer.charges_attributes = [charge]
 
         formPost = {}
         formPost.customer = customer
         formPost.card_token = response.id # from stripe
         formPost.config = config
-        formPost.organization_slug = self.org
+        formPost.organization_slug = self.org()
 
         req = $.ajax(
           url: "#{config['pathtoserver']}/charges"
           type: "post"
-          data: formPost
+          dataType: 'json'
+          contentType: 'application/json'
+          data: JSON.stringify(formPost)
         )
         req.done (response, textStatus, jqXHR) ->
           gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
           subscribeToDonationChannel(response.pusher_channel_token)
         req.fail (response, textStatus, errorThrown) ->
           gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-          $form.find(".donation-payment-errors").text(errorThrown or "Something went wrong.").show()
+          $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
           $('.donation-loading-overlay').hide()
           $form.find("button").prop "disabled", false
         false
