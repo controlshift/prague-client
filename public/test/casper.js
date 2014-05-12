@@ -37,9 +37,6 @@
     });
   });
 
-}).call(this);
-
-(function() {
   casper.test.begin("seeding currencies to the form", 1, function(test) {
     casper.on('remote.alert', function(message) {
       return this.log('remote alert message: ' + message, 'warning');

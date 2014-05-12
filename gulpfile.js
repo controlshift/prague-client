@@ -11,6 +11,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     filter = require('gulp-filter'),
     s3 = require('gulp-s3'),
+    bust = require('gulp-buster'),
     gzip = require('gulp-gzip'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
@@ -77,29 +78,39 @@ gulp.task('clean', function(event) {
 gulp.task('scss:compile', function(event) {
     return gulp.src(sources.scss)
         .pipe(plumber())
+        .pipe(concat('test/jhey.donations.css'))
         .pipe(sass()) // use outputStyle: 'compressed' for minifications.
         .pipe(gulp.dest(destinations.public));
 });
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
-    var loaderFilter = filter('donations-loader.js'),
-        donationsFormFilter = filter('*form*.js'),
-        testFilter = filter(['test/*feature.js']);
+    var loaderFilter = filter('donations-loader.coffee'),
+        donationsFormFilter = filter('*form*.coffee'),
+        testFilter = filter(['test/*feature.coffee']);
     return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
-        .pipe(coffee())
         .pipe(loaderFilter)
-        .pipe(concat('jquery.donations.loader.js'))
+        .pipe(concat('jquery.donations.loader.coffee'))
+        .pipe(coffee())
         .pipe(gulp.dest(destinations.public + 'test/'))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
-        .pipe(concat('jquery.donations.js'))
+        .pipe(concat('jquery.donations.coffee'))// TODO:THIS IS REALLY BAD SO WE ARE JUST PULLING A GLOBAL VARIABLE OF HTML. THIS MUST BE CHANGED.
+        .pipe(coffee({
+            bare: true
+        }))
         .pipe(gulp.dest(destinations.public + 'test/'))
         .pipe(donationsFormFilter.restore())
         .pipe(testFilter)
-        .pipe(concat('test/casper.js'))
+        .pipe(concat('test/casper.coffee'))
+        .pipe(coffee())
         .pipe(testFilter.restore())
         .pipe(gulp.dest(destinations.public))
+});
+gulp.task('version:build', function(event) {
+    return gulp.src(['public/test/jhey.donations.js', 'jhey.donations.css'], {base: 'public/'})
+        .pipe(bust('buster.json'))
+        .pipe(gulp.dest('version/'));
 });
 /** Package:script:create; packages up scripts **/
 gulp.task('package:script:create', function(event) {
