@@ -58,12 +58,12 @@ var gulp = require('gulp'),
 /** serve; sets up a static server with livereload **/
 gulp.task('serve', function(event) {
     connect.server({
-		root: destinations.docs,
-		port: 1987,
-		livereload: true
-	});
-	watch({glob: sources.overwatch})
-		.pipe(connect.reload());
+    root: destinations.docs,
+    port: 1987,
+    livereload: true
+  });
+  watch({glob: sources.overwatch})
+    .pipe(connect.reload());
 });
 /** Deploy:S3; gzips sources and deploys to S3.**/
 gulp.task('deploy:s3', function(event) {
