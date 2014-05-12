@@ -2,5 +2,5 @@
 /.sass-cache/
 config/production.json
 .idea
-vendor/
-public/
+/public/
+/vendor/
