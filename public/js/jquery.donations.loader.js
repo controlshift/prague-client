@@ -45,7 +45,7 @@
   loadExternalScripts = function() {
     var donationsJs, executeMain, loadedScripts, scrString, scriptStrings, testmode, _i, _len, _results;
     testmode = $("#donation-script").data('testmode') === true;
-    donationsJs = testmode ? "jquery.donations.js" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js";
+    donationsJs = testmode ? "/js/jquery.donations.js" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js";
     scriptStrings = ["https://js.stripe.com/v2/", "https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs];
     loadedScripts = 0;
     executeMain = function() {
@@ -64,7 +64,7 @@
           $.ajax({
             async: false,
             dataType: 'json',
-            url: 'config.json',
+            url: '/config/config.json',
             success: function(dat) {
               return json = dat;
             }
@@ -107,7 +107,7 @@
     $ = jQuery = window.jQuery.noConflict(true);
     var cssSrc, testmode;
     testmode = $("#donation-script").data('testmode') === true;
-    cssSrc = testmode ? "jquery.donations.css" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css";
+    cssSrc = testmode ? "/css/jquery.donations.css" : "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css";
     loadExternalResource("css", cssSrc, (function() {}));
     loadExternalScripts();
   };

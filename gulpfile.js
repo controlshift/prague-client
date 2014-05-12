@@ -17,11 +17,12 @@ var gulp = require('gulp'),
     replace = require('gulp-replace'),
     sources = {
         deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
-        scss: 'src/style.scss',
+        scss: 'src/scss/**/*.scss',
         clean: ['jhey/css/', 'jhey/js/'],
         coffee: 'src/coffee/**/*.coffee',
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
+        config: 'src/config/*.json',
         asset_scripts: [
             'vendor/form2js/src/form2js.js',
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
@@ -40,11 +41,12 @@ var gulp = require('gulp'),
     destinations = {
         public: 'public/',
         html: 'public/',
+        config: 'public/config/',
         docs: 'public/',
         js: 'public/js/',
         css: 'public/css/',
         img: 'public/img/',
-        test: 'test/'
+        test: 'public/test/'
     },
     options = {
         s3: {
@@ -79,33 +81,39 @@ gulp.task('clean', function(event) {
 gulp.task('scss:compile', function(event) {
     return gulp.src(sources.scss)
         .pipe(plumber())
-        .pipe(concat('test/jhey.donations.css'))
+        .pipe(concat('jquery.donations.css'))
         .pipe(sass()) // use outputStyle: 'compressed' for minifications.
-        .pipe(gulp.dest(destinations.public));
+        .pipe(gulp.dest(destinations.css));
 });
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
     var loaderFilter = filter('donations-loader.coffee'),
         donationsFormFilter = filter('*form*.coffee'),
-        testFilter = filter(['test/*feature.coffee']);
+        casperFilter = filter('test/*feature.coffee'),
+        jasmineFilter = filter('test/*spec.coffee');
     return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
         .pipe(loaderFilter)
         .pipe(concat('jquery.donations.loader.coffee'))
         .pipe(coffee())
-        .pipe(gulp.dest(destinations.test))
+        .pipe(gulp.dest(destinations.js))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
         .pipe(concat('jquery.donations.coffee'))// TODO:THIS IS REALLY BAD SO WE ARE JUST PULLING A GLOBAL VARIABLE OF HTML. THIS MUST BE CHANGED.
         .pipe(coffee({
             bare: true
         }))
-        .pipe(gulp.dest(destinations.test))
+        .pipe(gulp.dest(destinations.js))
         .pipe(donationsFormFilter.restore())
-        .pipe(testFilter)
+        .pipe(casperFilter)
+        .pipe(concat('test/casper.coffee'))
         .pipe(coffee())
-        .pipe(gulp.dest(destinations.test))
-        .pipe(testFilter.restore());
+        .pipe(gulp.dest(destinations.js))
+        .pipe(casperFilter.restore())
+        .pipe(jasmineFilter)
+        .pipe(coffee())
+        .pipe(gulp.dest(destinations.js))
+        .pipe(jasmineFilter.restore());
 });
 gulp.task('version:build', function(event) {
     return gulp.src(['public/jquery.donations.js', 'public/jquery.donations.css'])
@@ -121,6 +129,14 @@ gulp.task('package:script:create', function(event) {
 /** Package:style:create; packages up styles **/
 gulp.task('package:style:create', function(event) {
     return console.log('this task concats the css with all the external libraries pulled in from bower.')
+});
+gulp.task('config:watch', function(event) {
+    watch({glob: sources.config }, ['config:push']);
+});
+/** Config:push; pushes over widget config **/
+gulp.task('config:push', function(event) {
+    return gulp.src(sources.config)
+        .pipe(gulp.dest(destinations.config));
 });
 /** Jade:compile; compiles jade source **/
 gulp.task('jade:compile', function(event) {
@@ -144,7 +160,7 @@ gulp.task('jade:watch', function(event) {
     watch({glob: sources.jade }, ['jade:compile']);
 });
 /** Watch; watch for source changes and run necessary compilation during development **/
-gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch']);
+gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch', 'config:watch']);
 /** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
     gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
@@ -154,6 +170,8 @@ gulp.task('script-assets:load', function(event) {
 });
 /**Style-assets:load; load vendor styles **/
 gulp.task('style-assets:load', function(event) {
+    gulp.src('src/css/vendor/cleanslate/*.css', {base: "./src/css/"})
+        .pipe(gulp.dest(destinations.css));
     return gulp.src(sources.asset_styles, {base: "./"})
         .pipe(gulp.dest(destinations.css));
 });

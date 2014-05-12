@@ -7,7 +7,7 @@ describe "DonationsFormModel", ->
       $.ajax
         async: false
         dataType: 'json'
-        url: 'config.json'
+        url: '/config/config.json'
         success: (dat) ->
           json = dat
       return json
