@@ -11,7 +11,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     filter = require('gulp-filter'),
     s3 = require('gulp-s3'),
-    bust = require('gulp-buster'),
+    rev = require('gulp-rev'),
     gzip = require('gulp-gzip'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
@@ -43,7 +43,8 @@ var gulp = require('gulp'),
         docs: 'public/',
         js: 'public/js/',
         css: 'public/css/',
-        img: 'public/img/'
+        img: 'public/img/',
+        test: 'test/'
     },
     options = {
         s3: {
@@ -92,25 +93,26 @@ gulp.task('coffee:compile', function(event) {
         .pipe(loaderFilter)
         .pipe(concat('jquery.donations.loader.coffee'))
         .pipe(coffee())
-        .pipe(gulp.dest(destinations.public + 'test/'))
+        .pipe(gulp.dest(destinations.test))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
         .pipe(concat('jquery.donations.coffee'))// TODO:THIS IS REALLY BAD SO WE ARE JUST PULLING A GLOBAL VARIABLE OF HTML. THIS MUST BE CHANGED.
         .pipe(coffee({
             bare: true
         }))
-        .pipe(gulp.dest(destinations.public + 'test/'))
+        .pipe(gulp.dest(destinations.test))
         .pipe(donationsFormFilter.restore())
         .pipe(testFilter)
-        .pipe(concat('test/casper.coffee'))
         .pipe(coffee())
-        .pipe(testFilter.restore())
-        .pipe(gulp.dest(destinations.public))
+        .pipe(gulp.dest(destinations.test))
+        .pipe(testFilter.restore());
 });
 gulp.task('version:build', function(event) {
-    return gulp.src(['public/test/jhey.donations.js', 'jhey.donations.css'], {base: 'public/'})
-        .pipe(bust('buster.json'))
-        .pipe(gulp.dest('version/'));
+    return gulp.src(['public/jquery.donations.js', 'public/jquery.donations.css'])
+        .pipe(rev())
+        .pipe(gulp.dest('public/'))
+        .pipe(rev.manifest())
+        .pipe(gulp.dest(process.cwd()));
 });
 /** Package:script:create; packages up scripts **/
 gulp.task('package:script:create', function(event) {
