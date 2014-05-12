@@ -6,7 +6,7 @@ class DonationsFormModel
       imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
-    
+
     ko.validation.configure({
       insertMessages: false
     });
@@ -44,13 +44,15 @@ class DonationsFormModel
     self.currenciesArray = ko.observableArray [
       'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
     ]
+    self.currenciesEnabled = ko.observable(config['currencyconversion'] isnt "none")
     self.seededCurrency = config['seedcurrency'] or 'USD'
+    self.formCurrency = config['formcurrency'] or self.seededCurrency
 
     initializeCurrency = ->
-      if config['currencyconversion'] == "detect"
+      unless config['currencyconversion'] in ["none", "choose"]
         return self.currencies[config['country']]
       else
-        return self.seededCurrency
+        return self.formCurrency
 
     self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
@@ -69,7 +71,15 @@ class DonationsFormModel
     self.displayAmount = ko.computed(->
       self.inputtedAmount() or self.selectedAmount()
     , this).extend({ required: { message: "Please select an amount" }, min: 1, digit: true })
-    
+
+    self.normalizedAmount = ko.computed(->
+      zeroDecimalCurrencies = ['BIF', 'CLP', 'JPY', 'KRW', 'PYG', 'VUV', 'XOF', 'CLP', 'GNF', 'KMF', 'MGA', 'RWF', 'XAF', 'XPF']
+      if self.selectedCurrency() in zeroDecimalCurrencies
+        self.displayAmount()
+      else
+        self.displayAmount() + "00"
+    , this)
+
     self.setActiveAmount = (index, amount) ->
       if index > -1
         self.inputtedAmount(null)
@@ -83,14 +93,14 @@ class DonationsFormModel
     self.amounts = ko.computed(->
       arr = []
       for entry, count in self.seedValues
-        baseAmount = Math.floor(parseInt(entry) / 100.0 * parseInt(self.seedAmount))
+        baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
         if count < 7 # limit 7 buttons
-          if config['currencyconversion'] in ["detect", "choose"]
+          if self.currenciesEnabled()
             conversionRateToCurrency = config[self.selectedCurrency()] or 1
             conversionRateFromCurrency = config[self.seededCurrency] or 1
-            arr.push(Math.floor(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
+            arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
           else
-            arr.push(baseAmount)
+            arr.push(self.round(baseAmount))
       return arr
     , this)
 
@@ -130,10 +140,14 @@ class DonationsFormModel
     $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
     $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
 
+    self.ccType = ko.observable()
+    self.calcCardType = ->
+      self.ccType($.payment.cardType($('#cc-num-input').val()))
+      return true
+
     self.ccBackground = ko.computed(->
-      ccType = $.payment.cardType(self.cardNumber())
-      if ccType in ['amex','mastercard','visa','discover','dinersclub']
-        return "url(#{self.imgPath()}/icon-cc-#{ccType}.png)"
+      if self.ccType() in ['amex','mastercard','visa','discover','dinersclub']
+        return "url(#{self.imgPath()}/icon-cc-#{self.ccType()}.png)"
       else
         return "url(#{self.imgPath()}/icon-cc-none.png)"
     , this)
@@ -141,6 +155,8 @@ class DonationsFormModel
     self.inputSet1 = ko.validatedObservable({ amount: self.displayAmount })
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})
     self.inputSet3 = ko.validatedObservable({ cardNumber: self.cardNumber, cardDate: self.cardDate, cvc: self.cvc})
+
+    self.connectToServer(config, self)
 
   parseQueryString: (q) ->
     hash = {}
@@ -166,3 +182,89 @@ class DonationsFormModel
 
     for k, v of icons
       $(k).css('background-image', "url('#{path}/#{v}')")
+
+  round: (number) ->
+    temp = Math.round(parseFloat(number.toPrecision(2)))
+    if temp == 0 then 1 else temp
+
+  connectToServer: (opts, self) ->
+    config = $.extend({}, {
+      stripepublickey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
+      pusherpublickey: '331ca3447b91e264a76f',
+      pathtoserver: "http://localhost:3000"
+    }, opts)
+
+    Stripe.setPublishableKey config['stripepublickey']
+
+    subscribeToDonationChannel = (channelToken) ->
+      pusher = new Pusher(config['pusherpublickey'])
+
+      channel = pusher.subscribe(channelToken)
+      channel.bind "charge_completed", (data) ->
+        # You can also use data.message
+        $('.donation-loading-overlay').hide()
+        pusher.disconnect()
+        if data.status == "success"
+          $("#donation-script").trigger("donations:success")
+          if config['redirectto']?
+            window.location.replace(config['redirectto'])
+          $("#donation-form").hide()
+          $(".donations-callback-flash").show(0).delay(8000).hide(0)
+        else 
+          $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
+
+
+    stripeResponseHandler = (status, response) ->
+      $form = $("#donation-form")
+      if response.error
+        # Show the errors on the form
+        gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
+        $form.find(".donation-payment-errors").text response.error.message
+        $form.find("button").prop "disabled", false
+        $('.donation-loading-overlay').hide()
+      else
+        charge = {}
+
+        charge.amount = self.normalizedAmount()
+        charge.currency = self.selectedCurrency()
+
+        customer = {}
+        customer.first_name = self.firstName()
+        customer.last_name = self.lastName()
+        customer.email = self.email()
+        customer.country = self.countryCode()
+        customer.charges_attributes = [charge]
+
+        formPost = {}
+        formPost.customer = customer
+        formPost.card_token = response.id # from stripe
+        formPost.config = config
+        formPost.organization_slug = self.org()
+
+        req = $.ajax(
+          url: "#{config['pathtoserver']}/charges"
+          type: "post"
+          dataType: 'json'
+          contentType: 'application/json'
+          data: JSON.stringify(formPost)
+        )
+        req.done (response, textStatus, jqXHR) ->
+          gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
+          subscribeToDonationChannel(response.pusher_channel_token)
+        req.fail (response, textStatus, errorThrown) ->
+          gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
+          $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
+          $('.donation-loading-overlay').hide()
+          $form.find("button").prop "disabled", false
+        false
+
+    self.submitForm = ->
+      gaDonations('send', 'event', 'advance-button', 'click#submit', 'submit', 1)
+      $form = $("#donation-form")
+      $('.donation-loading-overlay').show()
+      # Disable the submit button to prevent repeated clicks
+      $form.find("button").prop "disabled", true
+      Stripe.createToken $form, stripeResponseHandler
+      
+      # Prevent the form from submitting with the default action
+      false

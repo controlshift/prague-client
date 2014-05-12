@@ -33,7 +33,7 @@ html = """
       </div>
     </div>
     <div class="donation-input-set" id="input-set-first" data-bind="visible: visibleInputSet() === 0">
-      <div class="donations-currency-select-row">
+      <div class="donations-currency-select-row" data-bind="visible: currenciesEnabled()">
         Currency: 
         <select class="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>
@@ -101,7 +101,7 @@ html = """
           Card Number*
           <span class="donation-error-label" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
-        <input name="cc-num" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, style: { backgroundImage: ccBackground() } ">
+        <input name="cc-num" id="cc-num-input" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, event: {keydown: calcCardType}, style: { backgroundImage: ccBackground() } ">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
@@ -123,7 +123,11 @@ html = """
       <div class="donation-payment-errors" data-bind="visible: false">
         Something went wrong.
       </div>
-      <button type="submit" class="donation-submit">
+      <button type="submit" class="donation-submit" data-bind="click: function()
+          { 
+            if(inputSet3.isValid()) { submitForm(); } 
+            else { inputSet3.errors.showAllMessages();}
+          }">
         <div class="donation-submit-header">
           SUBMIT
         </div>
