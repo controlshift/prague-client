@@ -3,3 +3,4 @@
 config/production.json
 .idea
 vendor/
+public/
