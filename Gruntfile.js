@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
- 
+
   // configure the tasks
   grunt.initConfig({
     env: {
@@ -198,7 +198,7 @@ module.exports = function(grunt) {
         },
         files: [
           {
-            src: ['build/jquery.donations.loader.js'], 
+            src: ['build/jquery.donations.loader.js'],
             dest: 'build/jquery.donations.loader.js'
           }
         ]
@@ -247,7 +247,7 @@ module.exports = function(grunt) {
     }
 
   });
- 
+
   // load the tasks
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -260,36 +260,36 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-s3');
   grunt.loadNpmTasks('grunt-ver');
   grunt.loadNpmTasks('grunt-replace');
- 
+
   // define the tasks
-  
+
   grunt.registerTask(
-    'deploy-production', 
-    'Deploys the code to production', 
+    'deploy-production',
+    'Deploys the code to production',
     ['env:production', 's3']
   );
 
   grunt.registerTask(
-    'stylesheets', 
-    'Compiles the stylesheets.', 
+    'stylesheets',
+    'Compiles the stylesheets.',
     [ 'sass', 'cssmin', 'clean:stylesheets' ]
   );
 
   grunt.registerTask(
-    'scripts', 
-    'Compiles the JavaScript files.', 
+    'scripts',
+    'Compiles the JavaScript files.',
     [ 'coffee', 'uglify', 'clean:scripts' ]
   );
 
   grunt.registerTask(
-    'build', 
-    'Compiles all of the assets and copies the files to the build directory.', 
+    'build',
+    'Compiles all of the assets and copies the files to the build directory.',
     [ 'clean:build', 'copy:build', 'stylesheets', 'scripts', 'copy:jasmine', 'ver', 'versionread', 'replace' ]
   );
 
   grunt.registerTask(
-    'default', 
-    'Watches the project for changes, automatically builds them and runs a server.', 
+    'default',
+    'Watches the project for changes, automatically builds them and runs a server.',
     [ 'build', 'connect', 'watch' ]
   );
 

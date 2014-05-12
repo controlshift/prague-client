@@ -7,7 +7,7 @@ describe "DonationsFormModel", ->
       $.ajax
         async: false
         dataType: 'json'
-        url: 'config.json'
+        url: '/config/config.json'
         success: (dat) ->
           json = dat
       return json
@@ -78,7 +78,7 @@ describe "DonationsFormModel", ->
 
       `formWithConversion = new DonationsFormModel($, conversionHash);`
       return
-    
+
     # Note: the BBD is pegged to the USD at 0.5 BBD to 1 USD
 
     it "should convert displayed amounts to normalized amounts", ->
