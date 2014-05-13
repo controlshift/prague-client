@@ -24,12 +24,16 @@ var gulp = require('gulp'),
         overwatch: 'public/**/*.*',
         config: 'src/config/*.json',
         asset_scripts: [
-            'vendor/form2js/src/form2js.js',
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
             'vendor/jquery/dist/jquery.min.js',
             'vendor/jquery.payment/lib/jquery.payment.js',
             'vendor/knockout-validation/Dist/knockout.validation.min.js',
             'vendor/knockout/index.js'
+        ],
+        vendor_scripts: [
+            "js/vendor/jquery.payment/jquery.payment.js",
+            "js/vendor/knockout/index.js",
+            "js/vendor/knockout-validation/Dist/knockout.validation.min.js"
         ],
         asset_styles: [
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
@@ -142,6 +146,9 @@ gulp.task('jade:compile', function(event) {
     return gulp.src(sources.jade)
         .pipe(plumber())
         .pipe(jade({
+            data: {
+                vendor_scripts: sources.vendor_scripts
+            },
             pretty: true
         }))
         .pipe(gulp.dest(destinations.docs))

@@ -5,7 +5,6 @@ head
     link(rel="stylesheet", href="css/vendor/cleanslate/cleanslate.css")
 body(style = "margin: 0px;")
     .donations-form-anchor
-    script(src="js/vendor/jquery.payment/jquery.payment.js")
-    script(src="js/vendor/knockout/index.js")
-    script(src="js/vendor/knockout-validation/Dist/knockout.validation.min.js")
+    each scriptSrc in vendor_scripts
+        script(src=scriptSrc)
     script#donation-script(src="js/jquery.donations.loader.js", data-testmode="true", data-imgpath="./img", data-org="snakeoil", data-metaviewporttag="false", data-seedcurrency="USD", data-seedamount="10", data-seedvalues="100,200,300,400", data-pathtoserver="http://localhost:3000")
