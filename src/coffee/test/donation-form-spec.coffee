@@ -82,7 +82,7 @@ describe "DonationsFormModel", ->
     # Note: the BBD is pegged to the USD at 0.5 BBD to 1 USD
 
     it "should convert displayed amounts to normalized amounts", ->
-      formWithConversion.inputtedAmount = 10
+      formWithConversion.inputtedAmount(10)
       formWithConversion.currency = 'USD'
       expect(formWithConversion.normalizedAmount()).toEqual('1000')
 
