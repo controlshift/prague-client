@@ -3,8 +3,8 @@ head
     meta(http-equiv="Content-type", content="text/html; charset=utf-8")
     title Donations
     link(rel="stylesheet", href="css/vendor/cleanslate/cleanslate.css")
+    each src in vendor_scripts["dev"]
+        script(src= "js/" + src)
 body(style = "margin: 0px;")
     .donations-form-anchor
-    each scriptSrc in vendor_scripts
-        script(src=scriptSrc)
     script#donation-script(src="js/jquery.donations.loader.js", data-testmode="true", data-imgpath="./img", data-org="snakeoil", data-metaviewporttag="false", data-seedcurrency="USD", data-seedamount="10", data-seedvalues="100,200,300,400", data-pathtoserver="http://localhost:3000")

@@ -23,18 +23,19 @@ var gulp = require('gulp'),
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
         config: 'src/config/*.json',
-        asset_scripts: [
-            'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
-            'vendor/jquery/dist/jquery.min.js',
-            'vendor/jquery.payment/lib/jquery.payment.js',
-            'vendor/knockout-validation/Dist/knockout.validation.min.js',
-            'vendor/knockout/index.js'
-        ],
-        vendor_scripts: [
-            "js/vendor/jquery.payment/jquery.payment.js",
-            "js/vendor/knockout/index.js",
-            "js/vendor/knockout-validation/Dist/knockout.validation.min.js"
-        ],
+        asset_scripts: {
+            test: [
+                'vendor/jasmine/lib/jasmine-2.0.0/jasmine.js',
+                'vendor/jasmine/lib/jasmine-2.0.0/jasmine-html.js',
+                'vendor/jasmine/lib/jasmine-2.0.0/boot.js',
+            ],
+            dev: [
+                'vendor/jquery/dist/jquery.min.js',
+                "vendor/jquery.payment/jquery.payment.js",
+                'vendor/knockout/index.js',
+                'vendor/knockout-validation/Dist/knockout.validation.min.js'
+            ]
+        },
         asset_styles: [
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
         ],
@@ -147,7 +148,7 @@ gulp.task('jade:compile', function(event) {
         .pipe(plumber())
         .pipe(jade({
             data: {
-                vendor_scripts: sources.vendor_scripts
+                vendor_scripts: sources.asset_scripts
             },
             pretty: true
         }))
@@ -171,7 +172,7 @@ gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch', 'config:watch'])
 gulp.task('script-assets:load', function(event) {
     gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
         .pipe(gulp.dest(destinations.js));
-    return gulp.src(sources.asset_scripts, {base: "./"})
+    return gulp.src(sources.asset_scripts.test.concat(sources.asset_scripts.dev), {base: "./"})
         .pipe(gulp.dest(destinations.js));
 });
 /**Style-assets:load; load vendor styles **/
