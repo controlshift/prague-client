@@ -18,7 +18,7 @@ var gulp = require('gulp'),
     sources = {
         deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
         scss: 'src/scss/**/*.scss',
-        clean: ['jhey/css/', 'jhey/js/'],
+        clean: ['public'],
         coffee: 'src/coffee/**/*.coffee',
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
@@ -40,7 +40,6 @@ var gulp = require('gulp'),
     },
     destinations = {
         public: 'public/',
-        html: 'public/',
         config: 'public/config/',
         docs: 'public/',
         js: 'public/js/',
@@ -145,7 +144,7 @@ gulp.task('jade:compile', function(event) {
         .pipe(jade({
             pretty: true
         }))
-        .pipe(gulp.dest(destinations.html))
+        .pipe(gulp.dest(destinations.docs))
 });
 /** Scss:watch; watch for scss source changes **/
 gulp.task('scss:watch', function(event) {
@@ -183,5 +182,5 @@ gulp.task('image-assets:load', function(event) {
 /** Assets:load; loads all css and js assets **/
 gulp.task('assets:load', ['script-assets:load', 'style-assets:load', 'image-assets:load']);
 /** Dev; sets up the development environment so you can hack away on a server **/
-gulp.task('dev', ['serve', 'watch']);
+gulp.task('dev', ['assets:load', 'serve', 'watch']);
 gulp.task('default', ['dev']);
