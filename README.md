@@ -1,7 +1,7 @@
 Donation Labs Client
 ======
 
-[Travis Status](https://travis-ci.org/controlshift/prague-client.svg?branch=master)
+[![Build Status](https://travis-ci.org/controlshift/prague-client.svg?branch=master)](https://travis-ci.org/controlshift/prague-client)
 
 This is a jQuery donation webform widget to be used in conjunction with https://github.com/controlshift/prague-server
 
