@@ -16,7 +16,7 @@ var gulp = require('gulp'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
     sources = {
-        deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
+        deployment: ['src/img/*.*', 'build/js/jquery.donations.min.js', 'build/css/jquery.donations.min.css'],
         scss: 'src/scss/**/*.scss',
         clean: ['public', 'build'],
         coffee: ['src/coffee/**/*.coffee'],
@@ -131,8 +131,10 @@ gulp.task('version:build', function(event) {
 /** Build:script; concats all vendor scripts and donations scripts into one and then minifies to build folder. **/
 gulp.task('build:script', function(event) {
     var coffeeFilter = filter('*form*.coffee'),
+        loaderFilter = filter('*loader.coffee'),
         jsFilter = filter('!**/*.coffee');
     return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
+        .pipe(plumber())
         .pipe(coffeeFilter)
         .pipe(concat('jquery.donations.coffee'))
         .pipe(coffee({
@@ -143,6 +145,14 @@ gulp.task('build:script', function(event) {
         .pipe(concat('js/jquery.donations.js'))
         .pipe(gulp.dest(destinations.build))
         .pipe(concat('js/jquery.donations.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(jsFilter.restore())
+        .pipe(loaderFilter)
+        .pipe(concat('js/jquery.donations.loader.js'))
+        .pipe(coffee())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('js/jquery.donations.loader.min.js'))
         .pipe(uglify())
         .pipe(gulp.dest(destinations.build));
 });
