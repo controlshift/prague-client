@@ -140,7 +140,9 @@ gulp.task('build:script', function(event) {
         }))
         .pipe(coffeeFilter.restore())
         .pipe(jsFilter)
-        .pipe(concat('jquery.donations.js'))
+        .pipe(concat('js/jquery.donations.js'))
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('js/jquery.donations.min.js'))
         .pipe(uglify())
         .pipe(gulp.dest(destinations.build));
 });
@@ -148,7 +150,10 @@ gulp.task('build:script', function(event) {
 gulp.task('build:style', function(event) {
     var scssFilter = filter('**/*.scss');
     return gulp.src(['src/css/vendor/**/*.css', sources.scss])
-        .pipe(concat('jquery.donations.css'))
+        .pipe(concat('css/jquery.donations.css'))
+        .pipe(sass())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('css/jquery.donations.min.css'))
         .pipe(sass({
             outputStyle: "compressed"
         }))
