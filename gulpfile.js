@@ -18,8 +18,8 @@ var gulp = require('gulp'),
     sources = {
         deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
         scss: 'src/scss/**/*.scss',
-        clean: ['public'],
-        coffee: 'src/coffee/**/*.coffee',
+        clean: ['public', 'build'],
+        coffee: ['src/coffee/**/*.coffee'],
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
         config: 'src/config/*.json',
@@ -30,7 +30,8 @@ var gulp = require('gulp'),
                 'vendor/jasmine/lib/jasmine-2.0.0/boot.js',
             ],
             dev: [
-                'vendor/jquery/dist/jquery.min.js',
+                'vendor/pusher/index.js',
+                'vendor/stripe/index',
                 "vendor/jquery.payment/jquery.payment.js",
                 'vendor/knockout/index.js',
                 'vendor/knockout-validation/Dist/knockout.validation.min.js'
@@ -50,7 +51,8 @@ var gulp = require('gulp'),
         js: 'public/js/',
         css: 'public/css/',
         img: 'public/img/',
-        test: 'public/test/'
+        test: 'public/test/',
+        build: 'build/'
     },
     options = {
         s3: {
@@ -126,14 +128,34 @@ gulp.task('version:build', function(event) {
         .pipe(rev.manifest())
         .pipe(gulp.dest(process.cwd()));
 });
-/** Package:script:create; packages up scripts **/
-gulp.task('package:script:create', function(event) {
-    return console.log('this task concats the js with all the external libraries pulled in from bower.')
+/** Build:script; concats all vendor scripts and donations scripts into one and then minifies to build folder. **/
+gulp.task('build:script', function(event) {
+    var coffeeFilter = filter('*form*.coffee'),
+        jsFilter = filter('!**/*.coffee');
+    return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
+        .pipe(coffeeFilter)
+        .pipe(concat('jquery.donations.coffee'))
+        .pipe(coffee({
+            bare:true
+        }))
+        .pipe(coffeeFilter.restore())
+        .pipe(jsFilter)
+        .pipe(concat('jquery.donations.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(destinations.build));
 });
-/** Package:style:create; packages up styles **/
-gulp.task('package:style:create', function(event) {
-    return console.log('this task concats the css with all the external libraries pulled in from bower.')
+/** Build:style; packages up styles **/
+gulp.task('build:style', function(event) {
+    var scssFilter = filter('**/*.scss');
+    return gulp.src(['src/css/vendor/**/*.css', sources.scss])
+        .pipe(concat('jquery.donations.css'))
+        .pipe(sass({
+            outputStyle: "compressed"
+        }))
+        .pipe(gulp.dest(destinations.build));
 });
+/** Build task **/
+gulp.task('build', ['build:script', 'build:style']);
 gulp.task('config:watch', function(event) {
     watch({glob: sources.config }, ['config:push']);
 });
