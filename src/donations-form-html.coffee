@@ -35,7 +35,7 @@ html = """
     <div class="donation-input-set" id="input-set-first" data-bind="visible: visibleInputSet() === 0">
       <div class="donations-currency-select-row" data-bind="visible: currenciesEnabled()">
         Currency: 
-        <select class="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
+        <select class="donation-select" id="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>
       <span class="donation-field-label">
         <span class="donation-error-label" id="d-error-label-first" data-bind="validationMessage: displayAmount"></span>
@@ -101,7 +101,7 @@ html = """
           Card Number*
           <span class="donation-error-label" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
-        <input name="cc-num" id="cc-num-input" type="cc-num" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, event: {keydown: calcCardType}, style: { backgroundImage: ccBackground() } ">
+        <input name="cc-num" type="tel" id="cc-num-input" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, event: {keydown: calcCardType}, style: { backgroundImage: ccBackground() } ">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
@@ -118,7 +118,7 @@ html = """
           CVV/CVC* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">What is this?</a>
           <span class="donation-error-label" data-bind="validationMessage: cvc">Invalid CVV number</span>
         </span>
-        <input name="cvc" type="cvc" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc" data-bind="value: cvc">
+        <input name="cvc" type="tel" id="cvc-num-input" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc" data-bind="value: cvc">
       </div>
       <div class="donation-payment-errors" data-bind="visible: false">
         Something went wrong.
