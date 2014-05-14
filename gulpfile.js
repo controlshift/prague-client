@@ -16,7 +16,7 @@ var gulp = require('gulp'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
     sources = {
-        deployment: ['src/img/*.*', 'build/js/jquery.donations.min.js', 'build/css/jquery.donations.min.css'],
+        deployment: ['src/img/*.*', 'build/js/*.min.js', 'build/css/*.min.css'],
         scss: 'src/scss/**/*.scss',
         clean: ['public', 'build'],
         coffee: ['src/coffee/**/*.coffee'],
