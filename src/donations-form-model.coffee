@@ -137,8 +137,8 @@ class DonationsFormModel
       { month: self.cardMonth(), year: self.cardYear() }
     , this).extend({ ccDate: true, observable: true })
     self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true, cvc: true })
-    $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
-    $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
+    $('#cc-num-input').payment('formatCardNumber')
+    $('#cvc-num-input').payment('formatCardCVC')
 
     self.ccType = ko.observable()
     self.calcCardType = ->
