@@ -198,6 +198,9 @@
     .donation-select {
       height: 33px;
       margin-right: 7px;
+      text-indent: 0.01px;
+      text-overflow: '';
+      overflow: hidden;
       width: 125px;
       margin-top: 10px;
       background-color: white; 
