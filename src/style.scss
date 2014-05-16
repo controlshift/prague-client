@@ -41,7 +41,7 @@
 
   .donation-button-set {
     height: 200px;
-    width: 350px;
+    width: 327px;
     margin-top: 16px;
     font-size: 12px;
     margin-left: 40px;
@@ -159,7 +159,7 @@
       line-height: 60px;
     }
     .donation-btn-lg {
-      width: 210px;
+      width: 209px;
       padding: 0;
       text-align: center;
       background-color: white;
@@ -292,6 +292,7 @@ and (min-device-width : 200px)
 and (max-device-width : 480px) {
   .donation-form {
     width: 100%;
+    min-width: 320px;
     height: 100%;
     .donation-loading-overlay {
       width: 100%;
@@ -306,6 +307,17 @@ and (max-device-width : 480px) {
     .donation-button-set {
       margin: 0 auto;
       margin-top: 16px;
+      width: 318px;
+      .donation-btn-sm {
+        margin-left: 2px;
+        margin-right: 2px;
+        width: 98px;
+      }
+      .donation-btn-lg {
+        width: 204px;
+        margin-left: 2px;
+        margin-right: 2px;
+      }
     }
     .donation-input-set {
       width: 100%;
@@ -325,7 +337,7 @@ and (max-device-width : 480px) {
       }
     }
     .donation-next-btn, .donation-submit {
-      margin-top: 18px;
+      margin-top: 10px;
     }
     .donation-progress-banner {
       .donation-progress-banner-container {
