@@ -57,7 +57,7 @@ class DonationsFormModel
     self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
       symbols = {
-        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : 'C$'
+        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : '$'
       }
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
     , this)
