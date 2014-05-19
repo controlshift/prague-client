@@ -177,6 +177,7 @@ class DonationsFormModel
       '.donation-progress-arrow' : 'icon-arrow.png',
       '.donation-text-field[type="cc-num"]' : 'icon-cc-none.png',
       '.donation-select' : 'icon-dropdown-arrows.png',
+      '.currency-select' : 'icon-dropdown-arrows.png',
       '.donation-loading-overlay' : '712.GIF'
     }
 

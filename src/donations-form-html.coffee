@@ -34,8 +34,8 @@ html = """
     </div>
     <div class="donation-input-set" id="input-set-first" data-bind="visible: visibleInputSet() === 0">
       <div class="donations-currency-select-row" data-bind="visible: currenciesEnabled()">
-        Currency: 
-        <select class="donation-select" id="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
+        Currency
+        <select class="currency-select" id="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>
       <span class="donation-field-label">
         <span class="donation-error-label" id="d-error-label-first" data-bind="validationMessage: displayAmount"></span>
