@@ -16,21 +16,27 @@ var gulp = require('gulp'),
     aws = require('./config/production.json.example'),
     replace = require('gulp-replace'),
     sources = {
-        deployment: ['public/img/*.*', 'public/jquery.donations.*.js', 'public/jquery.donations.*.css'],
+        deployment: ['src/img/*.*', 'build/js/*.min.js', 'build/css/*.min.css'],
         scss: 'src/scss/**/*.scss',
-        clean: ['public'],
-        coffee: 'src/coffee/**/*.coffee',
+        clean: ['public', 'build'],
+        coffee: ['src/coffee/**/*.coffee'],
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
         config: 'src/config/*.json',
-        asset_scripts: [
-            'vendor/form2js/src/form2js.js',
-            'vendor/jasmine/lib/jasmine-2.0.0/**/*.js',
-            'vendor/jquery/dist/jquery.min.js',
-            'vendor/jquery.payment/lib/jquery.payment.js',
-            'vendor/knockout-validation/Dist/knockout.validation.min.js',
-            'vendor/knockout/index.js'
-        ],
+        asset_scripts: {
+            test: [
+                'vendor/jasmine/lib/jasmine-2.0.0/jasmine.js',
+                'vendor/jasmine/lib/jasmine-2.0.0/jasmine-html.js',
+                'vendor/jasmine/lib/jasmine-2.0.0/boot.js',
+            ],
+            dev: [
+                'vendor/pusher/index.js',
+                'vendor/stripe/index',
+                "vendor/jquery.payment/jquery.payment.js",
+                'vendor/knockout/index.js',
+                'vendor/knockout-validation/Dist/knockout.validation.min.js'
+            ]
+        },
         asset_styles: [
             'vendor/jasmine/lib/jasmine-2.0.0/**/*.css'
         ],
@@ -45,7 +51,8 @@ var gulp = require('gulp'),
         js: 'public/js/',
         css: 'public/css/',
         img: 'public/img/',
-        test: 'public/test/'
+        test: 'public/test/',
+        build: 'build/'
     },
     options = {
         s3: {
@@ -121,14 +128,49 @@ gulp.task('version:build', function(event) {
         .pipe(rev.manifest())
         .pipe(gulp.dest(process.cwd()));
 });
-/** Package:script:create; packages up scripts **/
-gulp.task('package:script:create', function(event) {
-    return console.log('this task concats the js with all the external libraries pulled in from bower.')
+/** Build:script; concats all vendor scripts and donations scripts into one and then minifies to build folder. **/
+gulp.task('build:script', function(event) {
+    var coffeeFilter = filter('*form*.coffee'),
+        loaderFilter = filter('*loader.coffee'),
+        jsFilter = filter('!**/*.coffee');
+    return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
+        .pipe(plumber())
+        .pipe(coffeeFilter)
+        .pipe(concat('jquery.donations.coffee'))
+        .pipe(coffee({
+            bare:true
+        }))
+        .pipe(coffeeFilter.restore())
+        .pipe(jsFilter)
+        .pipe(concat('js/jquery.donations.js'))
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('js/jquery.donations.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(jsFilter.restore())
+        .pipe(loaderFilter)
+        .pipe(concat('js/jquery.donations.loader.js'))
+        .pipe(coffee())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('js/jquery.donations.loader.min.js'))
+        .pipe(uglify())
+        .pipe(gulp.dest(destinations.build));
 });
-/** Package:style:create; packages up styles **/
-gulp.task('package:style:create', function(event) {
-    return console.log('this task concats the css with all the external libraries pulled in from bower.')
+/** Build:style; packages up styles **/
+gulp.task('build:style', function(event) {
+    var scssFilter = filter('**/*.scss');
+    return gulp.src(['src/css/vendor/**/*.css', sources.scss])
+        .pipe(concat('css/jquery.donations.css'))
+        .pipe(sass())
+        .pipe(gulp.dest(destinations.build))
+        .pipe(concat('css/jquery.donations.min.css'))
+        .pipe(sass({
+            outputStyle: "compressed"
+        }))
+        .pipe(gulp.dest(destinations.build));
 });
+/** Build task **/
+gulp.task('build', ['build:script', 'build:style']);
 gulp.task('config:watch', function(event) {
     watch({glob: sources.config }, ['config:push']);
 });
@@ -142,6 +184,9 @@ gulp.task('jade:compile', function(event) {
     return gulp.src(sources.jade)
         .pipe(plumber())
         .pipe(jade({
+            data: {
+                vendor_scripts: sources.asset_scripts
+            },
             pretty: true
         }))
         .pipe(gulp.dest(destinations.docs))
@@ -164,7 +209,7 @@ gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch', 'config:watch'])
 gulp.task('script-assets:load', function(event) {
     gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
         .pipe(gulp.dest(destinations.js));
-    return gulp.src(sources.asset_scripts, {base: "./"})
+    return gulp.src(sources.asset_scripts.test.concat(sources.asset_scripts.dev), {base: "./"})
         .pipe(gulp.dest(destinations.js));
 });
 /**Style-assets:load; load vendor styles **/
