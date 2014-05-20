@@ -32,14 +32,17 @@
   .donations-currency-select-row {
     margin-top: 16px;
     font-size: 12px;
-    margin-left: 40px;
-    .donations-currency-select {
+    margin-left: 230px;
+    color: #848484;
+    #donations-currency-select {
       display: inline;
+      margin-top: 0px;
     }
   }
 
   .donation-button-set {
     height: 200px;
+    width: 327px;
     margin-top: 16px;
     font-size: 12px;
     margin-left: 40px;
@@ -157,7 +160,7 @@
       line-height: 60px;
     }
     .donation-btn-lg {
-      width: 210px;
+      width: 209px;
       padding: 0;
       text-align: center;
       background-color: white;
@@ -186,19 +189,21 @@
       padding: 0px 10px;
       font-size: 13px;
     }
-    .donation-text-field[type="cc-num"] {
+    #cc-num-input {
       background-repeat: no-repeat;
       background-position: 290px 5px;
     }
     .donation-text-field-completed {
       border: 2px solid #0066b4;
     }
-    .donation-select {
+
+    @mixin fancy-select {
       height: 33px;
       margin-right: 7px;
-      width: 125px;
+      text-indent: 0.01px;
+      text-overflow: '';
+      overflow: hidden;
       margin-top: 10px;
-      background-color: white; 
       border: 2px solid #d1d2cd;
       border-radius: 5px;
       box-shadow: inset 0px 3px 3px 0px #eee;
@@ -206,8 +211,23 @@
       padding: 0px 15px;
       font-size: 13px;
       background-repeat: no-repeat;
-      background-position: 138px 7px;
       display: inline-block;
+    }
+
+    .currency-select {
+      @include fancy-select;
+      width: 35px;
+      border: 1px solid #d1d2cd;
+      background-position: 50px 7px;
+      background-color: none;
+      margin-left: 10px;
+    }
+    .donation-select {
+      @include fancy-select;
+      width: 125px;
+      border: 2px solid #d1d2cd;
+      background-color: white;
+      background-position: 138px 7px;
     }
     .donation-text-field-sm {
       width: 136px;
@@ -290,7 +310,8 @@ and (min-device-width : 200px)
 and (max-device-width : 480px) {
   .donation-form {
     width: 100%;
-    height: 100%;
+    min-width: 320px;
+    min-height: 550px;
     .donation-loading-overlay {
       width: 100%;
       height: 100%;
@@ -301,33 +322,40 @@ and (max-device-width : 480px) {
         padding-top: 20px;
       }
     }
+    .donation-button-set {
+      margin: 0 auto;
+      margin-top: 16px;
+      width: 318px;
+      .donation-btn-sm {
+        margin-left: 2px;
+        margin-right: 2px;
+        width: 98px;
+      }
+      .donation-btn-lg {
+        width: 204px;
+        margin-left: 2px;
+        margin-right: 2px;
+      }
+    }
     .donation-input-set {
       width: 100%;
+      margin: 0 auto;
       .donation-input-row {
         margin: 0px auto;
         width: 250px;
-        padding-left: 40px;
-      }
-      .donation-btn {
-        width: 60px;
-        height: 36px;
-        margin-bottom: 5px;
-      }
-      .donation-btn-sm {
-        line-height: 36px;
-      }
-      .donation-btn-lg {
-        width: 130px;
       }
       .donation-text-field {
-        width: 200px;
+        width: 210px;
+        font-size: 16px;
       }
       .donation-select {
-        width: 106px;
+        width: 78px;
+        background-position: 91px 7px;
+        font-size: 16px;
       }
     }
     .donation-next-btn, .donation-submit {
-      margin-top: 18px;
+      margin-top: 10px;
     }
     .donation-progress-banner {
       .donation-progress-banner-container {

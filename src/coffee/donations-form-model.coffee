@@ -57,7 +57,7 @@ class DonationsFormModel
     self.selectedCurrency = ko.observable(initializeCurrency())
     self.currencySymbol = ko.computed(->
       symbols = {
-        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : 'C$'
+        'USD' : '$', 'GBP' : '&pound;', 'EUR' : '&euro;', 'NZD' : 'NZ$', 'AUD' : 'AU$', 'CAD' : '$'
       }
       return symbols[self.selectedCurrency()] or self.selectedCurrency()
     , this)
@@ -137,8 +137,8 @@ class DonationsFormModel
       { month: self.cardMonth(), year: self.cardYear() }
     , this).extend({ ccDate: true, observable: true })
     self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true, cvc: true })
-    $('.donation-text-field[type="cc-num"]').payment('formatCardNumber')
-    $('.donation-text-field[type="cvc"]').payment('formatCardCVC')
+    $('#cc-num-input').payment('formatCardNumber')
+    $('#cvc-num-input').payment('formatCardCVC')
 
     self.ccType = ko.observable()
     self.calcCardType = ->
@@ -177,6 +177,7 @@ class DonationsFormModel
       '.donation-progress-arrow' : 'icon-arrow.png',
       '.donation-text-field[type="cc-num"]' : 'icon-cc-none.png',
       '.donation-select' : 'icon-dropdown-arrows.png',
+      '.currency-select' : 'icon-dropdown-arrows.png',
       '.donation-loading-overlay' : '712.GIF'
     }
 
