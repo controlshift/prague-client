@@ -18,6 +18,7 @@ var gulp = require('gulp'),
     revall = require('gulp-rev-all'),
     cloudfront = require("gulp-cloudfront"),
     aws = require('./config/production.json').aws,
+    debug = require('gulp-debug'),
     replace = require('gulp-replace'),
     destinations = {
       public: 'public/',
@@ -31,7 +32,7 @@ var gulp = require('gulp'),
       dist: 'dist/'
     },
     sources = {
-        deployment: ['dist/img/*.*', 'dist/js/*.min.js', 'dist/css/*.min.css'],
+        deployment: ['dist/**/*.*'],
         scss: 'src/scss/**/*.scss',
         clean: [destinations.public, destinations.dist, destinations.build],
         coffee: ['src/coffee/**/*.coffee'],
@@ -222,6 +223,7 @@ gulp.task('dist:style', function(event) {
     .pipe(gulp.dest(destinations.build));
 });
 
+/** Applies revisions for cache busting **/
 gulp.task('dist:version', function(event) {
   return gulp.src(['build/jquery.donations.js', 'build/jquery.donations.css', 'build/jquery.donations.loader.js'])
     .pipe(revall())
@@ -229,7 +231,7 @@ gulp.task('dist:version', function(event) {
 });
 
 /** Deploy:S3; gzips sources and deploys to S3.**/
-gulp.task('deploy:s3', ['dist'], function(event) {
+gulp.task('deploy:s3', function(event) {
   return gulp.src(sources.deployment)
     .pipe(plumber())
     .pipe(gzip())

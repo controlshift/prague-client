@@ -1,5 +1,10 @@
-module.exports = {
-    "bucket" : "your-bucket-name",
-    "key" : "ABC123",
-    "secret" : "ABC123"
+{
+  "stripe-public-key": "",
+  "cdn-url" : "https://d2yuwrm8xcn0u8.cloudfront.net",
+  "aws" : {
+    "bucket" : "buckey",
+    "key" : "xxx",
+    "secret" : "yyy",
+    "distributionId" : "see-aws-cloudfront-settings"
+  }
 }
