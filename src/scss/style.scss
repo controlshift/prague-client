@@ -306,8 +306,8 @@
 }
 
 @media only screen 
-and (min-device-width : 200px) 
-and (max-device-width : 480px) {
+and (min-width: 200px)
+and (max-width: 480px) {
   .donation-form {
     width: 100%;
     min-width: 320px;
@@ -359,13 +359,13 @@ and (max-device-width : 480px) {
     }
     .donation-progress-banner {
       .donation-progress-banner-container {
-        width: 260px;
+        width: 300px;
         margin: 0 auto;
       }
       .donation-progress-header {
         padding-left: 20px;
         font-size: 12px;
-        width: 40px;
+        width: 60px;
       }
       .donation-progress-arrow {
         width: 15px;
