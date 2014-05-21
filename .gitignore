@@ -3,4 +3,6 @@
 config/production.json
 .idea
 /public/
+/dist/
+/build/
 /vendor/

@@ -33,8 +33,7 @@ getGlobalDefaults = (callback) ->
 
 loadExternalScripts = ->
   testmode = ($("#donation-script").data('testmode') == true)
-  donationsJs = if testmode then "/js/jquery.donations.js" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.js"
-  # scriptStrings = ["https://js.stripe.com/v2/","https://d3dy5gmtp8yhk7.cloudfront.net/2.1/pusher.min.js", donationsJs]
+  donationsJs = if testmode then "/js/jquery.donations.js" else "jquery.donations.js"
   scriptStrings = [donationsJs]
   loadedScripts = 0
   executeMain = ->
@@ -83,7 +82,7 @@ googleAnalyticsInit = ->
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
   testmode = ($("#donation-script").data('testmode') == true)
-  cssSrc = if testmode then "/css/jquery.donations.css" else "https://d2yuwrm8xcn0u8.cloudfront.net/jquery.donations.css"
+  cssSrc = if testmode then "/css/jquery.donations.css" else "jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
   loadExternalScripts()
   return

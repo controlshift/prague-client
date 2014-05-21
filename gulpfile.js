@@ -1,3 +1,4 @@
+// Load Plugins
 var gulp = require('gulp'),
     clean = require('gulp-clean'),
     coffee = require('gulp-coffee'),
@@ -8,17 +9,31 @@ var gulp = require('gulp'),
     plumber = require('gulp-plumber'),
     connect = require('gulp-connect'),
     uglify = require('gulp-uglify'),
+    imagemin = require('gulp-imagemin'),
+    cache = require('gulp-cache'),
     concat = require('gulp-concat'),
     filter = require('gulp-filter'),
     s3 = require('gulp-s3'),
-    rev = require('gulp-rev'),
     gzip = require('gulp-gzip'),
-    aws = require('./config/production.json.example'),
+    revall = require('gulp-rev-all'),
+    cloudfront = require("gulp-cloudfront"),
+    aws = require('./config/production.json').aws,
     replace = require('gulp-replace'),
+    destinations = {
+      public: 'public/',
+      config: 'public/config/',
+      docs: 'public/',
+      js: 'public/js/',
+      css: 'public/css/',
+      img: 'public/img/',
+      test: 'public/test/',
+      build: 'build/',
+      dist: 'dist/'
+    },
     sources = {
-        deployment: ['src/img/*.*', 'build/js/*.min.js', 'build/css/*.min.css'],
+        deployment: ['dist/img/*.*', 'dist/js/*.min.js', 'dist/css/*.min.css'],
         scss: 'src/scss/**/*.scss',
-        clean: ['public', 'build'],
+        clean: [destinations.public, destinations.dist, destinations.build],
         coffee: ['src/coffee/**/*.coffee'],
         jade: 'src/jade/**/*.jade',
         overwatch: 'public/**/*.*',
@@ -44,18 +59,9 @@ var gulp = require('gulp'),
             'src/img/**/*.*'
         ]
     },
-    destinations = {
-        public: 'public/',
-        config: 'public/config/',
-        docs: 'public/',
-        js: 'public/js/',
-        css: 'public/css/',
-        img: 'public/img/',
-        test: 'public/test/',
-        build: 'build/'
-    },
     options = {
         s3: {
+                gzippedOnly: true,
                 headers: {
                     'Cache-Control': 'max-age=315360000, no-transform, public'
                 }
@@ -71,13 +77,7 @@ gulp.task('serve', function(event) {
   watch({glob: sources.overwatch})
     .pipe(connect.reload());
 });
-/** Deploy:S3; gzips sources and deploys to S3.**/
-gulp.task('deploy:s3', function(event) {
-    return gulp.src(sources.deployment)
-        .pipe(plumber())
-        .pipe(gzip())
-        .pipe(s3(aws, options.s3));
-});
+
 /** Clean; cleans out appropriate sources.**/
 gulp.task('clean', function(event) {
     return gulp.src(sources.clean)
@@ -121,56 +121,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(gulp.dest(destinations.js))
         .pipe(jasmineFilter.restore());
 });
-gulp.task('version:build', function(event) {
-    return gulp.src(['public/jquery.donations.js', 'public/jquery.donations.css'])
-        .pipe(rev())
-        .pipe(gulp.dest('public/'))
-        .pipe(rev.manifest())
-        .pipe(gulp.dest(process.cwd()));
-});
-/** Build:script; concats all vendor scripts and donations scripts into one and then minifies to build folder. **/
-gulp.task('build:script', function(event) {
-    var coffeeFilter = filter('*form*.coffee'),
-        loaderFilter = filter('*loader.coffee'),
-        jsFilter = filter('!**/*.coffee');
-    return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
-        .pipe(plumber())
-        .pipe(coffeeFilter)
-        .pipe(concat('jquery.donations.coffee'))
-        .pipe(coffee({
-            bare:true
-        }))
-        .pipe(coffeeFilter.restore())
-        .pipe(jsFilter)
-        .pipe(concat('js/jquery.donations.js'))
-        .pipe(gulp.dest(destinations.build))
-        .pipe(concat('js/jquery.donations.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest(destinations.build))
-        .pipe(jsFilter.restore())
-        .pipe(loaderFilter)
-        .pipe(concat('js/jquery.donations.loader.js'))
-        .pipe(coffee())
-        .pipe(gulp.dest(destinations.build))
-        .pipe(concat('js/jquery.donations.loader.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest(destinations.build));
-});
-/** Build:style; packages up styles **/
-gulp.task('build:style', function(event) {
-    var scssFilter = filter('**/*.scss');
-    return gulp.src(['src/css/vendor/**/*.css', sources.scss])
-        .pipe(concat('css/jquery.donations.css'))
-        .pipe(sass())
-        .pipe(gulp.dest(destinations.build))
-        .pipe(concat('css/jquery.donations.min.css'))
-        .pipe(sass({
-            outputStyle: "compressed"
-        }))
-        .pipe(gulp.dest(destinations.build));
-});
-/** Build task **/
-gulp.task('build', ['build:script', 'build:style']);
+
 gulp.task('config:watch', function(event) {
     watch({glob: sources.config }, ['config:push']);
 });
@@ -191,20 +142,25 @@ gulp.task('jade:compile', function(event) {
         }))
         .pipe(gulp.dest(destinations.docs))
 });
+
 /** Scss:watch; watch for scss source changes **/
 gulp.task('scss:watch', function(event) {
     watch({glob: sources.scss }, ['scss:compile']);
 });
+
 /** Coffee:watch; watch for coffeescript source changes and compile as necessary **/
 gulp.task('coffee:watch', function(event) {
     watch({glob: sources.coffee}, ['coffee:compile']);
 });
+
 /** Jade:watch; watch for jade source changes and compile as necessary **/
 gulp.task('jade:watch', function(event) {
     watch({glob: sources.jade }, ['jade:compile']);
 });
+
 /** Watch; watch for source changes and run necessary compilation during development **/
 gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch', 'config:watch']);
+
 /** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
     gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
@@ -212,7 +168,8 @@ gulp.task('script-assets:load', function(event) {
     return gulp.src(sources.asset_scripts.test.concat(sources.asset_scripts.dev), {base: "./"})
         .pipe(gulp.dest(destinations.js));
 });
-/**Style-assets:load; load vendor styles **/
+
+/** Style-assets:load; load vendor styles **/
 gulp.task('style-assets:load', function(event) {
     gulp.src('src/css/vendor/cleanslate/*.css', {base: "./src/css/"})
         .pipe(gulp.dest(destinations.css));
@@ -224,6 +181,75 @@ gulp.task('image-assets:load', function(event) {
     return gulp.src(sources.asset_images, {base: "./src/img"})
         .pipe(gulp.dest(destinations.img));
 });
+
+/** Build:script; concats all vendor scripts and donations scripts into one and then minifies to dist folder. **/
+gulp.task('dist:script', function(event) {
+  var coffeeFilter = filter('*form*.coffee'),
+    loaderFilter = filter('*loader.coffee'),
+    jsFilter = filter('!**/*.coffee');
+  return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
+    .pipe(plumber())
+    .pipe(coffeeFilter)
+    .pipe(concat('jquery.donations.coffee'))
+    .pipe(coffee({
+      bare:true
+    }))
+    .pipe(coffeeFilter.restore())
+    .pipe(jsFilter)
+    .pipe(concat('jquery.donations.js'))
+    .pipe(gulp.dest(destinations.build))
+    .pipe(uglify())
+    .pipe(gulp.dest(destinations.build))
+    .pipe(jsFilter.restore())
+    .pipe(loaderFilter)
+    .pipe(concat('jquery.donations.loader.js'))
+    .pipe(coffee())
+    .pipe(gulp.dest(destinations.build))
+    .pipe(uglify())
+    .pipe(gulp.dest(destinations.build));
+});
+
+/** dist:style; packages up styles **/
+gulp.task('dist:style', function(event) {
+  var scssFilter = filter('**/*.scss');
+  return gulp.src(['src/css/vendor/**/*.css', sources.scss])
+    .pipe(concat('jquery.donations.css'))
+    .pipe(sass())
+    .pipe(gulp.dest(destinations.build))
+    .pipe(sass({
+      outputStyle: "compressed"
+    }))
+    .pipe(gulp.dest(destinations.build));
+});
+
+gulp.task('dist:version', function(event) {
+  return gulp.src(['build/jquery.donations.js', 'build/jquery.donations.css', 'build/jquery.donations.loader.js'])
+    .pipe(revall())
+    .pipe(gulp.dest(destinations.dist))
+});
+
+/** Deploy:S3; gzips sources and deploys to S3.**/
+gulp.task('deploy:s3', ['dist'], function(event) {
+  return gulp.src(sources.deployment)
+    .pipe(plumber())
+    .pipe(gzip())
+    .pipe(s3(aws, options.s3)
+    .pipe(cloudfront(aws))
+    );
+});
+
+gulp.task('dist', ['dist:script', 'dist:style', 'dist:images'], function(event) {
+    gulp.start('dist:version');
+  }
+);
+
+gulp.task('dist:images', function() {
+  return gulp.src('src/img/**/*')
+    .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
+    .pipe(gulp.dest('dist/img')
+  );
+});
+
 /** Assets:load; loads all css and js assets **/
 gulp.task('assets:load', ['script-assets:load', 'style-assets:load', 'image-assets:load']);
 /** Dev; sets up the development environment so you can hack away on a server **/
