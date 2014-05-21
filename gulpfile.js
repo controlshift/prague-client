@@ -17,7 +17,8 @@ var gulp = require('gulp'),
     gzip = require('gulp-gzip'),
     revall = require('gulp-rev-all'),
     cloudfront = require("gulp-cloudfront"),
-    aws = require('./config/production.json').aws,
+    settings = require('./config/production.json'),
+    aws = settings.aws,
     debug = require('gulp-debug'),
     replace = require('gulp-replace'),
     destinations = {
@@ -226,14 +227,14 @@ gulp.task('dist:style', function(event) {
 /** Applies revisions for cache busting **/
 gulp.task('dist:version', function(event) {
   return gulp.src(['build/jquery.donations.js', 'build/jquery.donations.css', 'build/jquery.donations.loader.js'])
-    .pipe(revall())
+    .pipe(revall({prefix: settings.cdnUrl}))
+    .pipe(replace(/praguecloudfronturl/g, settings.cdnUrl))
     .pipe(gulp.dest(destinations.dist))
 });
 
 /** Deploy:S3; gzips sources and deploys to S3.**/
 gulp.task('deploy:s3', function(event) {
   return gulp.src(sources.deployment)
-    .pipe(plumber())
     .pipe(gzip())
     .pipe(s3(aws, options.s3)
     .pipe(cloudfront(aws))
@@ -241,7 +242,7 @@ gulp.task('deploy:s3', function(event) {
 });
 
 gulp.task('dist', ['dist:script', 'dist:style', 'dist:images'], function(event) {
-    gulp.start('dist:version');
+    return gulp.start('dist:version');
   }
 );
 

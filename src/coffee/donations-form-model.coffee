@@ -3,7 +3,7 @@ class DonationsFormModel
     self = @
     `$ = jQuery;`
     config = $.extend({}, {
-      imgpath: 'https://d2yuwrm8xcn0u8.cloudfront.net',
+      imgpath: 'praguecloudfronturl',
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
 

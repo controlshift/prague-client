@@ -44,7 +44,7 @@
     "gulp-imagemin": "^0.5.0",
     "gulp-cache": "^0.1.11",
     "gulp-cloudfront": "git+ssh://git@github.com:controlshift/gulp-cloudfront.git",
-    "gulp-rev-all": "git+ssh://git@github.com/smysnk/gulp-rev-all.git",
+    "gulp-rev-all": "git+ssh://git@github.com/controlshift/gulp-rev-all.git#feature/prefix",
     "gulp-debug": "^0.3.0"
   }
 }
