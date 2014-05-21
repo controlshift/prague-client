@@ -308,6 +308,9 @@
 @media only screen 
 and (min-width: 200px)
 and (max-width: 480px) {
+  .donation-form .donations-currency-select-row {
+    margin-left: 100px;
+  }
   .donation-form {
     width: 100%;
     min-width: 320px;
@@ -380,6 +383,23 @@ and (max-width: 480px) {
     }
     #dnt-progress-myinfo {
       background-position: 0px 12px;
+    }
+  }
+}
+
+
+@-moz-document url-prefix() {
+  .donation-form .donation-input-set {
+    .donation-select{
+      padding: 10px 15px 0px 15px;
+      height:23px;
+    }
+
+    .currency-select{
+      padding: 10px 15px 0px 15px;
+      height:23px;
+      width: 50px;
+      background-position: 55px 7px;
     }
   }
 }
