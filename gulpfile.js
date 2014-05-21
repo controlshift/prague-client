@@ -106,7 +106,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(gulp.dest(destinations.js))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
-        .pipe(concat('jquery.donations.coffee'))// TODO:THIS IS REALLY BAD SO WE ARE JUST PULLING A GLOBAL VARIABLE OF HTML. THIS MUST BE CHANGED.
+        .pipe(concat('jquery.donations.coffee'))
         .pipe(coffee({
             bare: true
         }))
