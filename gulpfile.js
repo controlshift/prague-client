@@ -236,9 +236,8 @@ gulp.task('dist:version', function(event) {
 gulp.task('deploy:s3', function(event) {
   return gulp.src(sources.deployment)
     .pipe(gzip())
-    .pipe(s3(aws, options.s3)
+    .pipe(s3(aws, options.s3))
     .pipe(cloudfront(aws))
-    );
 });
 
 gulp.task('dist', ['dist:script', 'dist:style', 'dist:images'], function(event) {

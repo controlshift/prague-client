@@ -1,5 +1,7 @@
 `var $`
 
+`var cacheBust = 'cachebust`
+
 loadExternalResource = (type, source, callback, params) ->
   tag = null
   if type == "js"
