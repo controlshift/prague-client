@@ -3,7 +3,6 @@ html = """
     Success! You'll receive a notification for your payment. 
   </div>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
     <div class="donation-loading-overlay"></div>
     <input type="hidden" name="organization_slug" data-bind="value: org">
