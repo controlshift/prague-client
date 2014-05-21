@@ -1,3 +1,5 @@
+cacheBust = 'cb3'
+
 class DonationsFormModel
   constructor: (jQuery, opts) ->
     self = @

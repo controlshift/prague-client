@@ -27,7 +27,7 @@
     "gulp": "~3.6.2",
     "gulp-coffee": "~1.4.2",
     "gulp-watch": "~0.6.4",
-    "gulp-s3": "~0.2.0",
+    "gulp-s3": "git+ssh://git@github.com/nkostelnik/gulp-s3.git",
     "gulp-replace": "~0.3.0",
     "gulp-plumber": "~0.6.1",
     "gulp-clean": "~0.2.4",

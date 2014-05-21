@@ -1,6 +1,6 @@
 `var $`
 
-`var cacheBust = 'cachebust`
+cacheBust = 'cb3'
 
 loadExternalResource = (type, source, callback, params) ->
   tag = null

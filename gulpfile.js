@@ -227,7 +227,7 @@ gulp.task('dist:style', function(event) {
 /** Applies revisions for cache busting **/
 gulp.task('dist:version', function(event) {
   return gulp.src(['build/jquery.donations.js', 'build/jquery.donations.css', 'build/jquery.donations.loader.js'])
-    .pipe(revall({prefix: settings.cdnUrl}))
+    .pipe(revall({prefix: (settings.cdnUrl + '/')}))
     .pipe(replace(/praguecloudfronturl/g, settings.cdnUrl))
     .pipe(gulp.dest(destinations.dist))
 });
