@@ -62,12 +62,15 @@ var gulp = require('gulp'),
         ]
     },
     options = {
+        s3noCache: {
+          gzippedOnly: true
+        },
         s3: {
-                gzippedOnly: true,
-                headers: {
-                    'Cache-Control': 'max-age=315360000, no-transform, public'
-                }
-            }
+          gzippedOnly: true,
+          headers: {
+              'Cache-Control': 'max-age=315360000, no-transform, public'
+          }
+        }
     };
 /** serve; sets up a static server with livereload **/
 gulp.task('serve', function(event) {
@@ -234,9 +237,20 @@ gulp.task('dist:version', function(event) {
 
 /** Deploy:S3; gzips sources and deploys to S3.**/
 gulp.task('deploy:s3', function(event) {
+  var loaderFilter = filter('jquery.donations.loader*');
+  var notLoaderFilter = filter('!jquery.donations.loader*');
+
   return gulp.src(sources.deployment)
+    .pipe(debug({verbose: true}))
     .pipe(gzip())
+    .pipe(debug({verbose: true}))
+    .pipe(loaderFilter)
+    .pipe(s3(aws, options.s3noCache))
+    .pipe(loaderFilter.restore())
+    .pipe(notLoaderFilter)
     .pipe(s3(aws, options.s3))
+    .pipe(notLoaderFilter.restore())
+    .pipe(debug({verbose: true}))
     .pipe(cloudfront(aws))
 });
 
