@@ -27,7 +27,7 @@ loadExternalResource = (type, source, callback, params) ->
 getGlobalDefaults = (callback) ->
   $.ajax
     type: 'get',
-    url: "#{$('#donation-script').data('pathtoserver')}\/config\/#{$('#donation-script').data('org')}.json",
+    url: "__praguepathtoserver__config\/#{$('#donation-script').data('org')}.json",
     dataType: 'jsonp',
     complete: (dat) ->
       callback(dat, $.extend($("#donation-script").data()))

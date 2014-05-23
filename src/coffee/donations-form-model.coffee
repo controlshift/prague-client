@@ -192,9 +192,9 @@ class DonationsFormModel
 
   connectToServer: (opts, self) ->
     config = $.extend({}, {
-      stripepublickey: "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
-      pusherpublickey: '331ca3447b91e264a76f',
-      pathtoserver: "http://localhost:3000"
+      stripepublickey: "__praguestripepublickey__",
+      pusherpublickey: '__praguepusherpublickey__',
+      pathtoserver: "__praguepathtoserver__"
     }, opts)
 
     Stripe.setPublishableKey config['stripepublickey']

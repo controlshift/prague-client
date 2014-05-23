@@ -1,3 +1,12 @@
+// Load Environment from NODE_ENV environmental variable. Used to load json configuration from config and change other behaviors.
+var env = process.env.NODE_ENV;
+
+if (typeof(env) === 'undefined' || env === null) {
+  env = 'development';
+}
+
+process.stdout.write("Loading " +  env + " environment.\n");
+
 // Load Plugins
 var gulp = require('gulp'),
     clean = require('gulp-clean'),
@@ -17,7 +26,7 @@ var gulp = require('gulp'),
     gzip = require('gulp-gzip'),
     revall = require('gulp-rev-all'),
     cloudfront = require("gulp-cloudfront"),
-    settings = require('./config/production.json'),
+    settings = require('./config/' + env + '.json'),
     aws = settings.aws,
     debug = require('gulp-debug'),
     replace = require('gulp-replace'),
@@ -106,11 +115,15 @@ gulp.task('coffee:compile', function(event) {
         .pipe(plumber())
         .pipe(loaderFilter)
         .pipe(concat('jquery.donations.loader.coffee'))
+        .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
         .pipe(coffee())
         .pipe(gulp.dest(destinations.js))
         .pipe(loaderFilter.restore())
         .pipe(donationsFormFilter)
         .pipe(concat('jquery.donations.coffee'))
+        .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
+        .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+        .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
         .pipe(coffee({
             bare: true
         }))
