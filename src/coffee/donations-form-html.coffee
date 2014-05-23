@@ -128,7 +128,7 @@ html = """
             else { inputSet3.errors.showAllMessages();}
           }">
         <div class="donation-submit-header">
-          SUBMIT
+          DONATE
         </div>
       </div>
     </div>
