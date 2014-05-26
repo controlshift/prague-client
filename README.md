@@ -98,31 +98,24 @@ We've made it pretty easy to use your own copy of our Rails server if you want t
 
 ## Contributing
 
-In order to get started contributing, you must install Grunt and all the necessary libraries.
+In order to get started contributing, you must install Gulp and all the necessary libraries.
 
-To install Grunt and everything:
+To install Gulp and everything:
 
+    npm install gulp
     npm install phantomjs -g
     npm install casperjs -g
-    npm install -g grunt
-    npm install -g grunt-cli
     npm install
+    bower install
 
 To start the server, compile and minify everything:
 
 ```
-grunt
-```
-
-To just build and compile
-
-```
-grunt build
+gulp
 ```
 
 To run the unit tests, just open up `SpecRunner.html`. To run the integration tests, you must run
 
 ```
-grunt build
 casperjs test build/features.js --verbose
 ```
