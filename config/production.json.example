@@ -1,5 +1,6 @@
 {
-  "stripe-public-key": "",
+  "stripe-public-key": "pk_test_LGrYxpfzI89s9yxXJfKcBB0R",
+  "pusher-public-key": "331ca3447b91e264a76f",
   "cdn-url" : "https://d2yuwrm8xcn0u8.cloudfront.net",
   "aws" : {
     "bucket" : "buckey",

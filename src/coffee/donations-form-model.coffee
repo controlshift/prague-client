@@ -158,6 +158,7 @@ class DonationsFormModel
     self.inputSet2 = ko.validatedObservable({ firstName: self.firstName, lastName: self.lastName, email: self.email})
     self.inputSet3 = ko.validatedObservable({ cardNumber: self.cardNumber, cardDate: self.cardDate, cvc: self.cvc})
 
+    self.stripeMessage = ko.observable("")
     self.connectToServer(config, self)
 
   parseQueryString: (q) ->
@@ -193,7 +194,7 @@ class DonationsFormModel
   connectToServer: (opts, self) ->
     config = $.extend({}, {
       stripepublickey: "__praguestripepublickey__",
-      pusherpublickey: '__praguepusherpublickey__',
+      pusherpublickey: "__praguepusherpublickey__",
       pathtoserver: "__praguepathtoserver__"
     }, opts)
 
@@ -222,8 +223,8 @@ class DonationsFormModel
       if response.error
         # Show the errors on the form
         gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-        $form.find(".donation-payment-errors").text response.error.message
         $form.find("button").prop "disabled", false
+        self.stripeMessage(response.error.message)
         $('.donation-loading-overlay').hide()
       else
         charge = {}
@@ -241,7 +242,7 @@ class DonationsFormModel
         formPost = {}
         formPost.customer = customer
         formPost.card_token = response.id # from stripe
-        formPost.config = config
+        formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
         formPost.organization_slug = self.org()
 
         req = $.ajax(

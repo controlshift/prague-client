@@ -119,7 +119,7 @@ html = """
         </span>
         <input name="cvc" type="tel" id="cvc-num-input" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc" data-bind="value: cvc">
       </div>
-      <div class="donation-payment-errors" data-bind="visible: false">
+      <div class="donation-payment-errors" data-bind="visible: !!stripeMessage(), text: stripeMessage()">
         Something went wrong.
       </div>
       <button type="submit" class="donation-submit" data-bind="click: function()
