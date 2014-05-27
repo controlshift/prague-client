@@ -202,7 +202,6 @@ class DonationsFormModel
 
     subscribeToDonationChannel = (channelToken) ->
       pusher = new Pusher(config['pusherpublickey'])
-
       channel = pusher.subscribe(channelToken)
       channel.bind "charge_completed", (data) ->
         # You can also use data.message
@@ -211,6 +210,8 @@ class DonationsFormModel
         if data.status == "success"
           $("#donation-script").trigger("donations:success")
           if config['redirectto']?
+            unless /^https?:\/\//.test(config['redirectto'])
+              config['redirectto'] = "http://#{config['redirectto']}"
             window.location.replace(config['redirectto'])
           $("#donation-form").hide()
           $(".donations-callback-flash").show(0).delay(8000).hide(0)
