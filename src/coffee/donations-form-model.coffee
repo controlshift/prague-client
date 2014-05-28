@@ -1,4 +1,4 @@
-cacheBust = 'cb15'
+cacheBust = 'cb22'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
@@ -97,9 +97,9 @@ class DonationsFormModel
       for entry, count in self.seedValues
         baseAmount = parseInt(entry) / 100.0 * parseInt(self.seedAmount)
         if count < 7 # limit 7 buttons
-          if self.currenciesEnabled()
-            conversionRateToCurrency = config[self.selectedCurrency()] or 1
-            conversionRateFromCurrency = config[self.seededCurrency] or 1
+          if self.currenciesEnabled() and config["rates"]?
+            conversionRateToCurrency = config["rates"][self.selectedCurrency()] or 1
+            conversionRateFromCurrency = config["rates"][self.seededCurrency] or 1
             arr.push(self.round(baseAmount * conversionRateToCurrency / conversionRateFromCurrency))
           else
             arr.push(self.round(baseAmount))
@@ -209,7 +209,7 @@ class DonationsFormModel
         pusher.disconnect()
         if data.status == "success"
           $("#donation-script").trigger("donations:success")
-          if config['redirectto']?
+          if !!config['redirectto']
             unless /^https?:\/\//.test(config['redirectto'])
               config['redirectto'] = "http://#{config['redirectto']}"
             window.location.replace(config['redirectto'])

@@ -5,14 +5,14 @@ before_install: gem install sass
 install:
   - npm install phantomjs -g
   - npm install casperjs -g
-  - npm install -g grunt
-  - npm install -g grunt-cli
+  - npm install gulp
+  - bower install
   - npm install
 before_script:
   - phantomjs --version
   - casperjs --version
-  - grunt &
-  - sleep 5 # give grunt background task some time to execute.
+  - gulp &
+  - sleep 10 # give gulp background task some time to execute.
 script:
-  - casperjs test build/features.js
-  - phantomjs run_jasmine.js http://localhost:4000/SpecRunner.html
+  - casperjs test public/js/test/casper.js
+  - phantomjs run_jasmine.js http://localhost:1987/test

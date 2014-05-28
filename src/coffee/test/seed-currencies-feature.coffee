@@ -16,7 +16,7 @@ casper.test.begin "seeding currencies to the form", 1, (test) ->
     amountElems = @evaluate ->
       amounts = document.querySelectorAll('.donation-amt')
       return (elem.textContent for elem in amounts)
-    test.assertEquals("#{amountElems}", "#{['10','20','30','35']}", "Amounts are correct")
+    test.assertEquals("#{amountElems}", "#{['10','20','30','40']}", "Amounts are correct")
 
   casper.run ->
     test.done()

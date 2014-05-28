@@ -70,11 +70,11 @@ describe "DonationsFormModel", ->
   describe "Currency conversion", ->
     `var formWithConversion;`
     beforeEach ->
-      conversionHash = $.extend({
+      conversionHash = $.extend(configHash, {
         'seedamount' : 100,
         'seedvalues' : "100,200,300",
         'currencyconversion' : 'choose'
-      }, configHash)
+      })
 
       `formWithConversion = new DonationsFormModel($, conversionHash);`
       return
@@ -91,23 +91,23 @@ describe "DonationsFormModel", ->
       expect(formWithConversion.amounts()).toEqual([200,400,600])
 
     it "should convert amounts by default and the country is different", ->
-      detectHash = $.extend({
+      detectHash = $.extend( configHash, {
         'seedamount' : 100,
         'seedvalues' : "100,200,300",
         'seedcurrency' : 'BBD'
-      }, configHash)
+      })
 
       detectForm = new DonationsFormModel($, detectHash);
       detectForm.selectedCurrency('USD')
       expect(detectForm.amounts()).toEqual([50,100,150])
 
     it "should not convert amounts if currencyconversion=none", ->
-      detectHash = $.extend({
+      detectHash = $.extend(configHash, {
         'seedamount' : 100,
         'seedvalues' : "100,200,300",
         'seedcurrency' : 'BBD',
         'currencyconversion' : 'none'
-      }, configHash)
+      })
 
       detectForm = new DonationsFormModel($, detectHash);
       detectForm.selectedCurrency('USD')

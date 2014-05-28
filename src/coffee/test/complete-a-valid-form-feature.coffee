@@ -8,7 +8,7 @@ casper.test.begin "completing a valid form", 3, (test) ->
   casper.on 'page.error', (message, trace) ->
     this.log("page js error: " + message, 'warning');
       
-  casper.start "build/index.html"
+  casper.start "public/test/casper.html"
 
   casper.waitUntilVisible '.donation-btn'
 
@@ -27,7 +27,7 @@ casper.test.begin "completing a valid form", 3, (test) ->
     }, false)
     @click "#donation-second-next-btn"
 
-    test.assertVisible("input[type='cc-num']", "Step 3 is visible")
+    test.assertVisible("#cc-num-input", "Step 3 is visible")
     @fill("form#donation-form", {
       "cc-num" : "4242 4242 4242 4242", 
       "month" : "02", 

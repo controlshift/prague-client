@@ -1,6 +1,6 @@
 `var $`
 
-cacheBust = 'cb18'
+cacheBust = 'cb24'
 
 loadExternalResource = (type, source, callback, params) ->
   tag = null
@@ -27,7 +27,7 @@ loadExternalResource = (type, source, callback, params) ->
 
 loadExternalScripts = ->
   testmode = ($("#donation-script").data('testmode') == true)
-  donationsJs = if testmode then "/js/jquery.donations.js" else "jquery.donations.js"
+  donationsJs = if testmode then "../js/jquery.donations.js" else "jquery.donations.js"
   scriptStrings = [donationsJs]
   loadedScripts = 0
   executeMain = ->
@@ -39,11 +39,13 @@ loadExternalScripts = ->
         $('.donations-form-anchor').append(html)
         ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
       loadJson = (callback) ->
-        jsonUrl = if testmode then "/config/config.json" else "__praguepathtoserver__config\/#{$('#donation-script').data('org')}.json"
+        serverPath = $("#donation-script").data('pathtoserver') or "__praguepathtoserver__"
+        jsonUrl = if testmode then "config/config.json" else "#{serverPath}config\/#{$('#donation-script').data('org')}.json"
         $.ajax
           dataType: if testmode then 'json' else 'jsonp'
           url: jsonUrl
           success: callback
+          error: callback
       if testmode then loadJson(initializeForm) else loadJson(initializeForm)
 
   for scrString in scriptStrings
@@ -72,7 +74,7 @@ googleAnalyticsInit = ->
 scriptLoadHandler = ->
   `$ = jQuery = window.jQuery.noConflict(true)`
   testmode = ($("#donation-script").data('testmode') == true)
-  cssSrc = if testmode then "/css/jquery.donations.css" else "jquery.donations.css"
+  cssSrc = if testmode then "../css/jquery.donations.css" else "jquery.donations.css"
   loadExternalResource("css", cssSrc, (->))
   loadExternalScripts()
   return
