@@ -1,6 +1,7 @@
 /node_modules/
 /.sass-cache/
 config/production.json
+config/staging.json
 config/development.json
 .idea
 /public/

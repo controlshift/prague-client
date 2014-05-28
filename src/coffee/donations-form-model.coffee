@@ -1,11 +1,11 @@
-cacheBust = 'cb3'
+cacheBust = 'cb15'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
     self = @
     `$ = jQuery;`
     config = $.extend({}, {
-      imgpath: 'praguecloudfronturl',
+      imgpath: 'praguecloudfronturl' + '/img',
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
 

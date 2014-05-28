@@ -115,7 +115,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(plumber())
         .pipe(loaderFilter)
         .pipe(concat('jquery.donations.loader.coffee'))
-        .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
+        .pipe(replace(/praguepathtoserver/g, settings.pathToServer))
         .pipe(coffee())
         .pipe(gulp.dest(destinations.js))
         .pipe(loaderFilter.restore())
@@ -209,18 +209,27 @@ gulp.task('dist:script', function(event) {
     .pipe(plumber())
     .pipe(coffeeFilter)
     .pipe(concat('jquery.donations.coffee'))
+    .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
+    .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(coffee({
       bare:true
     }))
     .pipe(coffeeFilter.restore())
     .pipe(jsFilter)
     .pipe(concat('jquery.donations.js'))
+    .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
+    .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())
     .pipe(gulp.dest(destinations.build))
     .pipe(jsFilter.restore())
     .pipe(loaderFilter)
     .pipe(concat('jquery.donations.loader.js'))
+    .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
+    .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(coffee())
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())
@@ -277,6 +286,15 @@ gulp.task('dist:images', function() {
     .pipe(cache(imagemin({ optimizationLevel: 5, progressive: true, interlaced: true })))
     .pipe(gulp.dest('dist/img')
   );
+});
+
+gulp.task('clearCache', function() {
+  // Still pass the files to clear cache for
+  gulp.src('./lib/*.js')
+    .pipe(cache.clear());
+
+  // Or, just call this for everything
+  cache.clearAll();
 });
 
 /** Assets:load; loads all css and js assets **/

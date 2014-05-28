@@ -1,6 +1,6 @@
 `var $`
 
-cacheBust = 'cb5'
+cacheBust = 'cb18'
 
 loadExternalResource = (type, source, callback, params) ->
   tag = null
@@ -24,14 +24,6 @@ loadExternalResource = (type, source, callback, params) ->
   (document.getElementsByTagName("head")[0] or document.documentElement).appendChild tag
 
 `var globalDefaults = {};`
-getGlobalDefaults = (callback) ->
-  $.ajax
-    type: 'get',
-    url: "__praguepathtoserver__config\/#{$('#donation-script').data('org')}.json",
-    dataType: 'jsonp',
-    complete: (dat) ->
-      callback(dat, $.extend($("#donation-script").data()))
-
 
 loadExternalScripts = ->
   testmode = ($("#donation-script").data('testmode') == true)
@@ -45,18 +37,14 @@ loadExternalScripts = ->
       googleAnalyticsInit()
       initializeForm = (config) ->
         $('.donations-form-anchor').append(html)
-        ko.applyBindings(new DonationsFormModel($, config))
-      loadLocalJson = ->
-        json = null
+        ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
+      loadJson = (callback) ->
+        jsonUrl = if testmode then "/config/config.json" else "__praguepathtoserver__config\/#{$('#donation-script').data('org')}.json"
         $.ajax
-          async: false
-          dataType: 'json'
-          url: '/config/config.json'
-          success: (dat) ->
-            json = dat
-        return json
-
-      if testmode then initializeForm($.extend(loadLocalJson(), $("#donation-script").data())) else getGlobalDefaults(initializeForm)
+          dataType: if testmode then 'json' else 'jsonp'
+          url: jsonUrl
+          success: callback
+      if testmode then loadJson(initializeForm) else loadJson(initializeForm)
 
   for scrString in scriptStrings
     loadExternalResource("js", scrString, executeMain)

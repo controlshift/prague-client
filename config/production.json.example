@@ -2,6 +2,7 @@
   "stripePublicKey": "",
   "pusherPublicKey": "",
   "cdnUrl" : "",
+  "pathToServer": "https://something.com/",
   "aws" : {
     "bucket" : "buckey",
     "key" : "xxx",
