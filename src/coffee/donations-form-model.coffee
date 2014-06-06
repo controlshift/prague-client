@@ -72,7 +72,7 @@ class DonationsFormModel
 
     self.displayAmount = ko.computed(->
       self.inputtedAmount() or self.selectedAmount()
-    , this).extend({ required: { message: "Please select an amount" }, min: 1, digit: true })
+    , this).extend({ required: { message: "Please select an amount" }, min: 1 })
 
     self.normalizedAmount = ko.computed(->
       zeroDecimalCurrencies = ['BIF', 'CLP', 'JPY', 'KRW', 'PYG', 'VUV', 'XOF', 'CLP', 'GNF', 'KMF', 'MGA', 'RWF', 'XAF', 'XPF']
@@ -200,11 +200,17 @@ class DonationsFormModel
 
     Stripe.setPublishableKey config['stripepublickey']
 
-    subscribeToDonationChannel = (channelToken) ->
+    subscribeToDonationChannel = (cardToken) ->
+      $form = $("#donation-form")
+      charge = {}
+
+      charge.amount = self.normalizedAmount()
+      charge.currency = self.selectedCurrency()
+      charge.pusher_channel_token = Math.random().toString(36).slice(2)
+
       pusher = new Pusher(config['pusherpublickey'])
-      channel = pusher.subscribe(channelToken)
+      channel = pusher.subscribe(charge.pusher_channel_token)
       channel.bind "charge_completed", (data) ->
-        # You can also use data.message
         $('.donation-loading-overlay').hide()
         pusher.disconnect()
         if data.status == "success"
@@ -218,6 +224,33 @@ class DonationsFormModel
         else 
           $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
 
+      customer = {}
+      customer.first_name = self.firstName()
+      customer.last_name = self.lastName()
+      customer.email = self.email()
+      customer.country = self.countryCode()
+      customer.charges_attributes = [charge]
+
+      formPost = {}
+      formPost.customer = customer
+      formPost.card_token = cardToken
+      formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
+      formPost.organization_slug = self.org()
+
+      $.ajax(
+        url: "#{config['pathtoserver']}/charges"
+        type: "post"
+        dataType: 'json'
+        contentType: 'application/json'
+        data: JSON.stringify(formPost)
+        success: (response, textStatus, jqXHR) ->
+          gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
+        error: (response, textStatus, errorThrown) ->
+          gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
+          $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
+          $('.donation-loading-overlay').hide()
+          $form.find("button").prop "disabled", false
+      )
 
     stripeResponseHandler = (status, response) ->
       $form = $("#donation-form")
@@ -228,39 +261,7 @@ class DonationsFormModel
         self.stripeMessage(response.error.message)
         $('.donation-loading-overlay').hide()
       else
-        charge = {}
-
-        charge.amount = self.normalizedAmount()
-        charge.currency = self.selectedCurrency()
-
-        customer = {}
-        customer.first_name = self.firstName()
-        customer.last_name = self.lastName()
-        customer.email = self.email()
-        customer.country = self.countryCode()
-        customer.charges_attributes = [charge]
-
-        formPost = {}
-        formPost.customer = customer
-        formPost.card_token = response.id # from stripe
-        formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
-        formPost.organization_slug = self.org()
-
-        req = $.ajax(
-          url: "#{config['pathtoserver']}/charges"
-          type: "post"
-          dataType: 'json'
-          contentType: 'application/json'
-          data: JSON.stringify(formPost)
-        )
-        req.done (response, textStatus, jqXHR) ->
-          gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
-          subscribeToDonationChannel(response.pusher_channel_token)
-        req.fail (response, textStatus, errorThrown) ->
-          gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-          $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
-          $('.donation-loading-overlay').hide()
-          $form.find("button").prop "disabled", false
+        subscribeToDonationChannel(response.id, $form)
         false
 
     self.submitForm = ->
