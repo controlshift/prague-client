@@ -26,6 +26,10 @@ describe "DonationsFormModel", ->
       donationsForm.email("a@b.com")
       expect(donationsForm.email.isValid()).toBeTruthy()
 
+    it "should return true for a decimal donation amount", ->
+      donationsForm.inputtedAmount("10.10")
+      expect(donationsForm.displayAmount.isValid()).toBeTruthy()
+
     it "should return false for an invalid email", ->
       donationsForm.email("ab.com")
       expect(donationsForm.email.isValid()).toBeFalsy()
@@ -79,7 +83,7 @@ describe "DonationsFormModel", ->
       `formWithConversion = new DonationsFormModel($, conversionHash);`
       return
 
-    # Note: the BBD is pegged to the USD at 0.5 BBD to 1 USD
+    # Note: the BBD is pegged to the USD at 2 BBD to 1 USD
 
     it "should convert displayed amounts to normalized amounts", ->
       formWithConversion.inputtedAmount(10)
