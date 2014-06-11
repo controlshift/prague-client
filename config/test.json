@@ -1,0 +1,11 @@
+{
+  "stripePublicKey": "XXX",
+  "pusherPublicKey": "XXX",
+  "cdnUrl" : "XXX",
+  "aws" : {
+    "bucket" : "buckey",
+    "key" : "xxx",
+    "secret" : "yyy",
+    "distributionId" : "see-aws-cloudfront-settings"
+  }
+}
