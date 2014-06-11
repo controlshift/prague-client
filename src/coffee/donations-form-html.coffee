@@ -1,6 +1,6 @@
 html = """
   <div class="cleanslate donations-callback-flash">
-    Success! You'll receive a notification for your payment. 
+    #{I18n.t()}Success! You'll receive a notification for your payment.
   </div>
 
   <form class="cleanslate donation-form" id="donation-form" autocomplete="on">
