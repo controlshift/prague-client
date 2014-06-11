@@ -27,7 +27,7 @@
     "gulp": "~3.6.2",
     "gulp-coffee": "~1.4.2",
     "gulp-watch": "~0.6.4",
-    "gulp-s3": "git+http://git@github.com/nkostelnik/gulp-s3.git",
+    "gulp-s3": "git+https://github.com/nkostelnik/gulp-s3",
     "gulp-replace": "~0.3.0",
     "gulp-plumber": "~0.6.1",
     "gulp-clean": "~0.2.4",
@@ -43,7 +43,7 @@
     "gulp-rev": "~0.3.2",
     "gulp-imagemin": "^0.5.0",
     "gulp-cache": "^0.1.11",
-    "gulp-cloudfront": "git+http://git@github.com:controlshift/gulp-cloudfront.git",
+    "gulp-cloudfront": "git+https://github.com/controlshift/gulp-cloudfront",
     "gulp-rev-all": "0.2.1",
     "gulp-debug": "^0.3.0"
   }
