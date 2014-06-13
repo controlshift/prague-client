@@ -1,6 +1,6 @@
 `var $`
 
-cacheBust = 'cb24'
+cacheBust = 'cb25'
 
 loadExternalResource = (type, source, callback, params) ->
   tag = null
@@ -40,7 +40,8 @@ loadExternalScripts = ->
         ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
       loadJson = (callback) ->
         serverPath = $("#donation-script").data('pathtoserver') or "__praguepathtoserver__"
-        jsonUrl = if testmode then "config/config.json" else "#{serverPath}config\/#{$('#donation-script').data('org')}.json"
+        urlForConfig = if serverPath.slice(-1) == "/" then serverPath + "config" else serverPath + "/config"
+        jsonUrl = if testmode then "config/config.json" else "#{urlForConfig}\/#{$('#donation-script').data('org')}.json"
         $.ajax
           dataType: if testmode then 'json' else 'jsonp'
           url: jsonUrl
