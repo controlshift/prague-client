@@ -15,7 +15,7 @@ before_script:
   - phantomjs --version
   - casperjs --version
   - gulp &
-  - sleep 10 # give gulp background task some time to execute.
+  - sleep 14 # give gulp background task some time to execute.
 script:
   - casperjs test public/js/test/casper.js
   - phantomjs run_jasmine.js http://localhost:1987/test
