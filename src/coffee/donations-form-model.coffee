@@ -212,20 +212,21 @@ class DonationsFormModel
 
       pusher = new Pusher(config['pusherpublickey'])
       channel = pusher.subscribe(charge.pusher_channel_token)
-      channel.bind "charge_completed", (data) ->
-        $('.donation-loading-overlay').hide()
-        pusher.disconnect()
-        if data.status == "success"
-          $("#donation-script").trigger("donations:success")
-          if !!config['redirectto']
-            unless /^https?:\/\//.test(config['redirectto'])
-              config['redirectto'] = "http://#{config['redirectto']}"
-            window.location.replace(config['redirectto'])
-          $("#donation-form").hide()
-          $(".donations-callback-flash").show(0).delay(8000).hide(0)
-        else 
-          $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
       channel.bind('pusher:subscription_succeeded', -> 
+        channel.bind "charge_completed", (data) ->
+          $('.donation-loading-overlay').hide()
+          pusher.disconnect()
+          if data.status == "success"
+            $("#donation-script").trigger("donations:success")
+            if !!config['redirectto']
+              unless /^https?:\/\//.test(config['redirectto'])
+                config['redirectto'] = "http://#{config['redirectto']}"
+              window.location.replace(config['redirectto'])
+            $("#donation-form").hide()
+            $(".donations-callback-flash").show(0).delay(8000).hide(0)
+          else 
+            $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
+            
         customer = {}
         customer.first_name = self.firstName()
         customer.last_name = self.lastName()
