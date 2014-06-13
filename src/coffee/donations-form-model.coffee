@@ -1,4 +1,4 @@
-cacheBust = 'cb23'
+cacheBust = 'cb24'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
@@ -225,34 +225,35 @@ class DonationsFormModel
           $(".donations-callback-flash").show(0).delay(8000).hide(0)
         else 
           $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
+      channel.bind('pusher:subscription_succeeded', -> 
+        customer = {}
+        customer.first_name = self.firstName()
+        customer.last_name = self.lastName()
+        customer.email = self.email()
+        customer.country = self.countryCode()
+        customer.charges_attributes = [charge]
 
-      customer = {}
-      customer.first_name = self.firstName()
-      customer.last_name = self.lastName()
-      customer.email = self.email()
-      customer.country = self.countryCode()
-      customer.charges_attributes = [charge]
+        formPost = {}
+        formPost.customer = customer
+        formPost.card_token = cardToken
+        formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
+        formPost.organization_slug = self.org()
 
-      formPost = {}
-      formPost.customer = customer
-      formPost.card_token = cardToken
-      formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
-      formPost.organization_slug = self.org()
-
-      urlForCharges = if config['pathtoserver'].slice(-1) == "/" then config['pathtoserver'] + "charges" else config['pathtoserver'] + "/charges"
-      $.ajax(
-        url: urlForCharges
-        type: "post"
-        dataType: 'json'
-        contentType: 'application/json'
-        data: JSON.stringify(formPost)
-        success: (response, textStatus, jqXHR) ->
-          gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
-        error: (response, textStatus, errorThrown) ->
-          gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
-          $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
-          $('.donation-loading-overlay').hide()
-          $form.find("button").prop "disabled", false
+        urlForCharges = if config['pathtoserver'].slice(-1) == "/" then config['pathtoserver'] + "charges" else config['pathtoserver'] + "/charges"
+        $.ajax(
+          url: urlForCharges
+          type: "post"
+          dataType: 'json'
+          contentType: 'application/json'
+          data: JSON.stringify(formPost)
+          success: (response, textStatus, jqXHR) ->
+            gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
+          error: (response, textStatus, errorThrown) ->
+            gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
+            $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
+            $('.donation-loading-overlay').hide()
+            $form.find("button").prop "disabled", false
+        )
       )
 
     stripeResponseHandler = (status, response) ->
