@@ -206,8 +206,8 @@ class DonationsFormModel
 
       charge.amount = self.normalizedAmount()
       charge.currency = self.selectedCurrency()
-      if config['charge_status']?
-        charge.status = config['charge_status']
+      if config['chargestatus']?
+        charge.status = config['chargestatus']
       charge.pusher_channel_token = Math.random().toString(36).slice(2)
 
       pusher = new Pusher(config['pusherpublickey'])
