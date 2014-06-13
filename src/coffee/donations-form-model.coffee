@@ -239,8 +239,9 @@ class DonationsFormModel
       formPost.config = $.extend(config, { 'calculatedAmounts' : self.amounts() })
       formPost.organization_slug = self.org()
 
+      urlForCharges = if config['pathtoserver'].slice(-1) == "/" then config['pathtoserver'] + "charges" else config['pathtoserver'] + "/charges"
       $.ajax(
-        url: "#{config['pathtoserver']}/charges"
+        url: urlForCharges
         type: "post"
         dataType: 'json'
         contentType: 'application/json'
