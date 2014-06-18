@@ -123,6 +123,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(concat('jquery.donations.coffee'))
         .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
         .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+        .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
         .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
         .pipe(coffee({
             bare: true
@@ -211,6 +212,7 @@ gulp.task('dist:script', function(event) {
     .pipe(concat('jquery.donations.coffee'))
     .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(coffee({
       bare:true
@@ -220,6 +222,7 @@ gulp.task('dist:script', function(event) {
     .pipe(concat('jquery.donations.js'))
     .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())
@@ -229,6 +232,7 @@ gulp.task('dist:script', function(event) {
     .pipe(concat('jquery.donations.loader.js'))
     .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
+    .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
     .pipe(coffee())
     .pipe(gulp.dest(destinations.build))

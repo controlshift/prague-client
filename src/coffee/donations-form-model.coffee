@@ -1,4 +1,4 @@
-cacheBust = 'cb24'
+cacheBust = 'cb26'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
@@ -194,11 +194,13 @@ class DonationsFormModel
   connectToServer: (opts, self) ->
     config = $.extend({}, {
       stripepublickey: "__praguestripepublickey__",
+      stripepublictestkey: "__praguestripepublictestkey__",
       pusherpublickey: "__praguepusherpublickey__",
       pathtoserver: "__praguepathtoserver__"
     }, opts)
 
-    Stripe.setPublishableKey config['stripepublickey']
+    keyToUse = if config['chargestatus'] == 'test' then config['stripepublictestkey'] else config['stripepublickey']
+    Stripe.setPublishableKey keyToUse
 
     subscribeToDonationChannel = (cardToken) ->
       $form = $("#donation-form")
