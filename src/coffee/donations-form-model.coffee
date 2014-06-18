@@ -37,7 +37,7 @@ class DonationsFormModel
     self.initializeIcons(self.imgPath())
 
     self.seedAmount = config['seedamount'] || 100
-    self.seedValues = if config['seedvalues']? then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
+    self.seedValues = if config['seedvalues']? and /[0-9]+(,[0-9]+)*/.test(config['seedvalues']) then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
 
     self.currencies = {
       'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
