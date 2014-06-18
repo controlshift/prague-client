@@ -12,7 +12,7 @@ describe "DonationsFormModel", ->
           json = dat
       return json
     `configHash = loadLocalJson();`
-    `donationsForm = new DonationsFormModel($, configHash)`
+    `donationsForm = new DonationsFormModel($, "", configHash)`
     return
 
   describe "Form validations", ->
@@ -80,7 +80,7 @@ describe "DonationsFormModel", ->
         'currencyconversion' : 'choose'
       })
 
-      `formWithConversion = new DonationsFormModel($, conversionHash);`
+      `formWithConversion = new DonationsFormModel($, "", conversionHash);`
       return
 
     # Note: the BBD is pegged to the USD at 2 BBD to 1 USD
@@ -101,7 +101,7 @@ describe "DonationsFormModel", ->
         'seedcurrency' : 'BBD'
       })
 
-      detectForm = new DonationsFormModel($, detectHash);
+      detectForm = new DonationsFormModel($, "", detectHash);
       detectForm.selectedCurrency('USD')
       expect(detectForm.amounts()).toEqual([50,100,150])
 
@@ -113,7 +113,7 @@ describe "DonationsFormModel", ->
         'currencyconversion' : 'none'
       })
 
-      detectForm = new DonationsFormModel($, detectHash);
+      detectForm = new DonationsFormModel($, "", detectHash);
       detectForm.selectedCurrency('USD')
       expect(detectForm.amounts()).toEqual([100,200,300])
 
@@ -125,7 +125,7 @@ describe "DonationsFormModel", ->
         'formcurrency' : 'AUD'
       }, configHash)
 
-      chooseForm = new DonationsFormModel($, chooseHash)
+      chooseForm = new DonationsFormModel($, "", chooseHash)
       expect(chooseForm.currencySymbol()).toEqual("AU$")
 
 
