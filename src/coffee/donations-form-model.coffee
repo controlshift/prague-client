@@ -1,7 +1,7 @@
 cacheBust = 'cb26'
 
 class DonationsFormModel
-  constructor: (jQuery, opts) ->
+  constructor: (jQuery, html, opts) ->
     self = @
     `$ = jQuery;`
     config = $.extend({}, {
@@ -9,23 +9,27 @@ class DonationsFormModel
       metaviewporttag: true
     }, opts, self.parseQueryString(document.URL.split("?")[1]))
 
+    I18n.translations[config['locale'] or 'en'] = config['error_messages']
+
+    $('.donations-form-anchor').append(Mustache.render(html, config['fields']))
+
     ko.validation.configure({
       insertMessages: false
     });
     ko.validation.rules['ccDate'] = {
       validator: (val, otherVal) ->
         return $.payment.validateCardExpiry(val.month, val.year);
-      , message: 'Invalid date'
+      , message: I18n.t('invalid_date', {locale: config['locale']})
     }
     ko.validation.rules['ccNum'] = {
       validator: (val, otherVal) ->
         return $.payment.validateCardNumber(val);
-      , message: 'Invalid credit card number'
+      , message: I18n.t('invalid_cc_num', {locale: config['locale']})
     }
     ko.validation.rules['cvc'] = {
       validator: (val, otherVal) ->
         return $.payment.validateCardCVC(val);
-      , message: 'Invalid CVC number'
+      , message: I18n.t('invalid_cvc_num', {locale: config['locale']})
     }
     ko.validation.registerExtenders()
 
@@ -37,7 +41,7 @@ class DonationsFormModel
     self.initializeIcons(self.imgPath())
 
     self.seedAmount = config['seedamount'] || 100
-    self.seedValues = if config['seedvalues']? then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
+    self.seedValues = if config['seedvalues']? and /[0-9]+(,[0-9]+)*/.test(config['seedvalues']) then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
 
     self.currencies = {
       'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
@@ -72,7 +76,7 @@ class DonationsFormModel
 
     self.displayAmount = ko.computed(->
       self.inputtedAmount() or self.selectedAmount()
-    , this).extend({ required: { message: "Please select an amount" }, min: 1 })
+    , this).extend({ required: { message: I18n.t('cant_be_blank_amount', {locale: config['locale']}) }, min: { message: I18n.t('greater_than_amount', {locale: config['locale']}), params: 1 } })
 
     self.normalizedAmount = ko.computed(->
       zeroDecimalCurrencies = ['BIF', 'CLP', 'JPY', 'KRW', 'PYG', 'VUV', 'XOF', 'CLP', 'GNF', 'KMF', 'MGA', 'RWF', 'XAF', 'XPF']
@@ -118,13 +122,13 @@ class DonationsFormModel
     self.setInputSet = (index) ->
       self.visibleInputSet(index)
 
-    self.firstName = ko.observable().extend({ required: { message: "Can't be blank" } })
-    self.lastName = ko.observable().extend({ required: { message: "Can't be blank" } })
+    self.firstName = ko.observable().extend({ required: { message: I18n.t('cant_be_blank', {locale: config['locale']}) } })
+    self.lastName = ko.observable().extend({ required: { message: I18n.t('cant_be_blank', {locale: config['locale']}) } })
     self.email = ko.observable().extend({
-      required: { message: "Can't be blank" },
-      email: { message: "Invalid email" }
+      required: { message: I18n.t('cant_be_blank', {locale: config['locale']}) },
+      email: { message: I18n.t('invalid_email', {locale: config['locale']}) }
     })
-    self.cardNumber = ko.observable().extend({ required: { message: "Can't be blank" }, ccNum: true })
+    self.cardNumber = ko.observable().extend({ required: { message: I18n.t('cant_be_blank', {locale: config['locale']}) }, ccNum: true })
     self.cardMonth = ko.observable()
     self.ccMonths = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
     self.cardYear = ko.observable("#{new Date().getFullYear() + 1}")
@@ -138,7 +142,7 @@ class DonationsFormModel
     self.cardDate = ko.computed(->
       { month: self.cardMonth(), year: self.cardYear() }
     , this).extend({ ccDate: true, observable: true })
-    self.cvc = ko.observable().extend({ required: { message: "Can't be blank" }, digit: true, cvc: true })
+    self.cvc = ko.observable().extend({ required: { message: I18n.t('cant_be_blank', {locale: config['locale']}) }, digit: true, cvc: true })
     $('#cc-num-input').payment('formatCardNumber')
     $('#cvc-num-input').payment('formatCardCVC')
 

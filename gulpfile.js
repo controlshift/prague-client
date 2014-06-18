@@ -60,7 +60,9 @@ var gulp = require('gulp'),
                 'vendor/stripe/index',
                 "vendor/jquery.payment/jquery.payment.js",
                 'vendor/knockout/index.js',
-                'vendor/knockout-validation/Dist/knockout.validation.min.js'
+                'vendor/knockout-validation/Dist/knockout.validation.min.js',
+                'vendor/mustache/mustache.js',
+                'vendor/i18n/i18n.js'
             ]
         },
         asset_styles: [
@@ -182,7 +184,7 @@ gulp.task('watch', ['jade:watch', 'coffee:watch', 'scss:watch', 'config:watch'])
 
 /** Script-assets:load; load vendor scripts **/
 gulp.task('script-assets:load', function(event) {
-    gulp.src('src/js/vendor/jquery.payment/*.js', {base: "./src/js/"})
+    gulp.src('src/js/vendor/**/*.js', {base: "./src/js/"})
         .pipe(gulp.dest(destinations.js));
     return gulp.src(sources.asset_scripts.test.concat(sources.asset_scripts.dev), {base: "./"})
         .pipe(gulp.dest(destinations.js));

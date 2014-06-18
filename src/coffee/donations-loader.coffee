@@ -36,8 +36,7 @@ loadExternalScripts = ->
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
       initializeForm = (config) ->
-        $('.donations-form-anchor').append(html)
-        ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
+        ko.applyBindings(new DonationsFormModel($, html, $.extend(config, $("#donation-script").data())))
       loadJson = (callback) ->
         serverPath = $("#donation-script").data('pathtoserver') or "__praguepathtoserver__"
         urlForConfig = if serverPath.slice(-1) == "/" then serverPath + "config" else serverPath + "/config"
