@@ -403,3 +403,43 @@ and (max-width: 480px) {
     }
   }
 }
+
+/*http://www.techumber.com/2013/03/amazing-social-icons-vibrating-effec-using-pure-css3.html*/
+.donations-buzz {
+  animation:vibrate 0.1s linear 0s 2;
+  -moz-animation: vibrate 0.1s linear 0s 2; /* Firefox */
+  -webkit-animation: vibrate 0.1s linear 0s 2; /* Safari and Chrome */
+  -o-animation: vibrate 0.1s linear 0s 2; /* Opera */
+}
+
+@keyframes vibrate {
+  0%   {padding-left: 0px;}
+  25%  {padding-left: -3px;}
+  50%  {padding-left: 0px;}
+  75%  {padding-left: 3px;}
+  100% {padding-left: 0px;}
+}
+ 
+@-moz-keyframes vibrate {
+  0%   {padding-left: 0px;}
+  25%  {padding-left: -3px;}
+  50%  {padding-left: 0px;}
+  75%  {padding-left: 3px;}
+  100% {padding-left: 0px;}
+}
+ 
+@-webkit-keyframes vibrate {
+  0%   {padding-left: 0px;}
+  25%  {padding-left: -3px;}
+  50%  {padding-left: 0px;}
+  75%  {padding-left: 3px;}
+  100% {padding-left: 0px;}
+}
+ 
+@-o-keyframes vibrate {
+  0%   {padding-left: 0px;}
+  25%  {padding-left: -3px;}
+  50%  {padding-left: 0px;}
+  75%  {padding-left: 3px;}
+  100% {padding-left: 0px;}
+}

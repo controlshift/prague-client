@@ -37,7 +37,7 @@ html = """
         <select class="currency-select" id="donations-currency-select" data-bind="options: currenciesArray, value: selectedCurrency"></select>
       </div>
       <span class="donation-field-label">
-        <span class="donation-error-label" id="d-error-label-first" data-bind="validationMessage: displayAmount"></span>
+        <span class="donation-error-label donations-buzz" id="d-error-label-first" data-bind="validationMessage: displayAmount"></span>
       </span>
       <div class="donation-button-set" data-bind="foreach: amounts">
         <div class="donation-btn donation-btn-sm" data-bind="css: { 'donation-btn-active' : $parent.selectedBtn() === $index() }, click: function() { $parent.setActiveAmount($index()); }">
@@ -62,7 +62,7 @@ html = """
       <div class="donation-input-row">
         <span class="donation-field-label">
           First Name*
-          <span class="donation-error-label" data-bind="validationMessage: firstName">Can't be blank</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: firstName">Can't be blank</span>
         </span>
         
         <input type="text" class="donation-text-field" autocompletetype="given-name" name="customer.first_name" data-bind="value: firstName">
@@ -70,7 +70,7 @@ html = """
       <div class="donation-input-row">      
         <span class="donation-field-label">
           Last Name*
-          <span class="donation-error-label" data-bind="validationMessage: lastName">Can't be blank</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: lastName">Can't be blank</span>
         </span>
         
         <input type="text" class="donation-text-field" autocompletetype="family-name" name="customer.last_name" data-bind="value: lastName">
@@ -78,7 +78,7 @@ html = """
       <div class="donation-input-row"> 
         <span class="donation-field-label">
           Email*
-          <span class="donation-error-label" data-bind="validationMessage: email">Invalid email format</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: email">Invalid email format</span>
         </span>
         
         <input type="email" class="donation-text-field" autocompletetype="email" name="customer.email" data-bind="value: email">
@@ -98,14 +98,14 @@ html = """
       <div class="donation-input-row">
         <span class="donation-field-label">
           Card Number*
-          <span class="donation-error-label" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: cardNumber" data-bind="validationMessage: cardDate">Invalid number</span>
         </span>
         <input name="cc-num" type="tel" id="cc-num-input" class="donation-text-field" autocompletetype="cc-number" data-stripe="number" data-bind="value: cardNumber, event: {keydown: calcCardType}, style: { backgroundImage: ccBackground() } ">
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
           Expiration*
-          <span class="donation-error-label" data-bind="validationMessage: cardDate">Invalid date</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: cardDate">Invalid date</span>
         </span>
         <select name="month" class="donation-select" type="month" data-stripe="exp-month" data-bind="value: cardMonth, options: ccMonths">
         </select>
@@ -115,11 +115,11 @@ html = """
       <div class="donation-input-row"> 
         <span class="donation-field-label">
           CVV/CVC* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">What is this?</a>
-          <span class="donation-error-label" data-bind="validationMessage: cvc">Invalid CVV number</span>
+          <span class="donation-error-label donations-buzz" data-bind="validationMessage: cvc">Invalid CVV number</span>
         </span>
         <input name="cvc" type="tel" id="cvc-num-input" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc" data-bind="value: cvc">
       </div>
-      <div class="donation-payment-errors" data-bind="visible: !!stripeMessage(), text: stripeMessage()">
+      <div class="donation-payment-errors donations-buzz" data-bind="visible: !!stripeMessage(), text: stripeMessage()">
         Something went wrong.
       </div>
       <button type="submit" class="donation-submit" data-bind="click: function()
