@@ -31,7 +31,7 @@ class DonationsFormModel
 
     self.org = ko.observable(config['org'])
 
-    self.countryCode = ko.observable("US")
+    self.countryCode = ko.observable(config['country'] )
 
     self.imgPath = ko.observable(config['imgpath'])
     self.initializeIcons(self.imgPath())
