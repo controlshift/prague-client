@@ -115,8 +115,21 @@ class DonationsFormModel
     self.incrementInputSet = ->
       self.visibleInputSet(self.visibleInputSet() + 1)
 
+    self.isAdvanceAllowed = (index) ->
+      switch index
+        when 1
+          self.inputSet1.isValid()
+        when 2
+          self.inputSet1.isValid() && self.inputSet2.isValid()
+        when 3
+          self.inputSet1.isValid() && self.inputSet2.isValid() && self.inputSet3.isValid()
+        else
+          true
+
+
     self.setInputSet = (index) ->
-      self.visibleInputSet(index)
+      if self.isAdvanceAllowed(index)
+        self.visibleInputSet(index)
 
     self.firstName = ko.observable().extend({ required: { message: "Can't be blank" } })
     self.lastName = ko.observable().extend({ required: { message: "Can't be blank" } })
