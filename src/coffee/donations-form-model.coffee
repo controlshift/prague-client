@@ -113,6 +113,7 @@ class DonationsFormModel
     self.visibleInputSet = ko.observable(0)
 
     self.incrementInputSet = ->
+      gaDonations('send', 'event', 'next', 'click', "from-#{self.visibleInputSet()}-to-#{self.visibleInputSet()+1}")
       self.visibleInputSet(self.visibleInputSet() + 1)
 
     self.isAdvanceAllowed = (index) ->
@@ -129,6 +130,7 @@ class DonationsFormModel
 
     self.setInputSet = (index) ->
       if self.isAdvanceAllowed(index)
+        gaDonations('send', 'event', 'navigation', 'click', "from-#{self.visibleInputSet()}-to-#{index}")
         self.visibleInputSet(index)
 
     self.firstName = ko.observable().extend({ required: { message: "Can't be blank" } })
@@ -232,6 +234,7 @@ class DonationsFormModel
           $('.donation-loading-overlay').hide()
           pusher.disconnect()
           if data.status == "success"
+            gaDonations('send', 'event', 'form', 'success')
             $("#donation-script").trigger("donations:success")
             if !!config['redirectto']
               unless /^https?:\/\//.test(config['redirectto'])
@@ -240,6 +243,7 @@ class DonationsFormModel
             $("#donation-form").hide()
             $(".donations-callback-flash").show(0).delay(8000).hide(0)
           else 
+            gaDonations('send', 'event', 'form', 'error')
             $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
             
         customer = {}
@@ -263,9 +267,8 @@ class DonationsFormModel
           contentType: 'application/json'
           data: JSON.stringify(formPost)
           success: (response, textStatus, jqXHR) ->
-            gaDonations('send', 'event', 'advance-button', 'click#success', 'submit', 1)
           error: (response, textStatus, errorThrown) ->
-            gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
+            gaDonations('send', 'event', 'form', 'error', 'charge-error')
             $form.find(".donation-payment-errors").text(response.responseText or "Something went wrong.").show()
             $('.donation-loading-overlay').hide()
             $form.find("button").prop "disabled", false
@@ -275,8 +278,8 @@ class DonationsFormModel
     stripeResponseHandler = (status, response) ->
       $form = $("#donation-form")
       if response.error
+        gaDonations('send', 'event', 'form', 'error', 'stripe-error')
         # Show the errors on the form
-        gaDonations('send', 'event', 'advance-button', 'click#with-errors', 'submit', 1)
         $form.find("button").prop "disabled", false
         self.stripeMessage(response.error.message)
         $('.donation-loading-overlay').hide()
@@ -285,7 +288,7 @@ class DonationsFormModel
         false
 
     self.submitForm = ->
-      gaDonations('send', 'event', 'advance-button', 'click#submit', 'submit', 1)
+      gaDonations('send', 'event', 'submit', 'click')
       $form = $("#donation-form")
       $('.donation-loading-overlay').show()
       # Disable the submit button to prevent repeated clicks
