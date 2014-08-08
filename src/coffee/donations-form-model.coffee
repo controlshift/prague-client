@@ -1,4 +1,4 @@
-cacheBust = 'cb27'
+cacheBust = 'cb28'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
