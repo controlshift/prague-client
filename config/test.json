@@ -2,6 +2,7 @@
   "stripePublicKey": "XXX",
   "pusherPublicKey": "XXX",
   "cdnUrl" : "XXX",
+  "honeybadgerPublicKey" : "xxx",
   "aws" : {
     "bucket" : "buckey",
     "key" : "xxx",

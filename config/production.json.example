@@ -3,6 +3,7 @@
   "pusherPublicKey": "",
   "cdnUrl" : "",
   "pathToServer": "https://something.com/",
+  "honeybadgerPublicKey" : "xxx",
   "aws" : {
     "bucket" : "buckey",
     "key" : "xxx",
