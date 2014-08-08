@@ -60,7 +60,8 @@ var gulp = require('gulp'),
                 'vendor/stripe/index',
                 "vendor/jquery.payment/jquery.payment.js",
                 'vendor/knockout/index.js',
-                'vendor/knockout-validation/Dist/knockout.validation.min.js'
+                'vendor/knockout-validation/Dist/knockout.validation.min.js',
+                'vendor/honeybadger/index.js'
             ]
         },
         asset_styles: [
@@ -125,6 +126,8 @@ gulp.task('coffee:compile', function(event) {
         .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
         .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
         .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
+        .pipe(replace(/__honeybadgerpublickey__/g, settings.honeybadgerPublicKey))
+        .pipe(replace(/__environment__/g, env))
         .pipe(coffee({
             bare: true
         }))
@@ -214,6 +217,8 @@ gulp.task('dist:script', function(event) {
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
     .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
+    .pipe(replace(/__honeybadgerpublickey__/g, settings.honeybadgerPublicKey))
+    .pipe(replace(/__environment__/g, env))
     .pipe(coffee({
       bare:true
     }))
@@ -224,6 +229,8 @@ gulp.task('dist:script', function(event) {
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
     .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
+    .pipe(replace(/__honeybadgerpublickey__/g, settings.honeybadgerPublicKey))
+    .pipe(replace(/__environment__/g, env))
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())
     .pipe(gulp.dest(destinations.build))
@@ -234,6 +241,8 @@ gulp.task('dist:script', function(event) {
     .pipe(replace(/__praguestripepublickey__/g, settings.stripePublicKey))
     .pipe(replace(/__praguestripepublictestkey__/g, settings.stripePublicTestKey))
     .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
+    .pipe(replace(/__honeybadgerpublickey__/g, settings.honeybadgerPublicKey))
+    .pipe(replace(/__environment__/g, env))
     .pipe(coffee())
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())

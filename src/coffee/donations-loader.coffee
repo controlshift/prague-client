@@ -37,6 +37,9 @@ loadExternalScripts = ->
       googleAnalyticsInit()
       initializeForm = (config) ->
         $('.donations-form-anchor').append(html)
+        Honeybadger.configure
+          api_key: "__honeybadgerpublickey__"
+          environment: "__environment__"
         ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
       loadJson = (callback) ->
         serverPath = $("#donation-script").data('pathtoserver') or "__praguepathtoserver__"
