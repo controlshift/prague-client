@@ -114,7 +114,7 @@ html = """
       </div>
       <div class="donation-input-row"> 
         <span class="donation-field-label">
-          CVV/CVC* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">What is this?</a>
+          CVV Security Code (on back of card)* <a class="what-is-cvv" title="For MasterCard, Visa or Discover, it's the three digits in the signature area on the back of your card. For American Express, it's the four digits on the front of the card.">(?)</a>
           <span class="donation-error-label" data-bind="validationMessage: cvc">Invalid CVV number</span>
         </span>
         <input name="cvc" type="tel" id="cvc-num-input" class="donation-text-field donation-text-field-sm" autocomplete="off" data-stripe="cvc" data-bind="value: cvc">
