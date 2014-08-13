@@ -36,6 +36,8 @@ loadExternalScripts = ->
       initJQueryPayments(jQuery)
       googleAnalyticsInit()
       initializeForm = (config) ->
+        #this doesn't work for some reason
+        $("head").append("<!–-[if IE 7]><style>.donations-form-anchor { width: 400px;}</style><![endif]–->")
         $('.donations-form-anchor').append(html)
         ko.applyBindings(new DonationsFormModel($, $.extend(config, $("#donation-script").data())))
       loadJson = (callback) ->
