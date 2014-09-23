@@ -1,4 +1,4 @@
-cacheBust = 'cb34'
+cacheBust = '__rand__'
 
 class DonationsFormModel
   constructor: (jQuery, opts) ->
