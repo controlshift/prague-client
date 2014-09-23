@@ -71,6 +71,12 @@ describe "DonationsFormModel", ->
 
     return
 
+  describe "Parsing tags", ->
+    it "should return the expected tags", ->
+      expect(donationsForm.tags).toEqual(['foo', 'bar', 'what:ever'])
+
+    return
+
   describe "Currency conversion", ->
     `var formWithConversion;`
     beforeEach ->

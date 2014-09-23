@@ -63,6 +63,8 @@ The options as of right now are:
 
 `pusherpublickey`: Again, only use if you are hosting your own server.
 
+`tags`: A comma-sepparated list of alphanumeric strings; any successful charges made with this widget will be tagged with these tags in the prague server
+
 ## Callbacks
 
 For the time being there is only one callback -- the success callback, after a user has successfully been charged. You can capture this like so:
