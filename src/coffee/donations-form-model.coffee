@@ -40,7 +40,7 @@ class DonationsFormModel
       self.seedAmount = config['seedamount'] || 100
       self.seedValues = if config['seedvalues']? and /[0-9]+(,[0-9]+)*/.test(config['seedvalues']) then config['seedvalues'].split(",") else [15,35,50,100,250,500,1000]
 
-      self.tags = if config['tags']? and /[a-zA-Z0-9]+?(,[a-zA-Z0-9]+)*/.test(config['tags']) then config['tags'].split(",") else []
+      self.tags = if config['tags']? then config['tags'].replace(/\s/g, '').split(',') else []
 
       self.currencies = {
         'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
@@ -250,7 +250,7 @@ class DonationsFormModel
           else 
             gaDonations('send', 'event', 'form', 'error')
             $(".donation-payment-errors").text(data.message or "Something went wrong.").show()
-            
+
         customer = {}
         customer.first_name = self.firstName()
         customer.last_name = self.lastName()
