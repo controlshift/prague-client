@@ -51,11 +51,9 @@ The options as of right now are:
 
 `imgpath`: A path to where your images live. Recommended to download these and add them to your server.
 
-`seedamount`: TODO what does this do?
-
 `seedcurrency`: Default currency to display, e.g. 'USD' or 'GBP'
 
-`seedvalues`: Comma-separated list of suggested donation amounts to show buttons for.  For example, "50,100,150" with USD will show 3 buttons: $5, $10, and $15.
+`seedamount` and `seedvalues`: A baseline suggested donation amount, and percentages of that to show buttons for.  For example, seedamount=10 and seedvalues=50,100,150 will give you buttons for 5, 10, and 15.
 
 `metaviewport`: Specifies whether the `metaviewport` tag should or should not be added. Set this to `"false"` (or `false` if using query strings) if this should not be used. 
 
