@@ -1,4 +1,4 @@
-Donation Labs Client
+Prague Donation Client
 ======
 
 [![Build Status](https://travis-ci.org/controlshift/prague-client.svg?branch=master)](https://travis-ci.org/controlshift/prague-client)
@@ -20,13 +20,13 @@ First things first, stick this tag wherever you want the form on the page.
 Stick this somewhere in below the `</body>` tag:
 
 ```html
-<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-org="org-from-server" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
+<script src="https://dy82rnfr2v486.cloudfront.net/" id="donation-script" data-org="org-from-server"></script>
 ```
 
 It is recommended that you store and host the images locally for performance. If you need to change the path where your images are stored, you can pass options like so:
 
 ```html
-<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script" data-imgpath="./img" data-pathtoserver="https://www.donatelab.com" data-stripepublickey="pk_live_TkBE6KKwIBdNjc3jocHvhyNx"></script>
+<script src="https://dy82rnfr2v486.cloudfront.net/" id="donation-script" data-org="org-from-server" data-imgpath="./img"></script>
 ```
 
 By default the path is `./img`.
@@ -51,11 +51,11 @@ The options as of right now are:
 
 `imgpath`: A path to where your images live. Recommended to download these and add them to your server.
 
-`pathtoserver`: A path to where the server lives. We recommend to use ours, but if you want your own the link to the server's source code is available above.
+`seedamount`: TODO what does this do?
 
-`amt1`, `amt2`, `amt3`, `amt4`, `amt5`, `amt6`, `amt7`: Specifies amount of the corresponding button -- we give a default value. Use numeric values with no currency symbols.
+`seedcurrency`: Default currency to display, e.g. 'USD' or 'GBP'
 
-`select`: Specifies which button should be selected by default (if none, don't use this parameter). Valid options are 1, 2, 3, 4, 5, 6, or 7.
+`seedvalues`: Comma-separated list of suggested donation amounts to show buttons for.  For example, "50,100,150" with USD will show 3 buttons: $5, $10, and $15.
 
 `metaviewport`: Specifies whether the `metaviewport` tag should or should not be added. Set this to `"false"` (or `false` if using query strings) if this should not be used. 
 
@@ -63,7 +63,7 @@ The options as of right now are:
 
 `pusherpublickey`: Again, only use if you are hosting your own server.
 
-`tags`: A comma-sepparated list of alphanumeric strings; any successful charges made with this widget will be tagged with these tags in the prague server
+`tags`: A comma-separated list of alphanumeric strings; any successful charges made with this widget will be tagged with these tags in the prague server
 
 ## Callbacks
 
@@ -92,10 +92,9 @@ If you want to apply custom stylings, you can just add another stylesheet below 
 We've made it pretty easy to use your own copy of our Rails server if you want to go that route. First, you'll have to set up your own Stripe and Pusher account. The default uses our server / credentials by default, but if you want to host your own copy of our server, you pass the following parameters:
 
 ```html
-<script src="https://s3.amazonaws.com/prague-production/jquery.donations.loader.js" id="donation-script"
+<script src="YOUR CDN HERE" id="donation-script"
   data-stripepublickey="YOUR_STRIPE_KEY"
-  data-pusherpublickey="YOUR_PUSHER_KEY"
-  data-pathtoserver="http://localhost:3000"></script>
+  data-pusherpublickey="YOUR_PUSHER_KEY"></script>
 ```
 
 ## Contributing
