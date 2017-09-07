@@ -43,11 +43,11 @@ class DonationsFormModel
       self.tags = if config['tags']? then config['tags'].replace(/\s/g, '').split(',') else []
 
       self.currencies = {
-        'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD'
+        'US' : 'USD', 'GB' : 'GBP', 'AU' : 'AUD', 'CA' : 'CAD', 'SE' : 'SEK', 'NO' : 'NOK', 'DK' : 'DKK', 'NZ' : 'NZD', 'CH' : 'CHF'
       }
 
       self.currenciesArray = ko.observableArray [
-        'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK'
+        'USD', 'GBP', 'CAD', 'AUD', 'EUR', 'NZD', 'SEK', 'NOK', 'DKK', 'CHF'
       ]
       self.currenciesEnabled = ko.observable(config['currencyconversion'] isnt "none")
       self.seededCurrency = config['seedcurrency'] or 'USD'
