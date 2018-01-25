@@ -22,6 +22,7 @@
   },
   "engine": "node >= 0.10",
   "devDependencies": {
+    "casperjs": "^1.1.4",
     "grunt-replace": "^1.0.1",
     "grunt-ver": "^0.5.3",
     "gulp": "^3.9.1",
@@ -45,6 +46,7 @@
     "gulp-s3": "^0.11.0",
     "gulp-sass": "^3.1.0",
     "gulp-uglify": "^3.0.0",
-    "gulp-watch": "^5.0.0"
+    "gulp-watch": "^5.0.0",
+    "phantomjs-prebuilt": "^2.1.16"
   }
 }
