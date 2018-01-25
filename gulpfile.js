@@ -119,7 +119,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(replace(/praguepathtoserver/g, settings.pathToServer))
         .pipe(coffee())
         .pipe(gulp.dest(destinations.js))
-        .pipe(loaderFilter.restore())
+        .pipe(loaderFilter.restore)
         .pipe(donationsFormFilter)
         .pipe(concat('jquery.donations.coffee'))
         .pipe(replace(/__praguepathtoserver__/g, settings.pathToServer))
@@ -132,16 +132,16 @@ gulp.task('coffee:compile', function(event) {
             bare: true
         }))
         .pipe(gulp.dest(destinations.js))
-        .pipe(donationsFormFilter.restore())
+        .pipe(donationsFormFilter.restore)
         .pipe(casperFilter)
         .pipe(concat('test/casper.coffee'))
         .pipe(coffee())
         .pipe(gulp.dest(destinations.js))
-        .pipe(casperFilter.restore())
+        .pipe(casperFilter.restore)
         .pipe(jasmineFilter)
         .pipe(coffee())
         .pipe(gulp.dest(destinations.js))
-        .pipe(jasmineFilter.restore());
+        .pipe(jasmineFilter.restore);
 });
 
 gulp.task('config:watch', function(event) {
@@ -223,7 +223,7 @@ gulp.task('dist:script', function(event) {
     .pipe(coffee({
       bare:true
     }))
-    .pipe(coffeeFilter.restore())
+    .pipe(coffeeFilter.restore)
     .pipe(jsFilter)
     .pipe(concat('jquery.donations.js'))
     .pipe(replace(/__rand__/g, Math.random()))
@@ -236,7 +236,7 @@ gulp.task('dist:script', function(event) {
     .pipe(gulp.dest(destinations.build))
     .pipe(uglify())
     .pipe(gulp.dest(destinations.build))
-    .pipe(jsFilter.restore())
+    .pipe(jsFilter.restore)
     .pipe(loaderFilter)
     .pipe(concat('jquery.donations.loader.js'))
     .pipe(replace(/__rand__/g, Math.random()))
@@ -284,10 +284,10 @@ gulp.task('deploy:s3', function(event) {
     .pipe(debug({verbose: true}))
     .pipe(loaderFilter)
     .pipe(s3(aws, options.s3noCache))
-    .pipe(loaderFilter.restore())
+    .pipe(loaderFilter.restore)
     .pipe(notLoaderFilter)
     .pipe(s3(aws, options.s3))
-    .pipe(notLoaderFilter.restore())
+    .pipe(notLoaderFilter.restore)
     .pipe(debug({verbose: true}))
     .pipe(cloudfront(aws))
 });
