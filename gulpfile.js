@@ -108,10 +108,10 @@ gulp.task('scss:compile', function(event) {
 });
 /** Coffee:compile; compiles coffeescript **/
 gulp.task('coffee:compile', function(event) {
-    var loaderFilter = filter('donations-loader.coffee'),
-        donationsFormFilter = filter('*form*.coffee'),
-        casperFilter = filter('test/*feature.coffee'),
-        jasmineFilter = filter('test/*spec.coffee');
+    const loaderFilter = filter('donations-loader.coffee', {restore: true});
+    const donationsFormFilter = filter('*form*.coffee', {restore: true});
+    const casperFilter = filter('test/*feature.coffee', {restore: true});
+    const jasmineFilter = filter('test/*spec.coffee', {restore: true});
     return gulp.src(sources.coffee, {base: './src/coffee/'})
         .pipe(plumber())
         .pipe(loaderFilter)
@@ -128,9 +128,7 @@ gulp.task('coffee:compile', function(event) {
         .pipe(replace(/__praguepusherpublickey__/g, settings.pusherPublicKey))
         .pipe(replace(/__honeybadgerpublickey__/g, settings.honeybadgerPublicKey))
         .pipe(replace(/__environment__/g, env))
-        .pipe(coffee({
-            bare: true
-        }))
+        .pipe(coffee({ bare: true }))
         .pipe(gulp.dest(destinations.js))
         .pipe(donationsFormFilter.restore)
         .pipe(casperFilter)
@@ -206,9 +204,9 @@ gulp.task('image-assets:load', function(event) {
 
 /** Build:script; concats all vendor scripts and donations scripts into one and then minifies to dist folder. **/
 gulp.task('dist:script', function(event) {
-  var coffeeFilter = filter('*form*.coffee'),
-    loaderFilter = filter('*loader.coffee'),
-    jsFilter = filter('!**/*.coffee');
+  var coffeeFilter = filter('*form*.coffee', {restore: true}),
+    loaderFilter = filter('*loader.coffee', {restore: true}),
+    jsFilter = filter('!**/*.coffee', {restore: true});
   return gulp.src(sources.coffee.concat(sources.asset_scripts.dev).concat(['src/js/vendor/**/*.js']))
     .pipe(plumber())
     .pipe(coffeeFilter)
@@ -275,8 +273,8 @@ gulp.task('dist:version', function(event) {
 
 /** Deploy:S3; gzips sources and deploys to S3.**/
 gulp.task('deploy:s3', function(event) {
-  var loaderFilter = filter('jquery.donations.loader*');
-  var notLoaderFilter = filter('!jquery.donations.loader*');
+  var loaderFilter = filter('jquery.donations.loader*', {restore: true});
+  var notLoaderFilter = filter('!jquery.donations.loader*', {restore: true});
 
   return gulp.src(sources.deployment)
     .pipe(debug({verbose: true}))
