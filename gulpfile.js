@@ -89,7 +89,7 @@ gulp.task('serve', function(event) {
     port: 1987,
     livereload: true
   });
-  watch({glob: sources.overwatch})
+  watch(sources.overwatch)
     .pipe(connect.reload());
 });
 
@@ -145,7 +145,7 @@ gulp.task('coffee:compile', function(event) {
 });
 
 gulp.task('config:watch', function(event) {
-    watch({glob: sources.config }, ['config:push']);
+    watch(sources.config, ['config:push']);
 });
 /** Config:push; pushes over widget config **/
 gulp.task('config:push', function(event) {
@@ -167,17 +167,17 @@ gulp.task('jade:compile', function(event) {
 
 /** Scss:watch; watch for scss source changes **/
 gulp.task('scss:watch', function(event) {
-    watch({glob: sources.scss }, ['scss:compile']);
+    watch(sources.scss, ['scss:compile']);
 });
 
 /** Coffee:watch; watch for coffeescript source changes and compile as necessary **/
 gulp.task('coffee:watch', function(event) {
-    watch({glob: sources.coffee}, ['coffee:compile']);
+    watch(sources.coffee, ['coffee:compile']);
 });
 
 /** Jade:watch; watch for jade source changes and compile as necessary **/
 gulp.task('jade:watch', function(event) {
-    watch({glob: sources.jade }, ['jade:compile']);
+    watch(sources.jade, ['jade:compile']);
 });
 
 /** Watch; watch for source changes and run necessary compilation during development **/
